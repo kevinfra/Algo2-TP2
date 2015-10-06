@@ -1,15 +1,17 @@
-\documentclass[10pt, a4paper]{article}
+\documentclass[10pt, a4paper, spanish]{article}
 \usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
-\usepackage[latin1]{inputenc}
-\usepackage[T1]{fontenc}
 \usepackage[spanish]{babel}
+\selectlanguage{spanish}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{indentfirst}
 \usepackage{fancyhdr}
 \usepackage{latexsym}
 \usepackage{lastpage}
-\usepackage{aed2-symb,aed2-itef,aed2-tad}
+\usepackage{aed2-symb,aed2-itef,aed2-tad,caratula}
 \usepackage[colorlinks=true, linkcolor=blue]{hyperref}
 \usepackage{calc}
+\usepackage{ifthen}
 \usepackage{caratula/caratula/caratula}
 
 \usepackage{xspace}
@@ -149,7 +151,7 @@
  pdfsubject={Diseño}
 }
 
-\parskip=5pt % 10pt es el tamaño de fuente
+\parskip=5pt % 5pt es el tamaño de fuente
 
 % Pongo en 0 la distancia extra entre ítemes.
 \let\olditemize\itemize
@@ -164,23 +166,20 @@
 \cfoot{\thepage /\pageref{LastPage}}
 \renewcommand{\footrulewidth}{0.4pt}
 
-\author{Grupo 1 - Algoritmos y Estructuras de Datos II}
+\author{Grupo 2 - Algoritmos y Estructuras de Datos II}
 \date{2do cuatrimestre 2015}
 \title{Trabajo Practico 2}
 
-
-
-
 \begin{document}
 
+%caratula
 \input{caratula/caratula.tex}
-%Carátula
-
-%Pagina de titulo e indice
-\thispagestyle{empty}
-
 \maketitle
-\pagebreak
+
+%Indice
 \tableofcontents
+
+\pagebreak
+\input{modulo_campusseguro}
 
 \end{document}
