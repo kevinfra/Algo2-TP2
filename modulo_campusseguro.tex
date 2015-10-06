@@ -20,7 +20,7 @@
 \InterfazFuncion{ingresarEstudiante}{\In{e}{nombre}, \In{p}{posición}, \Inout{cs}{campusSeguro}}{}
 []
 {}
-[]
+[$O(|n_m|) + O(log(N_a))$]
 []
 []
 
@@ -30,7 +30,7 @@
 []
 {}
 []
-[]
+[$O(|n_m|) + O(log(N_a))$]
 []
 
 ~
@@ -39,7 +39,7 @@
 []
 {}
 []
-[]
+[$O(|n_m|) + O(log(N_a))$]
 []
 
 ~
@@ -48,7 +48,7 @@
 \InterfazFuncion{moverHippie}{\In{h}{nombre}, \In{d}{direccion}, \Inout{c}{campusSeguro}}{}
 []
 {}
-[]
+[$O(|n_m|) + O(log(N_a)) + O(N_e)$]
 []
 []
 
@@ -56,7 +56,7 @@
 \InterfazFuncion{moverAgente}{\In{a}{agente}, \Inout{cs}{campusSeguro}}{}
 []
 {}
-[]
+[$O(|n_m|) + O(log(N_a)) + O(N_h)$]
 []
 []
 
@@ -65,7 +65,7 @@
 \InterfazFuncion{campus}{\In{cs}{campusSeguro}}{campus}
 []
 {}
-[]
+[$O(1)$]
 []
 []
 
@@ -75,7 +75,7 @@
 []
 {}
 []
-[]
+[$O(1)$]
 []
 
 ~
@@ -84,7 +84,7 @@
 []
 {}
 []
-[]
+[$O(1)$]
 []
 
 ~
@@ -93,7 +93,7 @@
 []
 {}
 []
-[]
+[$O(1)$]
 []
 
 ~
@@ -102,7 +102,7 @@
 []
 {}
 []
-[]
+[$O(|n_m|)$, donde $|m_n|$ es la longitud mas larga entre todos los nombres.]
 []
 
 ~
@@ -110,7 +110,7 @@
 \InterfazFuncion{posAgente}{\In{a}{agente}, \In{cs}{campusSeguro}}{posición}
 []
 {}
-[]
+[$O(1)$ en caso promedio.]
 []
 []
 
@@ -119,7 +119,7 @@
 \InterfazFuncion{cantSanciones}{\In{a}{agente}, \In{cs}{campusSeguro}}{nat}
 []
 {}
-[]
+[$O(1)$ en caso promedio.]
 []
 []
 
@@ -128,7 +128,7 @@
 \InterfazFuncion{cantHippiesAtrapados}{\In{a}{agente}, \In{cs}{campusSeguro}}{nat}
 []
 {}
-[]
+[$O(1)$ en caso promedio.]
 []
 []
 
@@ -137,13 +137,22 @@
 \InterfazFuncion{másVigilante}{\In{cs}{campusSeguro}}{agente}
 []
 {}
-[]
+[$O(1)$]
 []
 []
 
 ~
 
 \InterfazFuncion{conMismasSanciones}{\In{a}{agente}, \In{cs}{campusSeguro}}{conj(agentes)}
+[]
+{}
+[$O(1)$]
+[]
+[]
+
+~
+
+\InterfazFuncion{conKSanciones}{\In{k}{nat}, \In{cs}{campusSeguro}}{conj(agentes)}
 []
 {}
 []
@@ -161,51 +170,47 @@
 
 ~
 
+\InterfazFuncion{conKSanciones}{\In{k}{nat}, \In{cs}{campusSeguro}}{conj(agentes)}
+[]
+{}
+[$O(N_a)$ la primera vez que se la llama y $O(log(N_a))$ en futuras llamadas mientras no ocurran sanciones.]
+[]
+[]
+
+~
+
 \pagebreak
 
-\subsubsection{Representación de dcnet}
+\subsubsection{Representación de campusSeguro}
 
-\begin{Estructura}{dcnet}[estr]
+\begin{Estructura}{campusSeguro}[estr]
 	\begin{Tupla}[estr]
-		\tupItem{topología}{red}%
-		\tupItem{\\ vectorCompusDCNet}{vector(compuDCNet)}%
-		\tupItem{\\ diccCompusDCNet}{diccString(puntero(compuDCNet))}%
-		\tupItem{\\ conjPaquetesDCNet}{conj(paqueteDCNet)}%
-		\tupItem{\\ laQueMásEnvió}{puntero(compuDCNet)}%
+		\tupItem{diccAgentes}{diccAs(placa,as)}%
+		\tupItem{\\ matrizPos}{secu(secu(placa))}%
+		\tupItem{\\ arregloSanc}{secu(sancion)}%
+		\tupItem{\\ masVigilante}{placa}%
+		\tupItem{\\ conMismasSanciones}{arreglo(mismasSancion)}%
 	\end{Tupla}
 
 	~
 
-	\begin{Tupla}[compuDCNet]
-		\tupItem{pc}{puntero(compu)}%
-		\tupItem{\\ conjPaquetes}{conj(paquete)}%
-		\tupItem{\\ diccPaquetesDCNet}{diccLog(itConj(paqueteDCNet))}%
-		\tupItem{\\ colaPaquetesDCNet}{colaPrioridad(nat, itConj(paqueteDCNet))}%
-		\tupItem{\\ paqueteAEnviar}{itConj(paqueteDCNet)}%
-		\tupItem{enviados}{nat}%
+	\begin{Tupla}[as]
+		\tupItem{posicion}{pos}%
+		\tupItem{\\ cantSanciones}{nat}%
+		\tupItem{\\ cantAtrapados}{nat}
 	\end{Tupla}
 
 	~
 
-	\begin{Tupla}[paqueteDCNet]
-		\tupItem{it}{itConj(paquete)}%
-		\tupItem{recorrido}{lista(compu)}%
+	\begin{Tupla}[sancion]
+		\tupItem{cantSancion}{nat}%
+		\tupItem{vectorAs}{vector(placa)}%
 	\end{Tupla}
 
 	~
-
-	\begin{Tupla}[paquete]
-		\tupItem{id}{nat}%
-		\tupItem{prioridad}{nat}%
-		\tupItem{origen}{compu}%
-		\tupItem{destino}{compu}%
-	\end{Tupla}
-
-	~
-
-	\begin{Tupla}[compu]
-		\tupItem{ip}{string}%
-		\tupItem{interfaces}{conj(nat)}%
+	\begin{Tupla}[mismasSancion]
+		\tupItem{agente}{placa}%
+		\tupItem{vectorAs}{vector(placa)}
 	\end{Tupla}
 
 \end{Estructura}
@@ -215,34 +220,15 @@
 \renewcommand{\labelenumi}{(\Roman{enumi})}
 
 \begin{enumerate}
-	\item Las compus de los elementos de vectorCompusDCNet son punteros a todas las compus de
-		la topología
-	\item Las claves de diccCompusDCNet son todos los hostnames de la topología
-	\item Los significados de diccCompusDCNet son punteros que apuntan a las
-		compuDCNet cuyo hostname equivale a su clave en vectorCompusDCNet
-	\item laQueMásEnvió es un puntero a la compuDCNet en vectorCompusDCNet que
-		más paquetes enviados tiene. Si no hay compus es NULL
-	\item El conjPaquetesDCNet contiene tuplas con iteradores a todos los
-		paquetes en tránsito en la red y sus recorridos
-	\item Todos los paquetes en conjPaquetes de cada compuDCNet tienen id único
-		y tanto su origen como destino existen en la topología
-	\item El paquete en conjPaquetes tiene que tener en su recorrido a la
-		compuDCNet en la que se encuentra y esta no puede ser igual al
-		destino del recorrido
-	\item Las claves de diccPaquetesDCNet son los id de los paquetes en
-		conjPaquetes
-	\item Los significados de diccPaquetesDCNet son un iterador al
-		paqueteDCNet de conjPaquetesDCNet que contiene un iterador al
-		paquete con el id equivalente a su clave y un recorrido que es uno de
-		los caminos mínimos del origen del paquete a la compu en la que se
-		encuentra
-	\item La cantidad de enviados de una compuDCNet es igual o mayor a la
-		cantidad de apariciones de esa compu en los caminos recorridos de
-		paquetes en la red
-	\item El paquete a enviar de cada compuDCNet es un iterador que no tiene siguiente
+	\item
+
 \end{enumerate}
 
 \pagebreak
+
+\Rep[estr][e]
+	\\
+	($\forall c$: campusSeguro)()
 
 \Rep[estr][e]{
 	\\
