@@ -1,0 +1,153 @@
+\section{Módulo Árbol binario($\alpha$)}
+
+\subsection{Interfaz}
+
+\textbf{se explica con}: \tadNombre{Árbol binario($\alpha$)}.
+
+\textbf{géneros}: \TipoVariable{ab($\alpha$)}.
+
+\subsubsection{Operaciones básicas de Árbol binario($\alpha$)}
+
+	\InterfazFuncion{Nil}{}{ab($\alpha$)}
+	[true]
+	{$res$ $\igobs$ nil}%
+	[$O(1)$]
+	[Crea un árbol binario nulo]
+	[]
+
+	~
+
+	\InterfazFuncion{Bin}{\In{i}{ab($\alpha$)}, \In{r}{$\alpha$}, \In{d}{ab($\alpha$)}}{ab($\alpha$)}
+	[true]
+	{$res$ $\igobs$ bin($i$, $r$, $d$)}%
+	[$O(copy(r) + copy(i) + copy(d))$]
+	[Crea un árbol binario con hijo izquierdo $i$, hijo derecho $d$ y raíz de valor $r$]
+	[]
+
+	~
+
+	\InterfazFuncion{Raíz}{\Inout{a}{ab($\alpha$)}}{$\alpha$}
+	[$\neg$nil?($a$)]
+	{alias($res$ $\igobs$ raíz($a$))}%
+	[$O(1)$]
+	[Devuelve el valor de la raíz del árbol]
+	[$res$ es modificable si y sólo si $a$ lo es]
+
+	~
+
+	\InterfazFuncion{Izq}{\Inout{a}{ab($\alpha$)}}{ab($\alpha$)}
+	[$\neg$nil?($a$)]
+	{alias($res$ $\igobs$ izq($a$))}%
+	[$O(1)$]
+	[Devuelve el hijo izquierdo]
+	[$res$ es modificable si y sólo si $a$ lo es]
+
+	~
+
+	\InterfazFuncion{Der}{\Inout{a}{ab($\alpha$)}}{ab($\alpha$)}
+	[$\neg$nil?($a$)]
+	{alias($res$ $\igobs$ der($a$))}%
+	[$O(1)$]
+	[Devuelve el hijo derecho]
+	[$res$ es modificable si y sólo si $a$ lo es]
+
+	~
+
+	\InterfazFuncion{Nil?}{\Inout{a}{ab($\alpha$)}}{bool}
+	[true]
+	{$res$ $\igobs$ nil?($a$)}%
+	[$O(1)$]
+	[Devuelve \TipoVariable{true} si $res$ es un árbol vacío]
+	[]
+
+\subsection{Representación}
+
+	\subsubsection{Representación de ab($\alpha$)}
+
+	\begin{Estructura}{ab($\alpha$)}[estr]
+		\- \- \- \- donde \TipoVariable{estr} es \TipoVariable{puntero(nodoAb)}
+
+		\- \- \- \- donde \TipoVariable{nodoAb} es
+			\TipoVariable{tupla}(
+				$raiz$: \TipoVariable{$\alpha$},
+				$hijos$: \TipoVariable{arreglo[2] de ab($\alpha$)}
+			)
+
+	\end{Estructura}
+
+	\subsubsection{Invariante de Representación}
+
+		\renewcommand{\labelenumi}{(\Roman{enumi})}
+
+		\begin{enumerate}
+			\item No puede haber ciclos en el árbol
+			\item Los hijos no pueden apuntar a un mismo árbol
+		\end{enumerate}
+
+	\subsubsection{Función de Abstracción}
+
+		\tadAlinearFunciones{Abs}{Estr/e}
+		\Abs[estr]{ab($\alpha$)}[e]{abn}{
+			(nil?($abn$) $\Leftrightarrow$ $e$ = NULL) $\land$ \\
+			($\neg$nil?($abn$) $\impluego$ \\
+			\- (raíz($abn$) = $e$ $\rightarrow$ raíz $\land$
+				izq($abn$) = $e$ $\rightarrow$ hijos[0] $\land$
+				der($abn$) = $e$ $\rightarrow$ hijos[1]) \\
+			)
+		}
+
+\subsection{Algoritmos}
+	\lstset{style=alg}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iNil}{}{ab($\alpha$)}'
+
+	res $\leftarrow$ NULL '\ote{1}'
+
+	'\ofi{O(1)}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iBin}{\In{i}{ab($\alpha$)}, \In{r}{$\alpha$},	\In{d}{ab($\alpha$)}}{ab($\alpha$)}'
+
+	nuevoAb:nodoAb '\ote{1}'
+	nuevoAb.raiz $\leftarrow$ copy(r) '\ote{copy(r)}'
+	nuevoAb.hijos[0] $\leftarrow$ copy(i) '\ote{copy(i)}'
+	nuevoAb.hijos[1] $\leftarrow$ copy(d) '\ote{copy(d)}'
+
+	res $\leftarrow$ puntero(nuevoAb) '\ote{1}'
+
+	'\ofi{O(copy(r) + copy(i) + copy(d))}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iRaíz}{\Inout{a}{ab($\alpha$)}}{$\alpha$}'
+
+	res $\leftarrow$ ($a$ $\rightarrow$ raiz) '\ote{1}'
+
+	'\ofi{O(1)}'
+	\end{lstlisting}
+\pagebreak
+	\begin{lstlisting}[mathescape]
+	'\alg{iIzq}{\Inout{a}{ab($\alpha$)}}{ab($\alpha$)}'
+
+	res $\leftarrow$ ($a$ $\rightarrow$ hijos[0]) '\ote{1}'
+
+	'\ofi{O(1)}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iDer}{\Inout{a}{ab($\alpha$)}}{ab($\alpha$)}'
+
+	res $\leftarrow$ ($a$ $\rightarrow$ hijos[1]) '\ote{1}'
+
+	'\ofi{O(1)}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iNil?}{\In{a}{ab($\alpha$)}}{bool}'
+
+	res $\leftarrow$ ($a$ = NULL) '\ote{1}'
+
+	'\ofi{O(1)}'
+	\end{lstlisting}

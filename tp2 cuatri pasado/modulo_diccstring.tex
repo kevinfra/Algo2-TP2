@@ -1,0 +1,63 @@
+\section{Módulo Diccionario String($\alpha$)}
+
+\subsection{Interfaz}
+
+\textbf{se explica con}: \tadNombre{Diccionario(string, $\alpha$)}.
+\textbf{géneros}: \TipoVariable{diccString$(\alpha)$}.
+
+Se representa mediante un árbol n-ario con invariante de trie
+
+~
+
+\InterfazFuncion{CrearDicc}{}{diccString$(\alpha)$}%
+[true]
+{$res$ $\igobs$ vacío()}
+[$O(1)$]
+[Crea un diccionario vacío.]
+[]
+
+~
+
+\InterfazFuncion{Definido?}{\In{d}{diccString$(\alpha)$}, \In{c}{string})}{bool}
+[true]
+{$res$ $\igobs$ def?($d$, $c$)}
+[$O(L)$]
+[Devuelve true si la clave está definida en el diccionario y false en caso contrario.]
+[]
+
+~
+
+\InterfazFuncion{Definir}{\In{d}{diccString$(\alpha)$}, \In{c}{string}, \In{s}{$\alpha$}}{}
+[$ d \igobs d_0 $]
+{$ d \igobs$ definir($c$, $s$, $d_0$)}
+[$O(L)$ ]
+[Define la clave $c$ con el significado $s$]
+[Almacena una copia de $s$.]
+
+~
+
+\InterfazFuncion{Obtener}{\In{d}{diccString$(\alpha)$}, \In{c}{string}}{$\alpha$}
+[def?($c$, $d$)]
+{alias($res$ $\igobs$ obtener($c$, $d$))}
+[$O(L)$]
+[Devuelve el significado correspondiente a la clave $c$.]
+[Devuelve el significado almacenado en el diccionario, por lo que $res$ es modificable si y sólo si $d$ lo es.]
+
+~
+
+\InterfazFuncion{• = •}{\Inout{d}{diccString($\alpha$)}, \Inout{d'}{diccString($\alpha$)}}{bool}
+[true]
+{$res$ $\igobs$ (d $\igobs$ d')}
+[$O(L*n*(\alpha  \igobs \alpha'))$]
+[Indica si d es igual d']
+[]
+
+~
+
+\InterfazFuncion{Copiar}{\In{dicc}{diccString$(\alpha)$}}{diccString$(\alpha)$}
+[true]
+{$res$ $\igobs$ dicc}
+[$O(n * L * copy(\alpha))$]
+[Devuelve una copia del diccionario]
+[]
+

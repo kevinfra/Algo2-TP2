@@ -1,0 +1,587 @@
+\section{Módulo Red}
+
+\subsection{Interfaz}
+
+\textbf{se explica con}: \tadNombre{red}.
+
+\textbf{géneros}: \TipoVariable{red}.
+
+  ~
+
+  \InterfazFuncion{IniciarRed}{}{red}
+  [true]
+  {$res$ $\igobs$ iniciarRed}
+  [$O(1)$]
+  [Crea una red nueva]
+
+
+  ~
+
+  \InterfazFuncion{AgregarComputadora}{\Inout{r}{red}, \In{c}{compu}}{}
+  [($r$ \igobs $r_0$) $\land$ (($\forall$ $c'$: compu) ($c'$ $\in$ computadoras($r$) $\Rightarrow$  ip($c$) $\neq$  ip($c'$)))  ]
+  {$r$ $\igobs$ agregarComputadora($r_0$, $c$)) }
+  [$O((n*L)$]
+  [Agrega una computadora a la red]
+  [La compu se agrega por copia]
+
+  ~
+
+  \InterfazFuncion{Conectar}{\Inout{r}{red}, \In{c}{compu}, \In{c'}{compu}, \In{i}{compu}, \In{i'}{compu}}{}
+  [($r$ \igobs $r_0$) $\land$ ($c$ $\in$ computadoras($r$)) $\land$ ($c'$ $\in$ computadoras(r)) $\land$ (ip($c$) $\neq$ ip($c'$)) \\
+   $\land$ ($\neg$conectadas?($r$, $c$, $c'$)) $\land$ ($\neg$usaInterfaz?($r$, $c$, $i$) $\land$ $\neg$usaInterfaz?($r$, $c'$, $i'$))]
+  {$r$ $\igobs$ conectar($r_0$, $c$, $i$, $c'$, $i'$))}
+  [$O(n!*(n^4))$]
+  [Conecta dos computadoras y recalcula los caminos mínimos de la red.]
+
+  ~
+
+
+  \InterfazFuncion{Computadoras}{\In{r}{red}}{conj(compu)}
+  [true]
+  {alias($res$ \igobs computadoras($r$))}
+  [$O(1)$]
+  [Devuelve el conjunto de computadoras de la red.]
+  [El conjunto se da por referencia, y es modificable si y solo si la red es modificable.]
+
+  ~
+
+  \InterfazFuncion{Conectadas?}{\In{r}{red}, \In{c}{compu}, \In{c'}{compu}}{bool}
+  [($c$ $\in$ computadoras($r$)) $\land$ ($c'$ $\in$ computadoras($r$))]
+  {$res$ \igobs conectadas?($r$, $c$, $c'$)}
+  [$O(1)$]
+  [Indica si dos computadoras de la red estan conectadas]
+
+  ~
+
+  \InterfazFuncion{InterfazUsada}{\In{r}{red}, \In{c}{compu},  \In{c'}{compu}}{interfaz}
+  [conectadas?($r$, $c$, $c'$)]
+  {$res$ \igobs interfazUsada($r$, $c$, $c'$)}
+  [$O(L + n)$]
+  [Devuelve la interfaz con la cual se conecta c con c']
+
+  ~
+
+  \InterfazFuncion{Vecinos}{\In{r}{red}, \In{c}{compu}}{conj(compu)}
+  [$c$ $\in$ computadoras($r$)]
+  {$res$ \igobs vecinos($r$, $c$)}
+  [$O(n^2)$]
+  [Devuelve el conjunto de computadoras conectadas con c]
+  [Devuelve una copia de las computadoras conectadas a c]
+
+  ~
+
+  \InterfazFuncion{usaInterfaz?}{\In{r}{red}, \In{c}{compu}, \In{i}{interfaz}}{bool}
+  [$c$ $\in$ computadoras($r$)]
+  {$res$ \igobs usaInterfaz?($r$, $c$, $i$)}
+  [$O(L + n)$]
+  [Indica si la interfaz i es usada por la computadora c]
+
+  ~
+
+  \InterfazFuncion{CaminosMinimos}{\In{r}{red}, \In{c}{compu}, \In{c'}{compu}}{conj(lista(compu))}
+  [($c$ $\in$ computadoras($r$)) $\land$ ($c'$ $\in$ computadoras(r))]
+  {alias($res$ \igobs caminosMinimos($r$, $c$, $i$))}
+  [$O(L)$]
+  [Devuelve el conjunto de caminos minimos de c a c']
+  [Devuelve una refencia no modificable]
+
+
+  ~
+
+  \InterfazFuncion{HayCamino?}{\In{r}{red}, \In{c}{compu}, \In{c'}{compu}}{bool}
+  [($c$ $\in$ computadoras($r$)) $\land$ ($c'$ $\in$ computadoras(r))]
+  {$res$ \igobs hayCamino?($r$, $c$, $i$)}
+  [$O(L)$]
+  [Indica si existe algún camino entre c y c']
+
+  ~
+
+  \InterfazFuncion{copiar}{\In{r}{red}}{red}
+  [true]
+  {$res$ \igobs $r$}
+  [$O(n!*(n^6))$]
+  [Devuelve una copia la red]
+
+  ~
+
+  \InterfazFuncion{• = •}{\In{r}{red}, \In{r'}{red}}{bool}
+  [true]
+  {$res$ \igobs ($r$ \igobs $r'$)}
+  [$O(n +L^2)$]
+  [Indica si r es igual a r']
+
+  ~
+
+
+\subsection{Representación}
+
+  \subsubsection{Estructura}
+
+    \begin{Estructura}{red}[estr]
+
+      \begin{Tupla}[estr]
+        \tupItem{compus}{conj(compu)}
+        \tupItem{\\dns}{diccString(nodoRed)}
+      \end{Tupla}
+
+      ~
+
+      \begin{Tupla}[nodoRed]
+        \tupItem{pc}{puntero(compu)}
+        \tupItem{\\caminos}{diccString(conj(lista(compu)))}
+        \tupItem{\\conexiones}{diccLineal(nat, puntero(nodoRed))}
+      \end{Tupla}
+
+      ~
+
+    	\begin{Tupla}[compu]
+    		\tupItem{ip}{string}%
+    		\tupItem{interfaces}{conj(nat)}%
+    	\end{Tupla}
+
+    \end{Estructura}
+\pagebreak
+
+\subsubsection{Invariante de Representación}
+  \begin{enumerate}
+
+  \item Todas los elementos de $compus$ deben tener IPs distintas.
+
+  \item Para cada compu, el diccionario de strings $dns$ define para la clave $<$IP de esa compu$>$ un \TipoVariable{nodoRed} cuyo $pc$ es puntero a esa compu.
+
+  \item \TipoVariable{nodoRed}.$conexiones$ contiene como claves todas las
+        interfaces usadas de la compu $c$ (que tienen que estar en $pc$.interfaces)
+
+  \item Ningun nodo se conecta con si mismo.
+
+  \item Ningun nodo se conecta a otro a traves de dos interfaces distintas.
+
+  \item Para cada \TipoVariable{nodoRed} en $dns$, $caminos$ tiene como claves todas las
+        IPs de las compus de la red (\TipoVariable{estr}.$compus$), y los significados corresponden a todos los caminos
+        mínimos desde la compu $pc$ hacia la compu cuya IP es clave.
+
+  \end{enumerate}
+
+  \Rep[estr][e]{ (\\
+    \\
+    (($\forall c1, c2$: compu) ($c1 \neq c2$ $\land$ $c1 \in e$.compus $\land$ $c2 \in e$.compus) $\implies$ $c1$.ip $\neq$ $c2$.ip) $\land$ \\
+
+    (($\forall c$: compu)($c \in e$.compus $\implies$ \\
+    \- \- ( def?($c$.ip, $e$.dns) $\yluego$ obtener($c$.ip, $e$.dns).pc = puntero($c$) ) \\
+    )) $\land$ \\
+
+    (($\forall i$: string, $n$: nodoRed) ((def?($i$, $e$.dns) $\yluego$ $n$ = obtener($i$, $e$.dns)) $\implies$ \\
+    \- \- ($\exists c$: compu) ($c \in e$.compus $\land$ ($n$.pc = puntero($c$))) \\
+    )) $\land$ \\
+
+    (($\forall i$: string, $n$: nodoRed) ((def?($i$, $e$.dns) $\yluego$ $n$ = obtener($i$, $e$.dns)) $\implies$ \\
+    \- \- (($\forall t$: nat) (def?($t$, $n$.conexiones) $\implies$ ($t$ $\in$ $n$.pc$\rightarrow$interfaces))) \\
+    )) $\land$ \\
+
+    (($\forall i$: string, $n$: nodoRed) ((def?($i$, $e$.dns) $\yluego$ $n$ = obtener($i$, $e$.dns)) $\implies$ \\
+    \- \- (($\forall t$: nat) (def?($t$, $n$.conexiones) $\impluego$ (obtener($t$, $n$.conexiones) $\neq$ puntero($n$))) ) \\
+    )) $\land$ \\
+
+    (($\forall i$: string, $n$: nodoRed) ((def?($i$, $e$.dns) $\yluego$ $n$ = obtener($i$, $e$.dns)) $\implies$ \\
+    \- \- (($\forall t1, t2$: nat) (($t1 \neq t2$ $\land$ def?($t1$, $n$.conexiones) $\land$ def?($t2$, $n$.conexiones)) $\impluego$ \\
+    \- \- \- \- (obtener($t1$, $n$.conexiones) $\neq$ obtener($t2$, $n$.conexiones)) \\
+    \- \- )) \\
+    )) $\land$ \\
+
+    (($\forall i1, i2$: string, $n1, n2$: nodoRed) (( \\
+    \- \- (def?($i1$, $e$.dns) $\yluego$ $n1$ = obtener($i1$, $e$.dns)) $\land$ \\
+    \- \- (def?($i2$, $e$.dns) $\yluego$ $n2$ = obtener($i2$, $e$.dns)) \\
+    \- ) $\implies$ (def?($i2$, $n1$.caminos) $\yluego$ obtener($i2$, $n1$.caminos) = darCaminosMinimos($n1$, $n2$)) \\
+    )) \\
+
+
+    ) \\
+  }
+\mbox{}
+
+\tadAlinearFunciones{darCaminoMasCorto}{topologia, conj(pc), pc/ip, conj(pc), secu(nodoRed)}
+
+\tadOperacion{vecinas}{nodoRed}{conj(nodoRed)}{}
+\tadOperacion{auxVecinas}{nodoRed, dicc(nat, puntero(nodoRed))}{conj(nodoRed)}{}
+\tadOperacion{secusDeLongK}{conj(secu($\alpha$)), nat}{conj(secu($\alpha$))}{}
+\tadOperacion{longMenorSec}{conj(secu($\alpha$))/secus}{nat}{$\neg \emptyset?(secus)$}
+
+\tadOperacion{darRutas}{nodoRed/nA, nodoRed/nB, conj(pc), secu(nodoRed)}{conj(secu(nodoRed))}{}
+\tadOperacion{darRutasVecinas}{conj(pc)/vec, nodoRed/n, conj(pc), secu(nodoRed)}{conj(secu(nodoRed))}{}
+\tadOperacion{darCaminosMinimos}{nodoRed/n1, nodoRed/n1}{conj(secu(compu))}{}
+
+~
+
+
+\tadAlinearAxiomas{darRutasEEEEEEWACHOOOOOOOOO}
+\tadAxioma{vecinas($n$)}{auxVecinas($n$, $n$.conexiones)}
+
+\tadAxioma{auxVecinas($n$, $cs$)}{
+	\IF $\emptyset$?($cs$) THEN
+		$\emptyset$
+	ELSE
+    Ag(obtener(dameUno(claves(cs)), cs), auxVecinas($n$, sinUno($cs$)))
+	FI
+}
+
+
+\tadAxioma{secusDeLongK($secus$, $k$)}{
+	\IF $\emptyset$?($secus$) THEN
+		$\emptyset$
+	ELSE{
+		\IF long(dameUno($secus$)) = $k$ THEN
+			dameUno($secus$) $\cup$ secusDeLongK(sinUno($secus$), $k$)
+		ELSE
+			secusDeLongK(sinUno($secus$), $k$)
+		FI
+	}
+	FI
+}
+
+\tadAxioma{longMenorSec($secus$)}{
+	\IF $\emptyset$?(sinUno($secus$)) THEN
+		long(dameUno($secus$))
+	ELSE
+		min(long(dameUno($secus$)), \\
+		longMenorSec(sinUno($secus$)))
+	FI
+}
+
+~
+
+
+\tadAxioma{darRutas($nA$, $nB$, $rec$, $ruta$)}{
+	\IF $nB$ $\in$ vecinas($nA$) THEN
+		Ag($ruta$ \circulito $nB$, $\emptyset$)
+	ELSE{
+		\IF $\emptyset$?(vecinas($nA$) - $rec$) THEN
+			$\emptyset$
+		ELSE
+			darRutas(dameUno(vecinas($nA$) - $rec$), \\ $nB$, Ag($nA$, $rec$),\\
+							$ruta$ \circulito dameUno(vecinas($nA$) - $rec$)) $\cup$ \\
+			darRutasVecinas(sinUno(vecinas($nA$) - $rec$), \\ $nB$, Ag($nA$, $rec$), \\
+							$ruta$ \circulito dameUno(vecinas($nA$) - $rec$))
+		FI
+	}
+	FI
+}
+
+\tadAxioma{darRutasVecinas($vecinas$, $n$, $rec$, $ruta$)}{
+	\IF $\emptyset$?($vecinas$) THEN
+		$\emptyset$
+	ELSE
+		darRutas(dameUno($vecinas$), $n$, $rec$, $ruta$) $\cup$ \\
+		darRutasVecinas(sinUno($vecinas$), $n$, $rec$, $ruta$)
+	FI
+}
+
+\tadAxioma{darCaminosMinimos($nA$, $nB$)}{
+	secusDeLongK(darRutas($nA$, $nB$, $\emptyset$, <>), \\
+	longMenorSec(darRutas($nA$, $nB$, $\emptyset$, <>)))
+}
+
+\pagebreak
+
+  \subsubsection{Función de Abstracción}
+
+  \tadAlinearFunciones{Abs}{Estr/e}
+  \Abs[estr]{red}[e]{r}{
+    $e$.compus $\igobs$ computadoras($r$) $\land$ \\
+    (($\forall$ $c1$, $c2$: compu, $i1$, $i2$: string, $n1$, $n2$: nodoRed) ( \\
+        \- \- ($c1$ $\in$ $e$.compus $\land$ $i1$ = $c1$.ip $\land$ def?($i1$, $e$.dns) $\yluego$ $n1$ = obtener($i1$, $e$.dns) $\land$ $c1$ = *$n1$.pc) $\land$ \\
+        \- \- ($c2$ $\in$ $e$.compus $\land$ $i2$ = $c2$.ip $\land$ def?($i2$, $e$.dns) $\yluego$ $n2$ = obtener($i2$, $e$.dns) $\land$ $c2$ = *$n2$.pc) $\land$ \\
+        \- \- ($c1$ $\neq$ $c2$))
+        ) $\impluego$ \\
+        \- \- \- \- (conectadas?($r$, $c1$, $c2$) $\Leftrightarrow$ ( ($\exists$ $t1$, $t2$: nat)  (\\
+        \- \- \- \- \- \- $t1$ = interfazUsada($r$, $c1$, $c2$) $\land$ $t2$ = interfazUsada($r$, $c2$, $c1$) $\land$ \\
+        \- \- \- \- \- \- def?($t1$, $n1$.conexiones) $\land$ def?($t2$, $n2$.conexiones) $\yluego$ (\\
+        \- \- \- \- \- \- \- \- $\&n2$ = obtener($t1$, $n1$.conexiones) $\land$ $\&n1$ = obtener($t2$, $n2$.conexiones) \\
+        \- \- \- \- ))))
+   }
+
+\subsection{Algoritmos}
+\lstset{style=alg,columns=fixed,basewidth=.5em}
+
+\begin{lstlisting}[mathescape]
+'\alg{iIniciarRed}{}{red}'
+    res.compus $\leftarrow$ Vacio() '\ote{1}'
+    res.dns $\leftarrow$ Vacio() '\ote{1}'
+  '\ofi{O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iAgregarComputadora}{\Inout{r}{red}, \In{c}{compu}}{}'
+    itCompus:itConj(compu) $\leftarrow$ CrearIt(r.compus)   '\ote{1}'
+    while HaySiguiente?(itCompus) do '\ote{1}'
+      nr:nodoRed $\leftarrow$ Significado(r.dns, Siguiente(itCompus).ip) '\ote{L}'
+      Definir(nr.caminos, c.ip, Vacio()) '\ote{L}'
+      Avanzar(itCompus) '\ote{1}'
+    end while  '\ote{n*L}'
+
+    AgregarRapido(r.compus, c) '\ote{1}'
+
+    Definir(r.dns, compu.ip, Tupla<&c,Vacio(),Vacio()>) '\ote{L}'
+    InicializarConjCaminos(r, c) '\ote{n*L}'
+  '\ofi{O(n*L)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{InicializarConjCaminos}{\Inout{r}{red}, \In{c}{compu}}{}'
+    itCompus:itConj(compu) $\leftarrow$ CrearIt(r.compus) '\ote{1}'
+    cams:diccTrie(ip,conj(lista(compu))) $\leftarrow$
+     Significado(r.dns, c.ip).caminos   '\ote{L}'
+    while HaySiguiente?(itCompus) do   '\ote{1}'
+      Definir(cams, Siguiente(itCompus).ip, Vacio())  '\ote{L}'
+      Avanzar(itCompus) '\ote{1}'
+    end while '\ote{n*L}'
+  '\ofi{O(n*L)}'
+\end{lstlisting}
+
+\pagebreak
+
+\begin{lstlisting}[mathescape]
+'\alg{iConectar}{\Inout{r}{red}, \In{c_0}{compu}, \In{c_1}{compu}, \In{i_0}{compu}, \In{i_1}{compu}}{}'
+    nr0:nodoRed $\leftarrow$ Significado(r.dns, c0.ip) '\ote{L}'
+    nr1:nodoRed $\leftarrow$ Significado(r.dns, c1.ip) '\ote{L}'
+    DefinirRapido(nr0.conexiones, i0, nr1)'\ote{1}'
+    DefinirRapido(nr1.conexiones, i1, nr0) '\ote{1}'
+    CrearTodosLosCaminos(r) '\ote{n! * (n$^3$ *(n + L))}'
+  '\ofi{O(n! * (n^3 *(n + L)))}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{CrearTodosLosCaminos}{\Inout{r}{red}}{}'
+  itCompuA:itConj(compu) $\leftarrow$ CrearIt(r.compus) '\ote{1}'
+  while HaySiguiente?(itCompuA) do  '\ote{1}'
+    nr:nodoRed $\leftarrow$ Significado(r.dns, Siguiente(itCompuA).ip) '\ote{L}'
+
+    itCompuB:itConj(compu) $\leftarrow$ CrearIt(r.compus) '\ote{1}'
+    while HaySiguiente?(itCompuB) do  '\ote{1}'
+
+      caminimos:conj(lista(compu)) $\leftarrow$ Minimos(Caminos
+        (nr, Siguiente(itCompuB).ip) '\ote{ n! * n*(n + L)}'
+      Definir(nr.caminos, Siguiente(itCompuB).ip, caminimos)  '\ote{L}'
+
+      Avanzar(itCompuB) '\ote{1}'
+    end while '\ote{n! * (n$^2$ *(n + L))}'
+
+    Avanzar(itCompuA) '\ote{1}'
+  end while '\ote{n! * (n$^3$ *(n + L))}'
+'\ofi{O(n! * (n^3 *(n + L)))}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{Caminos}{\In{c1}{nodoRed}, \In{ipDestino}{string}}{conj(lista(compu))}'
+  res $\leftarrow$ Vacio()       '\ote{1}'
+
+  frameRecorrido:pila(lista(compu)) $\leftarrow$ Vacia() '\ote{1}'
+  frameCandidatos:pila(lista(nodoRed)) $\leftarrow$ Vacia() '\ote{1}'
+
+  iCandidatos:lista(nodoRed) $\leftarrow$ listaNodosVecinos(c1) '\ote{n}'
+  iRecorrido:lista(compu) $\leftarrow$ Vacia()  '\ote{1}'
+  AgregarAdelante(iRecorrido, *(c1.pc)) '\ote{1}'
+
+  Apilar(frameRecorrido, iRecorrido) '\ote{1}'
+  Apilar(frameCandidatos, iCandidatos) '\ote{1}'
+
+  pCandidatos:compu '\ote{1}'
+  fCandidatos:lista(nodoRed) '\ote{1}'
+
+  while $\neg$EsVacia?(frameRecorrido) do  '\ote{1}'
+    iRecorrido $\leftarrow$ Tope(frameRecorrido) '\ote{1}'
+    iCandidatos $\leftarrow$ Tope(frameCandidatos)  '\ote{1}'
+
+    Desapilar(frameRecorrido) '\ote{1}'
+    Desapilar(frameCandidatos)  '\ote{1}'
+
+    pCandidatos $\leftarrow$ Primero(iCandidatos) '\ote{1}'
+
+    // ... sigue
+
+
+    if $\neg$EsVacio?(iCandidatos) then   '\ote{1}'
+      Fin(iCandidatos)  '\ote{1}'
+      fCandidatos $\leftarrow$ iCandidatos  '\ote{n}'
+
+      if ult(iRecorrido).pc$\rightarrow$ip = ipDestino then   '\ote{L}'
+        AgregarRapido(res, iRecorrido)  '\ote{n}'
+      else
+        Apilar(frameRecorrido, iRecorrido)  '\ote{1}'
+        Apilar(frameCandidatos, fCandidatos)  '\ote{1}'
+
+        if $\neg$nodoEnLista(pCandidatos, iRecorrido) then '\ote{n*(n + L)}'
+          iRecorrido $\leftarrow$ Copiar(iRecorrido)  '\ote{n}'
+          AgregarAtras(iRecorrido, *(pCandidatos)) '\ote{n}'
+          Apilar(frameRecorrido, iRecorrido)  '\ote{1}'
+          Apilar(frameCandidatos, listaNodosVecinos(pCandidatos)) '\ote{n}'
+        fi '\ote{n*(n + L)}'
+      fi '\ote{n*(n + L)}'
+    fi '\ote{n*(n + L)}'
+
+  end while '\ote{n! * n*(n + L)}'
+'\ofi{O(n! * n*(n + L))}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{Minimos}{\In{caminos}{conj(lista(compu))}}{conj(lista(compu))}'
+  res $\leftarrow$ Vacio() '\ote{1}'
+  longMinima:int '\ote{1}'
+  itCaminos:itConj(lista(compu)) $\leftarrow$ CrearIt(caminos) '\ote{1}'
+  if HaySiguiente?(itCaminos) then  '\ote{1}'
+    longMinima $\leftarrow$ Longitud(Siguiente(itCaminos)) '\ote{1}'
+    Avanzar(itCaminos)  '\ote{1}'
+    while HaySiguiente?(itCaminos)  '\ote{1}'
+      if Longitud(Siguiente(itCaminos)) < longMinima then
+        longMinima $\leftarrow$ Longitud(Siguiente(itCaminos)) '\ote{1}'
+      Avanzar(itCaminos)  '\ote{1}'
+    end while '\ote{n}'
+    itCaminos $\leftarrow$ CrearIt(caminos) '\ote{1}'
+    while HaySiguiente?(itCaminos)  '\ote{1}'
+      if Longitud(Siguiente(itCaminos)) = longMinima then '\ote{1}'
+        AgregarRapido(res, Siguiente(itCaminos))  '\ote{1}'
+      Avanzar(itCaminos)  '\ote{1}'
+    end while '\ote{n}'
+  end if '\ote{1}'
+'\ofi{O(n)}'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{listaNodosVecinos}{\In{n}{nodoRed}}{lista(nodoRed)}'
+  res $\leftarrow$ Vacia()  '\ote{1}'
+  itVecinos :itDicc(interfaz, puntero(nodoRed))) $\leftarrow$ CrearIt(n,conexiones) '\ote{1}'
+  while HaySiguiente?(itVecinos) do '\ote{1}'
+    AgregarAdelante(res, *SiguienteSignificado(itVecinos)) '\ote{1}'
+    Avanzar(itVecinos) '\ote{1}'
+  end while '\ote{n}'
+'\ofi{O(n)}'
+\end{lstlisting}
+
+\pagebreak
+
+\begin{lstlisting}[mathescape]
+'\alg{nodoEnLista}{\In{n}{nodoRed}, \In{ns}{lista(nodoRed)}}{bool}'
+  res $\leftarrow$ false  '\ote{1}'
+  itNodos: itLista(lista(nodoRed)) $\leftarrow$ CrearIt(ns) '\ote{1}'
+  while HaySiguiente?(itNodos) do '\ote{1}'
+    if Siguiente(itNodos) = n then '\ote{n + L}'
+      res $\leftarrow$ true   '\ote{1}'
+    end if  '\ote{1}'
+    Avanzar(itNodos) '\ote{1}'
+  end while '\ote{n*(n + L)}'
+'\ofi{O(n*(n + L))}'
+\end{lstlisting}
+
+
+\begin{lstlisting}[mathescape]
+'\alg{iComputadoras}{\In{r}{red}}{conj(compu)}'
+    res  $\leftarrow$ r.compus  '\ote{1}'
+  '\ofi{O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iConectadas?}{\In{r}{red}, \In{c_0}{compu}, \In{c_1}{compu}}{bool}'
+    nr0:nodoRed $\leftarrow$ Significado(r.dns, c0.ip) '\ote{L}'
+    it :itDicc(interfaz, puntero(nodoRed))) $\leftarrow$ CrearIt(nr0.conexiones) '\ote{1}'
+    res $\leftarrow$ false  '\ote{1}'
+    while HaySiguiente?(it) do  '\ote{1}'
+      if c1.ip = SiguienteSignificado(it)->pc->ip then  '\ote{1}'
+        res $\leftarrow$ true   '\ote{1}'
+      end if '\ote{1}'
+      Avanzar(it) '\ote{1}'
+    end while '\ote{n}'
+  '\ofi{O(L + n)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iInterfazUsada}{\In{r}{red}, \In{c_0}{compu},  \In{c_1}{compu}}{interfaz}'
+    nr0:nodoRed $\leftarrow$ Significado(r.dns, c0.ip)  '\ote{L}'
+    it :itDicc(interfaz, puntero(nodoRed))
+      $\leftarrow$ CrearIt(nr0.conexiones)  '\ote{1}'
+    while HaySiguiente?(it) do  '\ote{1}'
+      if c1.ip = SiguienteSignificado(it)->pc->ip then '\ote{1}'
+        res $\leftarrow$ SiguienteClave(it)   '\ote{1}'
+      end if '\ote{1}'
+      Avanzar(it)   '\ote{1}'
+    end while '\ote{n}'
+  '\ofi{O(L + n)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iVecinos}{\In{r}{red}, \In{c}{compu}}{conj(compu)}'
+    nr:nodoRed $\leftarrow$ Significado(r.dns, c.ip)  '\ote{L}'
+    res:conj(compu) $\leftarrow$ Vacio()  '\ote{1}'
+    it :itDicc(interfaz, puntero(nodoRed))
+      $\leftarrow$ CrearIt(nr.conexiones)  '\ote{1}'
+    while HaySiguiente?(it) do  '\ote{1}'
+      AgregarRapido(res,*(SiguienteSignificado(it)->pc))  '\ote{1}'
+      Avanzar(it)  '\ote{1}'
+    end while '\ote{n}'
+  '\ofi{O(L + n)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iUsaInterfaz?}{\In{r}{red}, \In{c}{compu}, \In{i}{interfaz}}{bool}'
+    nr:nodoRed $\leftarrow$ Significado(r.dns, c.ip)   '\ote{L}'
+    res $\leftarrow$ Definido?(pnr.conexiones,i)  '\ote{n}'
+  '\ofi{O(L + n)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iCaminosMinimos}{\In{r}{red}, \In{c_0}{compu}, \In{c_1}{compu}}{conj(secu(compu))}'
+    nr:nodoRed $\leftarrow$ Significado(r.dns, c0.ip) '\ote{L}'
+    res $\leftarrow$  Significado(pnr.caminos, c1.ip) '\ote{L}'
+  '\ofi{O(L)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{HayCamino?}{\In{r}{red}, \In{c_0}{compu}, \In{c_1}{compu}}{bool}'
+    nr:nodoRed $\leftarrow$ Significado(r.dns, c0.ip)  '\ote{L}'
+    res $\leftarrow$ $\neg$EsVacio?(Significado(pnr.caminos, c1.ip))  '\ote{L}'
+  '\ofi{O(L)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iCopiar}{\In{otraRed}{red}}{red}'
+    res $\leftarrow$ iIniciarRed '\ote{1}'
+    // copia el conjunto de tuplas
+    res.compus $\leftarrow$ Copiar(otraRed.compus) '\ote{n}'
+    // rearma los nodos (con conexiones en blanco) del diccionario dns
+    itCompus:itConj(compu) $\leftarrow$ CrearIt(res.compus)   '\ote{1}'
+    while HaySiguiente?(itCompus) do '\ote{1}'
+
+      c:compu $\leftarrow$ Siguiente(itCompus) '\ote{1}'
+      nodoAux:nodoRed $\leftarrow$ Obtener(otraRed.dns, c.ip) '\ote{L}'
+      copiaCaminos:diccString(conj(lista(compu))) $\leftarrow$ Copiar(nodoAux.caminos) '\ote{n}'
+      Definir(res.dns, c.ip, Tupla<&c, copiaCaminos, Vacio()>) '\ote{L}'
+
+      Avanzar(itCompus) '\ote{1}'
+    end while '\ote{n$^2$ + n*L}'
+
+    // rearma las conexiones
+    itCompus:itConj(compu) $\leftarrow$ CrearIt(res.compus)   '\ote{1}'
+    while HaySiguiente?(itCompus) do '\ote{1}'
+      nodoMio:nodoRed $\leftarrow$ Obtener(res.dns, c.ip) '\ote{L}'
+      nodoOtra:nodoRed $\leftarrow$ Obtener(otraRed.dns, c.ip) '\ote{L}'
+
+      itInterfs:itConj(nat) $\leftarrow$ CrearIt(nodoMio.pc $\rightarrow$ interfaces)   '\ote{1}'
+
+      while HaySiguiente?(itInterfs) do '\ote{1}'
+        interf:nat $\leftarrow$ Siguiente(itInterfs) '\ote{1}'
+        ip:string $\leftarrow$ Obtener(nodoOtra.conexiones, interf) '\ote{n}'
+        Definir(nodoMio.conexiones, interf, &Obtener(res.dns, ip)) '\ote{L}'
+
+        Avanzar(itInterfs) '\ote{1}'
+      end while  '\ote{$n^2$ + n*L}'
+
+      Avanzar(itCompus) '\ote{1}'
+    end while '\ote{n$^3$ + n$^2$ * L}'
+
+  '\ofi{O(n^3 + n^2 * L))}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{• = •}{\In{r_0}{red}, \In{r_1}{red}}{bool}'
+    res $\leftarrow$ (r0.compus = r1.compus) $\land$ (r0.dns = r1.dns) '\ote{n + L$^2$}'
+  '\ofi{O(n + L(L + n))}'
+\end{lstlisting}

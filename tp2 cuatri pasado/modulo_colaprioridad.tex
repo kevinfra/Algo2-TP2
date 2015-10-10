@@ -1,0 +1,223 @@
+\section{Módulo Cola de mínima prioridad($\alpha$)}
+
+El módulo cola de mínima prioridad consiste en una cola de prioridad de
+elementos del tipo $\alpha$ cuya prioridad está determinada por un $nat$ de forma
+tal que el elemento que se ingrese con el menor $nat$ será el de mayor prioridad.
+
+\subsection{Especificación}
+
+	\begin{tad}{\tadNombre{Cola de mínima prioridad($\alpha$)}}
+	\tadIgualdadObservacional{c}{c'}{colaMinPrior($\alpha$)}{vacía?($c$) $\igobs$ vacía?($c'$) $\yluego$ \\
+							($\neg$vacía?($c$) $\impluego$ (próximo($c$) $\igobs$ próximo($c'$) $\land$ \\
+							\phantom{($\neg$vacía?($c$) $\impluego$ (}desencolar($c$) $\igobs$ desencolar($c'$))}
+
+	\tadParametrosFormales{
+		\tadEncabezadoInline{géneros}{$\alpha$}\\
+		\tadEncabezadoInline{operaciones}{
+			\tadOperacionInline{\argumento $<$ \argumento}{$\alpha$, $\alpha$}{bool} \hfill Relación de orden total estricto\footnotemark
+		}
+	}
+
+	\footnotetext{\noindent Una relación es un orden total estricto cuando se cumple:
+	\begin{description}
+	 \item[Antirreflexividad:] $\neg$ $a < a$ para todo $a: \alpha$
+	 \item[Antisimetría:] $(a < b \implies \neg\ b < a)$ para todo $a, b: \alpha$, $a \neq b$
+	 \item[Transitividad:] $((a < b \land b < c) \implies a < c)$ para todo $a, b, c: \alpha$
+	 \item[Totalidad:] $(a < b \lor b < a)$ para todo $a, b: \alpha$
+	\end{description}
+	}
+
+	\tadGeneros{colaMinPrior($\alpha$)}
+	\tadExporta{colaMinPrior($\alpha$), generadores, observadores}
+	\tadUsa{\tadNombre{Bool}}
+
+	\tadAlinearFunciones{desencolar}{$\alpha$,colaMinPrior($\alpha$)}
+
+	\tadObservadores
+	\tadOperacion{vacía?}{colaMinPrior($\alpha$)}{bool}{}
+	\tadOperacion{próximo}{colaMinPrior($\alpha$)/c}{$\alpha$}{$\neg$ vacía?($c$)}
+	\tadOperacion{desencolar}{colaMinPrior($\alpha$)/c}{colaMinPrior($\alpha$)}{$\neg$ vacía?($c$)}
+
+	\tadGeneradores
+	\tadOperacion{vacía}{}{colaMinPrior($\alpha$)}{}
+	\tadOperacion{encolar}{$\alpha$,colaMinPrior($\alpha$)}{colaMinPrior($\alpha$)}{}
+
+	\tadOtrasOperaciones
+	\tadOperacion{tamaño}{colaMinPrior($\alpha$)}{nat}{}
+
+	\tadAxiomas[\paratodo{colaMinPrior($\alpha$)}{c}, \paratodo{$\alpha$}{e}]
+	\tadAlinearAxiomas{desencolar(encolar($e$, $c$))}{}
+
+	\tadAxioma{vacía?(vacía)}{true}
+	\tadAxioma{vacía?(encolar($e$, $c$))}{false}
+
+	\tadAxioma{próximo(encolar($e$, $c$))}{\IF vacía?($c$) $\oluego$\ proximo($c$) $> e$ THEN $e$ ELSE próximo($c$) FI}
+
+	\tadAxioma{desencolar(encolar($e$, $c$))}{\IF vacía?($c$) $\oluego$\ proximo($c$) $> e$ THEN $c$ ELSE encolar($e$, desencolar($c$)) FI}
+
+	\end{tad}
+
+\subsection{Interfaz}
+	\tadParametrosFormales{
+		\tadEncabezadoInline{géneros}{$\alpha$}
+	}
+
+	\textbf{se explica con}: \tadNombre{Cola de mínima prioridad(nat)}.
+
+	\textbf{géneros}: \TipoVariable{colaMinPrior($\alpha$)}.
+
+\subsubsection{Operaciones básicas de Cola de mínima prioridad}
+
+	\InterfazFuncion{Vacía}{}{colaMinPrior($\alpha$)}
+	[true]
+	{$res$ $\igobs$ vacía}
+	[O(1)]
+	[Crea una cola de prioridad vacía]
+
+	~
+
+	\InterfazFuncion{Vacía?}{\In{c}{colaMinPrior($\alpha$)}}{bool}
+	[true]
+	{$res$ $\igobs$ vacía?(c)}
+	[O(1)]
+	[Devuelve \TipoVariable{true} si y sólo si la cola está vacía]
+
+	~
+
+	\InterfazFuncion{Próximo}{\In{c}{colaMinPrior($\alpha$)}}{$\alpha$}
+	[$\neg$vacía?($c$)]
+	{alias($res$ $\igobs$ próximo($c$))}
+	[O(1)]
+	[Devuelve el próximo elemento a desencolar]
+	[$res$ es modificable si y sólo si $c$ es modificable]
+
+	~
+
+	\InterfazFuncion{Desencolar}{\Inout{c}{colaMinPrior($\alpha$)}}{$\alpha$}
+	[$\neg$vacía?($c$) $\land$ $c$ $\igobs$ $c_0$]
+	{$res$ $\igobs$ próximo($c_0$) $\land$ $c$ $\igobs$ desencolar($c_0$)}
+	[O(log(tamaño(c)))]
+	[Quita el elemento más prioritario]
+	[Se devuelve el elemento por copia]
+
+	~
+
+	\InterfazFuncion{Encolar}{\Inout{c}{colaMinPrior($\alpha$)}, \In{p}{nat}, \In{a}{$\alpha$}}{}
+	[$c$ $\igobs$ $c_0$]
+	{$c$ $\igobs$ encolar($p$,$c_0$)}
+	[O(log(tamaño(c)))]
+	[Agrega al elemento $\alpha$ con prioridad $p$ a la cola]
+	[Se agrega el elemento por copia]
+
+	~
+
+	\InterfazFuncion{• = •}{\In{c}{colaMinPrior($\alpha$)}, \In{c'}{colaMinPrior($\alpha$)}}{bool}
+	[true]
+	{$res$ $\igobs$ ($c$ $\igobs$ $c'$)}
+	[O(min(tamaño($c$), tamaño($c'$)))]
+	[Indica si $c$ es igual $c'$]
+
+\subsection{Representación}
+
+	\subsubsection{Representación de colaMinPrior}
+
+		\begin{Estructura}{colaMinPrior($\alpha$)}[estr]
+			\- \- \- \- donde \TipoVariable{estr} es \TipoVariable{diccLog(nodoEncolados)}
+
+			\- \- \- \- donde \TipoVariable{nodoEncolados} es
+			\TipoVariable{tupla}($encolados$: \TipoVariable{cola($\alpha$)},
+			$prioridad$: \TipoVariable{nat})
+		\end{Estructura}
+
+	\subsubsection{Invariante de Representación}
+
+		\renewcommand{\labelenumi}{(\Roman{enumi})}
+
+		\begin{enumerate}
+			\item Todos los significados del diccionario tienen como clave
+			el valor de $prioridad$
+			\item Todos los significados del diccionario no pueden tener una
+			cola vacía
+		\end{enumerate}
+
+	\tadAlinearFunciones{Rep}{estr}
+	\tadAlinearAxiomas{Rep(e)}
+
+	\Rep[estr][e]{
+		\\($\forall n:$ nat) def?($n$, $e$) $\impluego$
+		((obtener($n$, $e$).prioridad = $n$) $\land$
+		$\neg$vacía?(obtener($n$, $e$).encolados))
+	}\mbox{}
+
+	\subsubsection{Función de Abstracción}
+
+	\tadAlinearFunciones{Abs}{Estr/e}
+
+		\Abs[estr]{colaMinPrior}[e]{cmp}{
+			(vacía?($cmp$) $\Leftrightarrow$ (\#claves($e$) = 0)) $\land$ \\
+			\- $\neg$vacía?($cmp$) $\impluego$ \\
+			\- \- ((próximo($cmp$) = próximo(mínimo($e$).encolados)) $\land$ \\
+			\- \- (desencolar($cmp$) = desencolar(mínimo($e$).encolados)))
+		}
+
+\subsection{Algoritmos}
+	\lstset{style=alg}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iVacía}{}{colaMinPrior($\alpha$)}'
+
+	res $\leftarrow$ CrearDicc() '\ote{1}'
+
+	'\ofi{O(1)}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iVacía?}{\In{c}{colaMinPrior($\alpha$)}}{bool}'
+
+	res $\leftarrow$ Vacio?($c$) '\ote{1}'
+
+	'\ofi{O(1)}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iPróximo}{\Inout{c}{colaMinPrior($\alpha$)}}{$\alpha$}'
+
+	res $\leftarrow$ Proximo(Minimo($c$).encolados) '\ote{1}'
+
+	'\ofi{O(1)}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iDesencolar}{\Inout{c}{colaMinPrior($\alpha$)}}{$\alpha$}'
+
+	res $\leftarrow$ Copiar(Proximo(Minimo($c$).encolados)) '\ote{copy($\alpha$)}'
+	Desencolar(Minimo($c$).encolados) '\ote{log(tamaño($c$))}'
+	if EsVacia?(Minimo($c$).encolados) then '\ote{1}'
+		Borrar($c$, Minimo($c$).prioridad) '\ote{log(tamaño($c$))}'
+	end if
+
+	'\ofi{O(log(tamano(c)) + O(copy(\alpha))}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{iEncolar}{\Inout{c}{colaMinPrior($\alpha$)}, \In{p}{nat}, \In{a}{$\alpha$}}{}'
+	if Definido?($c$, $p$) then '\ote{log(tamaño($c$))}'
+		Encolar(Obtener($c$, $p$).encolados, $a$) '\ote{log(tamaño($c$)) + copy($\alpha$)}'
+	else
+		nodoEncolados $nuevoNodoEncolados$ '\ote{1}'
+		$nuevoNodoEncolados$.encolados $\leftarrow$ Vacia() '\ote{1}'
+		$nuevoNodoEncolados$.prioridad $\leftarrow$ $p$ '\ote{1}'
+		Encolar($nuevoNodoEncolados$.encolados, $a$) '\ote{copy($a$)}'
+		Definir($c$, $p$, $nuevoNodoEncolados$) '\ote{log(tamaño($c$)) + copy($nodoEncolados$)}'
+	end if
+
+	'\ofi{O(log(tamano(c)) + O(copy(\alpha))}'
+	\end{lstlisting}
+
+	\begin{lstlisting}[mathescape]
+	'\alg{• = •}{\In{c_0}{colaMinPrior($\alpha$)}, \In{c_1}{colaMinPrior($\alpha$)}}{bool}'
+	res $\leftarrow$ $c_0$ = $c_1$ '\ote{min(tamano($c_0$), tamano($c_1$))}'
+	'\ofi{O(min(tamano(c_0), tamano(c_1)))}'
+	\end{lstlisting}
+
+
