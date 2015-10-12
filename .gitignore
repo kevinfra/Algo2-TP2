@@ -1,0 +1,10 @@
+
+*.aux
+
+*.log
+
+*.out
+
+tp2.pdf
+
+*.toc
