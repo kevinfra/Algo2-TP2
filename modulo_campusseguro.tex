@@ -169,9 +169,27 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 \begin{Estructura}{campusSeguro}[estr]
 	\begin{Tupla}[estr]
 		\tupItem{campus}{campus}%
-		\tupItem{\\ agentes}{AS}%
-		\tupItem{\\ hippies}{conj(hippies)}%
-		\tupItem{\\ estudiantes}{conj(estudiantes)}%
+		\tupItem{\\ personalAS}{diccNat(agente,datosAgente)}%
+		\tupItem{\\ posicionesAgente}{vector(As)}%
+		\tupItem{\\ masVigilante}{As}%
+		\tupItem{\\ sanciones??}{}%
+		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
+		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
+	\end{Tupla}
+
+	~
+
+	\begin{Tupla}[datosAgente]
+		\tupItem{posicion}{posicion}%
+		\tupItem{cantSanc}{nat}%
+		\tupItem{cantAtrapados}{nat}%
+	\end{Tupla}
+
+	~
+
+	\begin{Tupla}[As]
+		\tupItem{agente}{nat}%
+		\tupItem{datos}{puntero(datosAgente)}%
 	\end{Tupla}
 
 \end{Estructura}
@@ -181,77 +199,84 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 \renewcommand{\labelenumi}{(\Roman{enumi})}
 
 \begin{enumerate}
-	\item
+	%done
+	\item Las posiciones de todos los agentes son posiciones validas del campus.
+	%done
+	\item Las posiciones de los hippies son posiciones validas del campus.
+	%done
+	\item Las posiciones de los estudiantes son posiciones validas del campus.
+	%done
+	\item Las posiciones de los agentes son distintas a las posiciones de los hippies.
+	%done
+	\item Las posiciones de los estudiantes son distintas a las posiciones de los hippies.
+	%done
+	\item Las posiciones de los agentes son distintas a las posiciones de los estudiantes.
+	%done
+	\item El agente masVigilante esta definido en personalAs y tiene la mayor cantidad de sanciones.
+	%done
+	\item Para todo nombre que esta definido en el diccionario de hippies no puede estar definido en el diccionario de estudiantes y viceversa.
+	%done
+	\item La cantidad de elementos que tiene posicionesAgente es la cantidad de coordenadas que tiene la grilla.
+	
+	\item Los agentes de posicionesAgente son los mismos que los de personalAs y viceversa.
+	\item La posicion de todos los agentes de posicionesAgente se mapea con la posicion que tienen en personalAs y viceversa.
+	\item La cantidad de estudiantes, hippies, agentes y obstaculos es menor o igual que la cantidad de coordenadas que tiene el campus.
 
 \end{enumerate}
 
 \pagebreak
 
-\Rep[estr][e]
-	\\
-	($\forall c$: campusSeguro)()
-
 \Rep[estr][e]{
 	\\
-	($\forall c$: compu)($c$ $\in$ computadoras($e$.topologia) $\Leftrightarrow$ \\
-	\- ( \\
-	\- \- ($\exists cd$: compuDCNet)
-	(está?($cd$, $e$.vectorCompusDCNet) $\land$ ($cd$.pc = puntero($c$)) $\land$ \\
-	\- \- ($\exists s$: string)(def?($s$, $e$.diccCompusDCNet) $\land$ ($s$ = $c$.ip))) \\
-	\- ) \\
-	) $\yluego$\\
-	($\forall cd$: compuDCNet)(está?($cd$, $e$.vectorCompusDCNet) $\Leftrightarrow$ \\
-	\- ($\exists s$: string)(($s$ = $cd$.pc$\rightarrow$ip) $\land$
-		def?($s$, $e$.diccCompusDCNet) $\yluego$ \\
-	\- obtener($s$, $e$.diccCompusDCNet) = puntero($cd$)) \\
-	) $\yluego$\\
-	($\exists cd$: compuDCNet)(está?($cd$, $e$.vectorCompusDCNet) $\yluego$ \\
-	*($cd$.pc) = compuQueMásEnvió($e$.vectorCompusDCNet) $\land$ $e$.laQueMásEnvió = puntero($cd$)) $\yluego$\\
-	($\forall cd_1$: compuDCNet)(está?($cd_1$, $e$.vectorCompusDCNet) $\implies$ \\
-	\- ($\forall p_1$: paquete)($p_1$ $\in$ $cd_1$.conjPaquetes $\implies$ \\
-	\- \- ($\forall cd_2$: compuDCNet)((está?($cd_2$, $e$.vectorCompusDCNet)
-		$\land$ $cd_1$ $\neq$ $cd_2$) $\implies$ \\
-	\- \- \- ($\forall p_2$: paquete)($p_2$ $\in$ $cd_2$.conjPaquetes $\implies$
-		$p_1$.id $\neq$ $p_2$.id) \\
-	\- \- ) \\
-	\- ) \\
-	) $\yluego$ \\
-	($\forall cd$: compuDCNet)(está?($cd$, $e$.vectorCompusDCNet) $\implies$ \\
-	\- ( \\
-	\- \- ($\forall p$: paquete)($p$ $\in$ $cd$.conjPaquetes $\Leftrightarrow$ \\
-	\- \- \- ( \\
-	\- \- \- \- (($p$.origen $\in$ computadoras($e$.topologia) $\land$ $p$.destino
-		$\in$ computadoras($e$.topologia) $\land$ \\
-	\- \- \- \- $p$.destino $\neq$ *($cd$.pc)) $\yluego$ \\
-	\- \- \- \- ($\exists sc$: secu(compu))($sc$ $\in$
-		caminosMinimos($e$.topologia, $p$.origen, $p$.destino) $\land$
-		está(*($cd$.pc), $sc$))) $\land$ \\
-	\- \- \- \- ($\exists n$: nat)
-		((def?($n$, $cd$.diccPaquetesDCNet) $\land$ $p$.id = $n$) $\yluego$ \\
-	\- \- \- \- \- ($\exists pdn$: paqueteDCNet)($pdn$ $\in$ $e$.conjPaquetesDCNet $\land$ Siguiente($pdn$.it) = $p$ $\land$ \\
-	\- \- \- \- \- \- (($p$.origen = *($cd$.pc) $\land$ $pdn$.recorrido = *($cd$.pc) $\puntito$ <>) $\lor$ \\
-	\- \- \- \- \- \- ($p$.origen $\neq$ *($cd$.pc) $\land$
-		$pdn$.recorrido $\in$ caminosMinimos($e$.topologia, $p$.origen,
-		*($cd$.pc)))) $\land$ \\
-	\- \- \- \- \- \- Siguiente(obtener($n$, $cd$.diccPaquetesDCNet)) = $pdn$ \\
-	\- \- \- \- \- ) \\
-	\- \- \- \- ) \\
-	\- \- \- ) \\
-	\- \- ) $\yluego$ \\
-	\- \- ($\neg$vacía?($cd$.colaPaquetesDCNet) $\Leftrightarrow$ \\
-	\- \- \- ($\exists p$: paquete)(($p$ $\in$ $cd$.conjPaquetes) $\land$
-		($p$ = paqueteMásPrioridad($cd$.conjPaquetes)) $\land$ \\
-	\- \- \- \- ($\exists pdn$: paqueteDCNet)(($pdn$ $\in$
-		$e$.conjPaquetesDCNet) $\land$ (Siguiente($pdn$.it) = $p$) $\land$ \\
-	\- \- \- \-	(Siguiente(proximo($cd$.colaPaquetesDCNet)) = $pdn$)) \\
-	\- \- \- ) \\
-	\- \- ) $\yluego$ \\
-	\- \- ($cd$.enviados $\geq$ enviadosCompu(*($cd$.pc), $e$.vectorCompusDCNet)) $\land$\\
-	\- \- ($\neg$HaySiguiente?(cd.paqueteAEnviar))
-	\- ) \\
-	)
+	($\forall a$: nat)(def?($a$, $e$.personalAS) $\Rightarrow_L$ posValida(Obtener($a$,$e$.personalAS).posicion, e.campus) $\land$ $\neg$ocupada?(Obtener($a$,$e$.personalAS).posicion),e.campus)
+	\\
+	$\land$
+	\\
+	($\forall h$: string)(def?($h$, $e$.hippies) $\Rightarrow_L$ posValida(Obtener($h$,$e$.hippies), e.campus) $\land$ $\neg$ocupada?(Obtener($h$, $e$.hippies)),e.campus)
+	\\
+	$\land$
+	\\
+	($\forall est$: string)(def?($est$, $e$.estudiantes) $\Rightarrow_L$ posValida(Obtener($est$, $e$.estudiantes), e.campus) $\land$ $\neg$ocupada?(Obtener($est$, $e$.estudiantes)), e.campus)
+	\\
+	$\land$
+	\\
+	($\forall a$: nat)($\forall h$: string) def?($a$, $e$.personalAS) $\land$ def?($h$, $e$.hippies) $\Rightarrow_L$ Obtener($a$, $e$.personalAS).posicion $\neq$ Obtener($h$, $e$.hippies)
+	\\
+	$\land$
+	\\
+	($\forall est$: string)($\forall h$: string) def?($est$,$e$.estudiantes) $\land$ def?($h$,$e$.hippies) $\Rightarrow_L$ Obtener($est$,$e$.estudiantes) $\neq$ Obtener($h$, $e$.hippies)
+	\\
+	$\land$
+	\\
+	($\forall a$: nat)($\forall est$: string) def?($a$, $e$.personalAS) $\land$ def?($est$, $e$.estudiantes) $\Rightarrow_L$ Obtener($a$, $e$.personalAS).posicion $\neq$ Obtener($est$, $e$.estudiantes)
+	\\
+	$\land$
+	\\
+	def?(masVigilante.agente, $e$.personalAS) $\land_L$ Obtener(masVigilante.agente, $e$.personalAS) = masVigilante.datos
+	\\
+	$\land$
+	\\
+	($\forall a$: nat) def?($a$, $e$.personalAS) $\Rightarrow_L$ Obtener($a$, $e$.personalAS).cantSanc $\leq$ masVigilante.datos.cantSanc 
+	\\
+	$\land$
+	\\
+	($\forall h$: string) def?($h$, $e$.hippies) $\Rightarrow$ $\neg$def?($h$, $e$.estudiantes)
+	\\
+	$\land$
+	\\
+	($\forall est$: string) def?($est$, $e$.estudiantes) $\Rightarrow$ $\neg$def?($est$, $e$.hippies)
+	\\
+	$\land$
+	\\
+	longitud($e$.posicionesAgente) = filas($e$.campus)$*$columnas($e$.campus)
+	\\
+	$\land$
+	\\
+
+
 }\mbox{}
 
+%de aca para abajo es el tad del cuatri pasado.
 \tadOperacion{compuQueMásEnvió}{secu(compuDCNet)/scd}{compu}{$\neg$vacía?($scd$)}
 \tadOperacion{maxEnviado}{secu(compuDCNet)/scd}{nat}{$\neg$vacía?($scd$)}
 \tadOperacion{enviaronK}{secu(compuDCNet),nat}{conj(compu)}{}
@@ -356,29 +381,8 @@ red($dcn$) = $e$.topología $\land$ \\
 \lstset{style=alg}
 
 \begin{lstlisting}[mathescape]
-'\alg{iIniciarDCNet}{\In{topo}{red}}{estr}'
-
-    res.topologia $\leftarrow$ Copiar(topo) '\ote{n! * $n^6$}'
-    res.vectorCompusDCNet $\leftarrow$ Vacia() '\ote{1}'
-    res.diccCompusDCNet $\leftarrow$ CrearDicc() '\ote{1}'
-    res.laQueMasEnvio $\leftarrow$ NULL '\ote{1}'
-    res.conjPaquetesDCNet $\leftarrow$ Vacio() '\ote{1}'
-
-    itConj(compu): it $\leftarrow$ CrearIt(Computadoras(topo)) '\ote{1}'
-
-    if(HaySiguiente?(it)) then '\ote{1}'
-    	res.laQueMasEnvio $\leftarrow$ puntero(Siguiente(it)) '\ote{1}'
-    end if
-
-    while HaySiguiente?(it) do '\ote{1}'
-    	compuDCNet: compudcnet $\leftarrow$ <puntero(Siguiente(it)), Vacio(), CrearDicc(),
-    		Vacia(), CrearIt(Vacio()), 0> '\ote{1}'
-    	AgregarAtras(res.vectorCompusDCNet, compudcnet) '\ote{n}'
-    	Definir(res.diccCompusDCNet, Siguiente(it).ip, puntero(compudcnet)) '\ote{L}'
-    	Avanzar(it) '\ote{1}'
-    end while '\ote{n * (n + L)}'
-
-'\ofi{O(n * (n + L))}'
+'\alg{comenzarRastrillaje}{\In{c}{campus}, \In{d}{}}{estr}' 
+   
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
