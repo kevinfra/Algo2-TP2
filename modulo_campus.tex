@@ -156,16 +156,11 @@
 
 \subsubsection{Funci\'on de Abstracci\'on}
 
-\Abs[estr]{dcnet}[e]{dcn}{
-red($dcn$) = $e$.topología $\land$ \\
-($\forall cdn$: compuDCNet)(está?($cdn$, $e$.vectorCompusDCNet) $\impluego$ \\
-\- enEspera($dcn$, *($cdn$.pc)) = $cdn$.conjPaquetes $\land$ \\
-\- cantidadEnviados($dcn$, *($cdn$.pc)) = $cdn$.enviados $\land$ \\
-\- ($\forall p$: paquete)($p$ $\in$ $cdn$.conjPaquetes $\impluego$ \\
-\- \- caminoRecorrido($dcn$, $p$) = Siguiente(obtener($p$.id,
-	$cdn$.diccPaquetesDCNet)).recorrido \\
-\- ) \\
-)
+\Abs[estr]{campus}[e]{cs}{
+	\\
+	filas(cs) = e.filas $\land$ \\
+	columnas(cs) = e.columnas $\land$ \\
+	($\forall pos$: posicion)(posValida?(pos,cs) $\Rightarrow_L$ (ocupada?(pos, cs) = pos $\in$ cs))
 }
 
 \subsection{Algoritmos}
