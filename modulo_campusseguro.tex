@@ -314,6 +314,32 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 \pagebreak
 
+\subsubsection{Función de Abstracción}
+\Abs[estr]{campusSeguro}[e]{cs}{
+$e$.campus $=$ campus($cs$) 
+\\
+$\land$
+\\
+$e$.estudiantes $=$ estudiantes($cs$)
+\\
+$\land$
+\\
+$e$.hippies $=$ hippies($cs$)
+\\
+$\land$
+\\
+$e$.personalAS $=$ agentes($cs$)
+\\
+$\land$
+\\
+($\forall a$: nat) (def?($a$, $e$.personalAS) $\Rightarrow_L$ posAgente($a$, $cs$) $=$ Obtener($a$, $e$.personalAS).posicion $\land$ cantSanciones($a$, $cs$) $=$ Obtener($a$, $e$.personalAS).cantSanc $\land$cantHippiesAtrapados($a$, $cs$) $=$ Obtener($a$, $e$.personalAS).cantAtrapados)
+\\
+$\land$
+\\
+($\forall id$: string) (def?($id$, $e$.estudiantes) $\land_L$ Obtener($id$, $e$.estudiantes) = posEstudianteYHippie(cs)) $\lor$ (def?($id$, $e$.hippies) $\land_L$ Obtener($id$, $e$.hippies) = posEstudianteYHippie(cs))
+}
+
+%de aca para abajo es del tad viejo.
 \subsubsection{Funci\'on de Abstracci\'on}
 
 \Abs[estr]{dcnet}[e]{dcn}{
