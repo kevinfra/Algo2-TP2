@@ -217,9 +217,13 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\item Para todo nombre que esta definido en el diccionario de hippies no puede estar definido en el diccionario de estudiantes y viceversa.
 	%done
 	\item La cantidad de elementos que tiene posicionesAgente es la cantidad de coordenadas que tiene la grilla.
-	
+	%done
 	\item Los agentes de posicionesAgente son los mismos que los de personalAs y viceversa.
+	%done
 	\item La posicion de todos los agentes de posicionesAgente se mapea con la posicion que tienen en personalAs y viceversa.
+	%done
+	\item Las posiciones en posicionesAgente que no tienen agente tienen un puntero a NULL.
+	%done
 	\item La cantidad de estudiantes, hippies, agentes y obstaculos es menor o igual que la cantidad de coordenadas que tiene el campus.
 
 \end{enumerate}
@@ -252,11 +256,11 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\\
 	$\land$
 	\\
-	def?(masVigilante.agente, $e$.personalAS) $\land_L$ Obtener(masVigilante.agente, $e$.personalAS) = masVigilante.datos
+	def?(masVigilante.agente, $e$.personalAS) $\land_L$ Obtener(masVigilante.agente, $e$.personalAS) = *masVigilante.datos
 	\\
 	$\land$
 	\\
-	($\forall a$: nat) def?($a$, $e$.personalAS) $\Rightarrow_L$ Obtener($a$, $e$.personalAS).cantSanc $\leq$ masVigilante.datos.cantSanc 
+	($\forall a$: nat) def?($a$, $e$.personalAS) $\Rightarrow_L$ Obtener($a$, $e$.personalAS).cantSanc $\leq$ *masVigilante.datos.cantSanc 
 	\\
 	$\land$
 	\\
@@ -272,96 +276,70 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\\
 	$\land$
 	\\
-
+	($\forall a$: nat) def?($a$, $e$.personalAS) $\Leftrightarrow_L$ ($\exists! i$: nat) $i <$ longitud($e$.posicionesAgente) $\land_L$ $e$.posicionesAgente[$i$].agente = $a$ $\land$ *$e$.posicionesAgente[$i$].datos = Obtener($a$, $e$.personalAS) $\land$ ($i$ $div$ filas($e$.campus)) = Obtener($a$, $e$.personalAS).posicion.X $\land$ ($i$ $mod$ columnas($e$.campus)) = Obtener($a$, $e$.personalAS).posicion.Y
+	\\
+	$\land$
+	\\
+	($\forall i$: nat) $i <$ longitud($e$.posicionesAgente) $\Leftrightarrow_L$ *$e$.posicionesAgente[$i$].datos = NULL $\lor$ ($\exists! a$: nat) def?($a$, $e$.personalAS) $\land_L$ *$e$.posicionesAgente[$i$].datos = Obtener($a$, $e$.personalAS)
+	\\
+	$\land$
+	\\
+	$\#$Claves($e$.personalAS) $+$ $\#$Claves($e$.hippies) $+$ $\#$Claves($e$.estudiantes) $+$ $\#$Obstaculos($e$.campus) $\leq$ filas($e$.campus)*columnas($e$.campus) 
 
 }\mbox{}
 
-%de aca para abajo es el tad del cuatri pasado.
-\tadOperacion{compuQueMásEnvió}{secu(compuDCNet)/scd}{compu}{$\neg$vacía?($scd$)}
-\tadOperacion{maxEnviado}{secu(compuDCNet)/scd}{nat}{$\neg$vacía?($scd$)}
-\tadOperacion{enviaronK}{secu(compuDCNet),nat}{conj(compu)}{}
-\tadOperacion{paqueteMásPrioridad}{conj(paquete)/cp}{paquete}{$\neg \emptyset?(cp)$}
-\tadOperacion{paquetesConPrioridadK}{conj(paquete),nat}{conj(paquete)}{}
-\tadOperacion{altaPrioridad}{conj(paquetes)/cp}{nat}{$\neg \emptyset?(cp)$}
-\tadOperacion{enviadosCompu}{compu,secu(compuDCNet)}{nat}{}
-\tadOperacion{aparicionesCompu}{compu,conj(nat)/cn,dicc(nat,itConj(paqueteDCNet))/dp}{nat}{claves($dp$) $\subseteq$ $cn$}
+\tadOperacion{$\#$Obstaculos}{campus}{nat}{}
+\tadOperacion{$\#$ObstaculosAux}{nat,nat,campus}{nat}{}
 
 ~
 
-\tadAxioma{compuQueMásEnvió($scd$)}{dameUno(enviaronK($scd$, maxEnviado($scd$)))}
-\tadAxioma{maxEnviado($scd$)}{
-	\IF vacía?(fin($scd$)) THEN
-		prim($scd$).enviados
-	ELSE
-		max(prim($scd$), maxEnviado(fin($scd$)))
-	FI
+\tadAxioma{$\#$Obstaculos(c)}{
+	$\#$ObstaculosAux(filas($c$)$-1$, columnas($c$)$-1$, $c$)
 }
-\tadAxioma{enviaronK($scd$, $k$)}{
-	\IF vacía?($scd$) THEN
-		$\emptyset$
-	ELSE {
-		\IF prim($scd$).enviados = $k$ THEN
-			Ag(*(prim($scd$).pc), enviaronK(fin($scd$), $k$))
-		ELSE
-			enviaronK(fin($scd$), $k$)
-		FI
-		}
-	FI
-}
-\tadAxioma{paqueteMásPrioridad($dcn$, $cp$)}{dameUno(paquetesConPrioridadK($cp$, altaPrioridad($cp$)))}
-
-\tadAxioma{altaPrioridad($cp$)}{
-	\IF $\emptyset$?(sinUno($cp$)) THEN
-		dameUno($cp$).prioridad
-	ELSE
-		min(dameUno($cp$).prioridad, altaPrioridad(sinUno($cp$)))
-	FI
-}
-
-\tadAxioma{paquetesConPrioridadK($cp$, $k$)}{
-	\IF $\emptyset$?($cp$) THEN
-		$\emptyset$
-	ELSE {
-		\IF dameUno($cp$).prioridad = $k$ THEN
-			 Ag(dameUno($cp$), paquetesConPrioridadK(sinUno($cp$), $k$))
-		ELSE
-			paquetesConPrioridadK(sinUno($cp$), $k$)
-		FI
-		}
-	FI
-}
-
-\tadAxioma{enviadosCompu($c$, $scd$)}{
-	\IF vacía?($scd$) THEN
-		0
-	ELSE {
-			\IF prim($scd$) = $c$ THEN
-				enviadosCompu($c$, fin($scd$))
-			ELSE {
-				aparicionesCompu($c$, claves(prim($scd$).diccPaquetesDCNet), \\
-				prim($scd$).diccPaquetesDCNet) + enviadosCompu($c$, fin($scd$))
-				}
+\tadAxioma{$\#$ObstaculosAux(f,col,c)}{
+	\IF ($f=0 \land col=0$) THEN	$\beta$(ocupada?(<$f$,$col$>, $c$)
+	ELSE{
+		\IF ($f \neq 0 \land col = 0$) THEN $\#$ObstaculosAux($f-1$, columnas($c$)$-1$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$)
+		ELSE{
+			\IF ($f = 0 \land col \neq 0$) THEN $\#$ObstaculosAux(filas($c$),$col-1$,$c$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$)
+			ELSE{
+				$\#$ObstaculosAux($f-1$, $col-1$, $c$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$)
+			}
 			FI
 		}
-	FI
-}
-
-\tadAxioma{aparicionesCompu($c$, $cn$, $dpd$)}{
-	\IF	$\emptyset$?($cn$) THEN
-		0
-	ELSE {
-			\IF está?($c$, Siguiente(obtener(dameUno($cn$), $dpd$)).recorrido) THEN
-				1 + aparicionesCompu($c$, sinUno($cn$), $dpd$)
-			ELSE {
-				aparicionesCompu($c$, sinUno($cn$), $dpd$)
-				}
-			FI
-		}
+		FI
+	}
 	FI
 }
 
 \pagebreak
 
+\subsubsection{Función de Abstracción}
+\Abs[estr]{campusSeguro}[e]{cs}{
+$e$.campus $=$ campus($cs$) 
+\\
+$\land$
+\\
+$e$.estudiantes $=$ estudiantes($cs$)
+\\
+$\land$
+\\
+$e$.hippies $=$ hippies($cs$)
+\\
+$\land$
+\\
+$e$.personalAS $=$ agentes($cs$)
+\\
+$\land$
+\\
+($\forall a$: nat) (def?($a$, $e$.personalAS) $\Rightarrow_L$ posAgente($a$, $cs$) $=$ Obtener($a$, $e$.personalAS).posicion $\land$ cantSanciones($a$, $cs$) $=$ Obtener($a$, $e$.personalAS).cantSanc $\land$cantHippiesAtrapados($a$, $cs$) $=$ Obtener($a$, $e$.personalAS).cantAtrapados)
+\\
+$\land$
+\\
+($\forall id$: string) (def?($id$, $e$.estudiantes) $\land_L$ Obtener($id$, $e$.estudiantes) = posEstudianteYHippie(cs)) $\lor$ (def?($id$, $e$.hippies) $\land_L$ Obtener($id$, $e$.hippies) = posEstudianteYHippie(cs))
+}
+
+%de aca para abajo es del tad viejo.
 \subsubsection{Funci\'on de Abstracci\'on}
 
 \Abs[estr]{dcnet}[e]{dcn}{

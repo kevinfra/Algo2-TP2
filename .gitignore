@@ -1,6 +1,10 @@
-tp2.pdf
-spec.pdf
-*.log
+
 *.aux
-*.toc
+
+*.log
+
 *.out
+
+tp2.pdf
+
+*.toc
