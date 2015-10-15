@@ -67,7 +67,7 @@
 [true]
 {$res =_{obs}$ esIngreso?($pos$,$c$)}
 [$O(1)$]
-[Devuelve true si la posicion es un ingreso]
+[Devuelve true si la posicion es un ingreso. No tiene en cuenta su validez]
 []
 
 ~
@@ -76,7 +76,7 @@
 [true]
 {$res =_{obs}$ ingresoSuperior?($pos$,$c$)}
 [$O(1)$]
-[Devuelve true si la posicion es un ingreso superior]
+[Devuelve true si la posicion es un ingreso superior. No tiene en cuenta su validez]
 []
 
 ~
@@ -85,7 +85,7 @@
 [true]
 {$res =_{obs}$ ingresoInferior?($pos$,$c$)}
 [$O(1)$]
-[Devuelve true si la posicion es un ingreso inferior]
+[Devuelve true si la posicion es un ingreso inferior. No tiene en cuenta su validez]
 []
 
 ~
@@ -212,39 +212,32 @@
 \begin{lstlisting}[mathescape]
 '\alg{posValida?}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
 
-	res $\leftarrow$ (x(pos) $\geq$ 0) $\land$ (x(pos) < cs.columnas) $\land$ 
-	       (y(pos) $\geq$ 0) $\land$ (y(pos) < cs.filas) '\ote{1}'
+	res $\leftarrow$ (pos.x $\geq$ 0) $\land$ (pos.x < cs.columnas) $\land$ 
+	       (pos.y $\geq$ 0) $\land$ (pos.y < cs.filas) '\ote{1}'
 
 '\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{esIngreso}{\In{dcn}{dcnet}, \In{c}{compu}}{nat}'
+'\alg{esIngreso}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
 
-	res $\leftarrow$ Obtener(dcn.diccCompusDCNet, c.ip)$\rightarrow$conjPaquetes '\ote{L}'
+	res $\leftarrow$ esIngresoSuperior(cs, pos) $\lor$ esIngresoInferior(cs, pos) '\ote{1}'
 
-'\ofi{O(L)}'
+'\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{PaqueteEnTransito}{\In{dcn}{dcnet}, \In{p}{paquete}}{bool}'
+'\alg{esIngresoSuperior}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+	
+	res $\leftarrow$ pos.y = 0 '\ote{1}'
 
-	res $\leftarrow$ false
-	nat: i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if Definido?(dcn.vectorCompusDCNet[i].diccPaquetesDCNet, p.id) then '\ote{log(k)}'
-			res $\leftarrow$ true '\ote{1}'
-		end if
-		i++ '\ote{1}'
-	end while '\ote{n * log(k)}'
-
-'\ofi{O(n * log(k))}'
+'\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{LaQueMasEnvio}{\In{dcn}{dcnet}}{compu}'
-
-	res $\leftarrow$ *(dcn.laQueMasEnvio$\rightarrow$pc) '\ote{1}'
+'\alg{esIngresoInferior}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+	
+	res $\leftarrow$ pos.y = cs.filas - 1 '\ote{1}'
 
 '\ofi{O(1)}'
 \end{lstlisting}
