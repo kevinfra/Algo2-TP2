@@ -172,7 +172,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ personalAS}{diccNat(agente,datosAgente)}%
 		\tupItem{\\ posicionesAgente}{vector(As)}%
 		\tupItem{\\ masVigilante}{As}%
-		\tupItem{\\ sanciones??}{}%
+		\tupItem{\\ mismasSanc}{lista(kSanc)}%
 		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
 		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
 	\end{Tupla}
@@ -183,6 +183,8 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{posicion}{posicion}%
 		\tupItem{cantSanc}{nat}%
 		\tupItem{cantAtrapados}{nat}%
+		\tupItem{posMismasSanc}{itLista(mismasSanc)}%
+		\tupItem{posConjMismasSanc}{itLista(mismasSanc.conjAgente)}%
 	\end{Tupla}
 
 	~
@@ -190,6 +192,13 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\begin{Tupla}[As]
 		\tupItem{agente}{nat}%
 		\tupItem{datos}{puntero(datosAgente)}%
+	\end{Tupla}
+
+	~
+
+	\begin{Tupla}[kSanc]
+		\tupItem{sanc}{nat}
+		\tupItem{conjAgente}{lista(agente)}
 	\end{Tupla}
 
 \end{Estructura}
@@ -225,7 +234,14 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\item Las posiciones en posicionesAgente que no tienen agente tienen un puntero a NULL.
 	%done
 	\item La cantidad de estudiantes, hippies, agentes y obstaculos es menor o igual que la cantidad de coordenadas que tiene el campus.
-
+	%done
+	\item La longitud de la lista mismasSanc es la cantidad de sanciones diferentes que hay.
+	
+%	\item Por cada posición de la lista mismasSanc va a estar el conjunto de todos los agentes que tienen la misma cantidad de sanciones.
+%	\item Todos los agentes de personalAS estan en mismasSanc en la posicion del vector que tiene su sanción.
+%	\item La cantidad de agentes en mismasSanc es la misma cantidad de agentes que personalAS
+%	\item Cada agente de personalAS tiene un iterador (posMismasSanc) que apunta al vector mismasSanc en la posición que tiene su misma cantidad de sanciones y otro iterador (posVectorMismasSanc) que apunta a la posicion del vector vectorAgente que posee la posicion en donde esta el otro iterador en donde esta el agente.
+	
 \end{enumerate}
 
 \pagebreak
@@ -284,12 +300,36 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\\
 	$\land$
 	\\
-	$\#$Claves($e$.personalAS) $+$ $\#$Claves($e$.hippies) $+$ $\#$Claves($e$.estudiantes) $+$ $\#$Obstaculos($e$.campus) $\leq$ filas($e$.campus)*columnas($e$.campus) 
+	$\#$Claves($e$.personalAS) $+$ $\#$Claves($e$.hippies) $+$ $\#$Claves($e$.estudiantes) $+$ $\#$Obstaculos($e$.campus) $\leq$ filas($e$.campus)*columnas($e$.campus)
+	\\
+	$\land$
+	\\
+%	Long($e$.mismasSanc) = $\#$SancionesDistintas($e$.personalAS)
+%	\\
+%	$\land$
+%	\\
+%	($\forall a$: nat) def?($a$, $e$.personalAS) $\Leftrightarrow_L$ ($\exists$ i:nat) $i <$ Longitud($e$.mismasSanc) $\land_L$ $e$.mismasSanc[$i$].sanc = Obtener($a$, $e$.personalAS).cantSanc $\land$ ($\exists j:$ nat) $j <$ Longitud($e$.mismasSanc.vectorAgente) $\land_L$ $e$.mismasSanc[$i$].vectorAgente[$j$] = a
+%	\\
+%	$\land$
+%	\\
+%	$\#$Claves($e$.personalAS) = cantAgentes($e$.mismasSanc)
+%	\\
+%	$\land$
+%	\\
+%	($\forall a$: nat) def?($a$, $e$.personalAS) $\Rightarrow_L$ Siguiente(Obtener($a$, $e$.personalAS).posMismasSanc).sanc = Obtener($a$, $e$.personalAS).cantSanc $\land$ Siguiente(Obtener($a$, $e$.personalAS).posVectorMismasSanc) = $a$
+%	\\
+%	$\land$
+%	\\
+
+	
 
 }\mbox{}
 
 \tadOperacion{$\#$Obstaculos}{campus}{nat}{}
 \tadOperacion{$\#$ObstaculosAux}{nat,nat,campus}{nat}{}
+\tadOperacion{$\#$SancionesDistintas}{diccNat(agente, datosAgente)}{nat}{}
+\tadOperacion{conjSanciones}{conj(nat), diccNat(agente,datosAgente)}{conj(nat)}{}
+\tadOperacion{cantAgentes}{secu(kSanc}{nat}{}
 
 ~
 
@@ -308,6 +348,23 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 			FI
 		}
 		FI
+	}
+	FI
+}
+\tadAxioma{$\#$SancionesDistintas(d)}{
+	$\#$conjSanciones(Claves($d$),$d$)
+}
+\tadAxioma{conjSanciones(c,d)}{
+	\IF $\neg\emptyset$($c$) THEN $\emptyset$
+	ELSE{
+		Ag(Obtener(DameUno($c$),$d$).cantSanc, conjSanciones(SinUno($c$,$d$)))
+	}
+	FI
+}
+\tadAxioma{cantAgentes(s)}{
+	\IF $s = <>$ THEN 0
+	ELSE {
+		Long(prim($s$).vectorAgente) + cantAgentes(fin($s$))
 	}
 	FI
 }
@@ -339,111 +396,153 @@ $\land$
 ($\forall id$: string) (def?($id$, $e$.estudiantes) $\land_L$ Obtener($id$, $e$.estudiantes) = posEstudianteYHippie(cs)) $\lor$ (def?($id$, $e$.hippies) $\land_L$ Obtener($id$, $e$.hippies) = posEstudianteYHippie(cs))
 }
 
-%de aca para abajo es del tad viejo.
-\subsubsection{Funci\'on de Abstracci\'on}
-
-\Abs[estr]{dcnet}[e]{dcn}{
-red($dcn$) = $e$.topología $\land$ \\
-($\forall cdn$: compuDCNet)(está?($cdn$, $e$.vectorCompusDCNet) $\impluego$ \\
-\- enEspera($dcn$, *($cdn$.pc)) = $cdn$.conjPaquetes $\land$ \\
-\- cantidadEnviados($dcn$, *($cdn$.pc)) = $cdn$.enviados $\land$ \\
-\- ($\forall p$: paquete)($p$ $\in$ $cdn$.conjPaquetes $\impluego$ \\
-\- \- caminoRecorrido($dcn$, $p$) = Siguiente(obtener($p$.id,
-	$cdn$.diccPaquetesDCNet)).recorrido \\
-\- ) \\
-)
-}
-
 \subsection{Algoritmos}
 
 \lstset{style=alg}
 
 \begin{lstlisting}[mathescape]
-'\alg{comenzarRastrillaje}{\In{c}{campus}, \In{d}{}}{estr}' 
-   
+'\alg{icomenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente, datosAgente)}}{estr}' 
+
+	res.campus $\leftarrow$ c '\ote{1}'
+	res.personalAS $\leftarrow$ d '\ote{1}'
+	
+	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) '\ote{}'
+
+	res.masVigilante $\leftarrow$ menorPlaca(d) '\ote{}'
+	res.hippies $\leftarrow$ Vacio() '\ote{1}'
+	res.estudiantes $\leftarrow$ Vacio() '\ote{1}'
+
+'\ofi{O()}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iCrearPaquete}{\Inout{dcn}{dcnet}, \In{p}{paquete}}{}'
+'\alg{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f,c}{nat}}{vector(AS)}'
+	
+	vectorPos $\leftarrow$ Vacio()
+	
+	while i = 0..f*c do '\ote{1}'
+		itd $\leftarrow$ CrearIt(d) '\ote{1}'
+		AgregarAtras(vectorPos, $<0,NILL>$) '\ote{1}'
+	end while
 
-	puntero(compuDCNet): compudcnet $\leftarrow$
-		Significado(dcn.diccCompusDCNet, p.origen.ip) '\ote{L}'
-	itConj(paquete): itPaq $\leftarrow$ AgregarRapido(compudcnet$\rightarrow$conjPaquetes, p) '\ote{1}'
-	lista(compu): recorr $\leftarrow$ AgregarAtras(Vacia(), p.origen) '\ote{1}'
-	paqueteDCNet: paqDCNet $\leftarrow$ <itPaq, recorr> '\ote{1}'
+	itd $\leftarrow$ CrearIt(d) '\ote{1}'
 
-	itConj(paqueteDCNet): itPaqDCNet $\leftarrow$
-		AgregarRapido(dcn.conjPaquetesDCNet, paqDCNet) '\ote{1}'
-	Definir(compudcnet$\rightarrow$diccPaquetesDCNet, p.id, itPaqDCNet) '\ote{log(k)}'
-	Encolar(compudcnet$\rightarrow$colaPaquetesDCNet, p.prioridad, itPaqDCNet) '\ote{log(k)}'
+	while HaySiguiente(itd) do
+		
+	
 
-'\ofi{O(log(k) + L)}'
+
+
+'\ofi{O()}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iAvanzarSegundo}{\Inout{dcn}{dcnet}}{}'
+'\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{campusSeguro} } {}'
 
-	nat: maxEnviados $\leftarrow$ 0
-	nat: i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if($\neg$EsVacia?(dcn.vectorCompusDCNet[i].colaPaquetesDCNet)) then
-			dcn.vectorCompusDCNet[i].paqueteAEnviar $\leftarrow$
-				Desencolar(dcn.vectorCompusDCNet[i].colaPaquetesDCNet) '\ote{log(k)}'
-		end if
-		i++ '\ote{1}'
-	end while '\ote{n * log(k)}'
-
-	i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if(HaySiguiente?(dcn.vectorCompusDCNet[i].paqueteAEnviar)) then '\ote{1}'
-
-			dcn.vectorCompusDCNet[i].enviados++ '\ote{1}'
-			if(dcn.vectorCompusDCNet[i].enviados > maxEnviados) then '\ote{1}'
-				dcn.laQueMasEnvio $\leftarrow$ puntero(dcn.vectorCompusDCNet[i]) '\ote{1}'
-			end if
-
-			paquete: pAEnviar $\leftarrow$
-				Siguiente(Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar).it) '\ote{1}'
-			itConj(lista(compu)): itercaminos $\leftarrow$
-				CrearIt(CaminosMinimos(dcn.topologia,
-				*(dcn.vectorCompusDCNet[i].pc), pAEnviar.destino)) '\ote{1}'
-			compu: siguientecompu $\leftarrow$ Siguiente(itercaminos)[1] '\ote{1}'
-
-			if(pAEnviar.destino $\neq$ siguientecompu) then '\ote{1}'
-
-				compuDCNet: siguientecompudcnet $\leftarrow$
-					*(Obtener(dcn.diccCompusDCNet, siguientecompu.ip)) '\ote{L}'
-
-				itConj(paquete): itpaquete $\leftarrow$
-					AgregarRapido(siguientecompudcnet.conjPaquetes, pAEnviar) '\ote{1}'
-
-				itConj(paqueteDCNet): paqAEnviar $\leftarrow$
-					Obtener(dcn.vectorCompusDCNet[i].diccPaquetesDCNet,
-					pAEnviar.id) '\ote{log(k)}'
-
-				AgregarAtras(Siguiente(paqAEnviar).recorrido, siguientecompu) '\ote{1}'
-
-				Encolar(siguientecompudcnet.colaPaquetesDCNet,
-					pAEnviar.prioridad, paqAEnviar) '\ote{log(k)}'
-				Definir(siguientecompudcnet.diccPaquetesDCNet,
-					pAEnviar.id, paqAEnviar) '\ote{log(k)}'
-			end if
-
-			Borrar(dcn.vectorCompusDCNet[i].diccPaquetesDCNet,
-				Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar$\rightarrow$it).id) '\ote{log(k)}'
-			EliminarSiguiente(Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar).it)
-				'\ote{1}'
-			EliminarSiguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar) '\ote{1}'
-
-			dcn.vectorCompusDCNet[i].paqueteAEnviar $\leftarrow$ CrearIt(Vacio()) '\ote{1}'
-
-		end if
-		i++ '\ote{1}'
-	end while '\ote{n * (L + log(k))}'
-
-'\ofi{O(n * (L + log(k)))}'
+	
+'\ofi{}'
 \end{lstlisting}
 
+\begin{lstlisting}[mathescape]
+'\alg{iIngresarHippie}{\In{h}{nombre}, \In{pos}{posicion}, \Inout{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iMoverEstudiante}{\In{e}{nombre}, \In{d}{dirección}, \Inout{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iMoverAgente}{\In{a}{agente}, \Inout{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iCampus}{\In{cs}{campusSeguro} }{campus}'
+
+	
+'\ofi{O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iEstudiantes}{\In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iHippies}{\In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iAgentes}{\In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iPosEstudianteYHippie}{\In{id}{nombre}, \In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iPosAgente}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iCantSanciones}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iCantHippiesAtrapados}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iConMismasSanciones}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iConKSanciones}{\In{n}{nat}, \In{cs}{campusSeguro} }{}'
+
+	
+'\ofi{}'
+\end{lstlisting}
+
+
+%de aca para abajo es del tp del cuatri pasado.
 \begin{lstlisting}[mathescape]
 '\alg{Red}{\In{dcn}{dcnet}}{red}'
 
