@@ -172,7 +172,8 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ personalAS}{diccNat(agente,datosAgente)}%
 		\tupItem{\\ posicionesAgente}{vector(As)}%
 		\tupItem{\\ masVigilante}{As}%
-		\tupItem{\\ mismasSanc}{lista(kSanc)}%
+		\tupItem{\\ listaMismasSanc}{lista(kSanc)}%
+		\tupItem{\\ vectorMismasSanc}{vector(puntero(kSanc))}
 		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
 		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
 	\end{Tupla}
@@ -181,10 +182,10 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 	\begin{Tupla}[datosAgente]
 		\tupItem{posicion}{posicion}%
-		\tupItem{cantSanc}{nat}%
-		\tupItem{cantAtrapados}{nat}%
-		\tupItem{posMismasSanc}{itLista(mismasSanc)}%
-		\tupItem{posConjMismasSanc}{itLista(mismasSanc.conjAgente)}%
+		\tupItem{\\ cantSanc}{nat}%
+		\tupItem{\\ cantAtrapados}{nat}%
+		\tupItem{\\ itMismasSanc}{itLista(kSanc)}%
+		\tupItem{\\ itConjMismasSanc}{itConj(agente)}%
 	\end{Tupla}
 
 	~
