@@ -473,58 +473,54 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iCampus}{\In{cs}{campusSeguro} }{campus}'
-
-	
+	$res$ $\leftarrow$ $cs$.campus'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iEstudiantes}{\In{cs}{campusSeguro} }{}'
-
-	
-'\ofi{}'
+'\alg{iEstudiantes}{\In{cs}{campusSeguro} }{itDiccString(nombre,posición)}'
+	$res$ $\leftarrow$ CrearIt($cs$.estudiantes)'\ote{1}'
+'\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iHippies}{\In{cs}{campusSeguro} }{}'
-
-	
-'\ofi{}'
+'\alg{iHippies}{\In{cs}{campusSeguro} }{itDiccString(nombre,posición)}'
+	$res$ $\leftarrow$ CrearIt($cs$.hippies)'\ote{1}'
+'\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iAgentes}{\In{cs}{campusSeguro} }{}'
-
-	
-'\ofi{}'
+'\alg{iAgentes}{\In{cs}{campusSeguro} }{itDiccNat(agente,datosAgente)}'
+	$res$ $\leftarrow$ CrearIt($cs$.personalAS)'\ote{1}'
+'\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iPosEstudianteYHippie}{\In{id}{nombre}, \In{cs}{campusSeguro} }{}'
-
-	
-'\ofi{}'
+'\alg{iPosEstudianteYHippie}{\In{id}{nombre}, \In{cs}{campusSeguro} }{posición}'
+	if Definido?($id$, $cs$.hippies) then '\ote{$|n_m|$}'
+		$res$ $\leftarrow$ Obtener($id$, $cs$.hippies)'\ote{$|n_m|$}'
+	else
+		$res$ $\leftarrow$ Obtener($id$, $cs$.estudiantes)'\ote{$|n_m|$}'
+	end if
+'\ofi{O(|n_m|) + O(|n_m|) = O(|n_m|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iPosAgente}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
-
-	
-'\ofi{}'
+'\alg{iPosAgente}{\In{a}{agente}, \In{cs}{campusSeguro} }{posición}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS)'\ote{O(1) caso promedio}'
+'\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iCantSanciones}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
-
-	
-'\ofi{}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{O(1) caso promedio}'
+'\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iCantHippiesAtrapados}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
-
-	
-'\ofi{}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{O(1) caso promedio}'
+'\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
