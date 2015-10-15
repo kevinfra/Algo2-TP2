@@ -10,10 +10,10 @@
 
 \InterfazFuncion{crearDiccionario}{\In{v}{vector(tupla(clave : nat, significado :  $\alpha$))}}{DiccNat($\alpha$)}
 [true]
-{(($\forall$ $t$ : tupla(nat, $\alpha$)) $t$ esta?(v)) $\Rightarrow$ ((definido?(t.clave, res))
-	$\land_L$ obtener(t.clave,res) $=_{obs}$ t.significado) $\land$ nClaves(res) $=_{obs}$ longitud(v)}
-[$O(copy(a)) + O(Cd)$ donde Cd es el numero de claves de d]
-[Agrega una clave $n$ con el significado $a$ al diccionario $d$]
+{(($\forall$ $t$ : tupla(nat, $\alpha$)) esta?($t$, v)) $\Rightarrow$ ((definido?(t.clave, res))
+	$\land_L$ obtener(t.clave,res) $=_{obs}$ t.significado) $\land$ cantClaves(res) $=_{obs}$ longitud(v)}
+[$O(copy(\alpha) * n)$ donde n es el largo del vector]
+[Agrega las tuplas de clave-significado pasadas por parametro al diccionario $d$]
 [Los elementos pasados por parámetros se copian al diccionario]
 
 ~
@@ -36,11 +36,11 @@
 
 ~
 
-\InterfazFuncion{nClaves}{\In{d}{DiccNat($\alpha$)}}{Nat}
+\InterfazFuncion{cantClaves}{\In{d}{DiccNat($\alpha$)}}{Nat}
 [true]
 {res $=_{obs}$ $ \# claves$($d$)}
 [$O(1)$]
-[Mueve un agente dentro del campus y se actualizan los atrapados, sanciones (si es que las hay) y hippies atrapados (si es que los hay).]
+[Devuelve la cantidad de claves definidas en el diccionario.]
 []
 
 ~
@@ -121,96 +121,49 @@
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iCrearPaquete}{\Inout{dcn}{dcnet}, \In{p}{paquete}}{}'
+'\alg{obtener}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{puntero($\alpha$)}'
+	nat : i $\leftarrow$ 0 '\ote{1}'
+	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
+	res $\leftarrow$ NULL '\ote{1}'
+	while 1 < longitud(d[k]) do '\ote{1}'
+		IF d[k][i].clave $=_{obs}$ n THEN '\ote{i}'
+			res $\leftarrow$ *d[k][i].significado '\ote{i}'
+			i $\leftarrow$ longitud(d[k]) '\ote{1}'
+		ELSE
+			i++ '\ote{1}'
+		FI
+	end for '\ote{i}'
 
-	puntero(compuDCNet): compudcnet $\leftarrow$
-		Significado(dcn.diccCompusDCNet, p.origen.ip) '\ote{L}'
-	itConj(paquete): itPaq $\leftarrow$ AgregarRapido(compudcnet$\rightarrow$conjPaquetes, p) '\ote{1}'
-	lista(compu): recorr $\leftarrow$ AgregarAtras(Vacia(), p.origen) '\ote{1}'
-	paqueteDCNet: paqDCNet $\leftarrow$ <itPaq, recorr> '\ote{1}'
-
-	itConj(paqueteDCNet): itPaqDCNet $\leftarrow$
-		AgregarRapido(dcn.conjPaquetesDCNet, paqDCNet) '\ote{1}'
-	Definir(compudcnet$\rightarrow$diccPaquetesDCNet, p.id, itPaqDCNet) '\ote{log(k)}'
-	Encolar(compudcnet$\rightarrow$colaPaquetesDCNet, p.prioridad, itPaqDCNet) '\ote{log(k)}'
-
-'\ofi{O(log(k) + L)}'
+'\ofi{O(i), donde i es 1 en el caso promedio}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iAvanzarSegundo}{\Inout{dcn}{dcnet}}{}'
+'\alg{definido?}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{bool}'
 
-	nat: maxEnviados $\leftarrow$ 0
-	nat: i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if($\neg$EsVacia?(dcn.vectorCompusDCNet[i].colaPaquetesDCNet)) then
-			dcn.vectorCompusDCNet[i].paqueteAEnviar $\leftarrow$
-				Desencolar(dcn.vectorCompusDCNet[i].colaPaquetesDCNet) '\ote{log(k)}'
-		end if
+	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
+	nat : i $\leftarrow$ 0 '\ote{1}'
+	res $\leftarrow$ false '\ote{1}'
+	while i < longitud(d[k]) do '\ote{1}'
+		IF d[k][i].clave $=_{obs}$ n THEN '\ote{i}'
+			res $\leftarrow$ true '\ote{1}'
+			i $\leftarrow$ longitud(d[k]) '\ote{1}'
+		FI
 		i++ '\ote{1}'
-	end while '\ote{n * log(k)}'
+	end while '\ote{i}'
 
-	i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if(HaySiguiente?(dcn.vectorCompusDCNet[i].paqueteAEnviar)) then '\ote{1}'
-
-			dcn.vectorCompusDCNet[i].enviados++ '\ote{1}'
-			if(dcn.vectorCompusDCNet[i].enviados > maxEnviados) then '\ote{1}'
-				dcn.laQueMasEnvio $\leftarrow$ puntero(dcn.vectorCompusDCNet[i]) '\ote{1}'
-			end if
-
-			paquete: pAEnviar $\leftarrow$
-				Siguiente(Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar).it) '\ote{1}'
-			itConj(lista(compu)): itercaminos $\leftarrow$
-				CrearIt(CaminosMinimos(dcn.topologia,
-				*(dcn.vectorCompusDCNet[i].pc), pAEnviar.destino)) '\ote{1}'
-			compu: siguientecompu $\leftarrow$ Siguiente(itercaminos)[1] '\ote{1}'
-
-			if(pAEnviar.destino $\neq$ siguientecompu) then '\ote{1}'
-
-				compuDCNet: siguientecompudcnet $\leftarrow$
-					*(Obtener(dcn.diccCompusDCNet, siguientecompu.ip)) '\ote{L}'
-
-				itConj(paquete): itpaquete $\leftarrow$
-					AgregarRapido(siguientecompudcnet.conjPaquetes, pAEnviar) '\ote{1}'
-
-				itConj(paqueteDCNet): paqAEnviar $\leftarrow$
-					Obtener(dcn.vectorCompusDCNet[i].diccPaquetesDCNet,
-					pAEnviar.id) '\ote{log(k)}'
-
-				AgregarAtras(Siguiente(paqAEnviar).recorrido, siguientecompu) '\ote{1}'
-
-				Encolar(siguientecompudcnet.colaPaquetesDCNet,
-					pAEnviar.prioridad, paqAEnviar) '\ote{log(k)}'
-				Definir(siguientecompudcnet.diccPaquetesDCNet,
-					pAEnviar.id, paqAEnviar) '\ote{log(k)}'
-			end if
-
-			Borrar(dcn.vectorCompusDCNet[i].diccPaquetesDCNet,
-				Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar$\rightarrow$it).id) '\ote{log(k)}'
-			EliminarSiguiente(Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar).it)
-				'\ote{1}'
-			EliminarSiguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar) '\ote{1}'
-
-			dcn.vectorCompusDCNet[i].paqueteAEnviar $\leftarrow$ CrearIt(Vacio()) '\ote{1}'
-
-		end if
-		i++ '\ote{1}'
-	end while '\ote{n * (L + log(k))}'
-
-'\ofi{O(n * (L + log(k)))}'
+'\ofi{O(i), donde i es 1 en el caso promedio}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{Red}{\In{dcn}{dcnet}}{red}'
+'\alg{cantClaves}{\In{d}{DiccNat($\alpha$)}}{nat}'
 
-	res $\leftarrow$ dcn.topologia '\ote{1}'
+	res $\leftarrow$ longitud(d) '\ote{1}'
 
 '\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{CaminoRecorrido}{\In{dcn}{dcnet}, \In{p}{paquete}}{lista(compu)}'
+'\alg{copiar}{\In{d}{DiccNat($\alpha$)}}{DiccNat($\alpha$)}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
