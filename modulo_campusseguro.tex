@@ -172,8 +172,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ personalAS}{diccNat(agente,datosAgente)}%
 		\tupItem{\\ posicionesAgente}{vector(As)}%
 		\tupItem{\\ masVigilante}{As}%
-		\tupItem{\\ listaMismasSanc}{lista(kSanc)}%
-		\tupItem{\\ vectorMismasSanc}{vector(puntero(kSanc))}
+		\tupItem{\\ sanciones}{mismasSanc}%
 		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
 		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
 	\end{Tupla}
@@ -186,6 +185,13 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ cantAtrapados}{nat}%
 		\tupItem{\\ itMismasSanc}{itLista(kSanc)}%
 		\tupItem{\\ itConjMismasSanc}{itConj(agente)}%
+	\end{Tupla}
+
+	~
+	\begin{Tupla}[mismasSanc]
+		\tupItem{lista}{lista(kSanc)}%
+		\tupItem{huboSanc}{bool}%
+		\tupItem{vectorMismasSanc}{vector(puntero(kSanc))}%
 	\end{Tupla}
 
 	~
@@ -508,34 +514,48 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iPosAgente}{\In{a}{agente}, \In{cs}{campusSeguro} }{posición}'
-	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS)'\ote{O(1) caso promedio}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS)'\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iCantSanciones}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
-	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{O(1) caso promedio}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iCantHippiesAtrapados}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
-	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{O(1) caso promedio}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iConMismasSanciones}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
-
-	
-'\ofi{}'
+'\alg{iConMismasSanciones}{\In{a}{agente}, \In{cs}{campusSeguro} }{lista(agente)}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).itMismasSanc.conjAgente '\ote{1 caso promedio}'
+'\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iConKSanciones}{\In{n}{nat}, \In{cs}{campusSeguro} }{}'
+'\alg{iConKSanciones}{\In{k}{nat}, \In{cs}{campusSeguro} }{lista(agente)}'
+	if $cs$.sanciones.huboSanc == true then '\ote{1}'
+		rearmarVectorMismasSanc($cs$) '\ote{$N_a$}'
+	end if
 
+	esta $\leftarrow$ busqBinAgente(k, i, $cs$.sanciones.vectorMismasSanc) '\ote{log(n)}'
+	if esta == true then '\ote{1}'
+		res $\leftarrow$ *$cs$.sanciones.vectorMismasSanc[i].conjAgente '\ote{1}'
+	else
+		res $\leftarrow$ Vacia() '\ote{1}'
+	end if
+
+'\ofi{O(N_a) \text{ la primera vez que se llama y } O(log N_a) \text{ en futuras llamadas mientras no ocurran sanciones.}}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{rearmarVectorMismasSanc}{\Inout{cs}{camspusSeguro}}{}'
 	
-'\ofi{}'
+'\ofi{O(N_a)}'
 \end{lstlisting}
 
 
