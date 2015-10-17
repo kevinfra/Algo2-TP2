@@ -174,6 +174,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ masVigilante}{As}%
 		\tupItem{\\ listaMismasSanc}{lista(kSanc)}%
 		\tupItem{\\ vectorMismasSanc}{vector(puntero(kSanc))}
+		\tupItem{\\ mismasSancModificado}{bool}
 		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
 		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
 	\end{Tupla}
@@ -199,7 +200,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 	\begin{Tupla}[kSanc]
 		\tupItem{sanc}{nat}
-		\tupItem{conjAgente}{lista(agente)}
+		\tupItem{agentes}{conj(agente)}
 	\end{Tupla}
 
 \end{Estructura}
