@@ -235,7 +235,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	%done
 	\item Las posiciones en posicionesAgente que no tienen agente tienen un puntero a NULL.
 	%done
-	\item La cantidad de estudiantes, hippies, agentes y obstaculos es menor o igual que la cantidad de coordenadas que tiene el campus.
+	\item La dimension del campus es mayor que la cantidad de estudiantes, hippies, agentes y obstaculos .
 	%done
 	\item La longitud de listaMismasSanc es la cantidad de sanciones diferentes que hay.
 	\item Para cada cantidad de sanciones distinta hay un nodo en listaMismasSanc con esa cantidad de sanciones.
@@ -303,27 +303,27 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\\
 	$\land$
 	\\
-	$\#$Claves($e$.personalAS) $+$ $\#$Claves($e$.hippies) $+$ $\#$Claves($e$.estudiantes) $+$ $\#$Obstaculos($e$.campus) $\leq$ filas($e$.campus)*columnas($e$.campus)
+	$\#$claves($e$.personalAS) $+$ $\#$claves($e$.hippies) $+$ $\#$claves($e$.estudiantes) $+$ $\#$Obstaculos($e$.campus) $\leq$ filas($e$.campus)*columnas($e$.campus)
 	\\
 	$\land$
 	\\
-%	Long($e$.mismasSanc) = $\#$SancionesDistintas($e$.personalAS)
-%	\\
-%	$\land$
-%	\\
-%	($\forall a$: nat) def?($a$, $e$.personalAS) $\Leftrightarrow_L$ ($\exists$ i:nat) $i <$ Longitud($e$.mismasSanc) $\land_L$ $e$.mismasSanc[$i$].sanc = Obtener($a$, $e$.personalAS).cantSanc $\land$ ($\exists j:$ nat) $j <$ Longitud($e$.mismasSanc.vectorAgente) $\land_L$ $e$.mismasSanc[$i$].vectorAgente[$j$] = a
-%	\\
-%	$\land$
-%	\\
-%	$\#$Claves($e$.personalAS) = cantAgentes($e$.mismasSanc)
-%	\\
-%	$\land$
-%	\\
-%	($\forall a$: nat) def?($a$, $e$.personalAS) $\Rightarrow_L$ Siguiente(Obtener($a$, $e$.personalAS).posMismasSanc).sanc = Obtener($a$, $e$.personalAS).cantSanc $\land$ Siguiente(Obtener($a$, $e$.personalAS).posVectorMismasSanc) = $a$
-%	\\
-%	$\land$
-%	\\
-
+	long($e$.listaMismasSanc) = $\#$SancionesDistintas($e$.personalAS)
+	\\
+	$\land$
+	\\
+	($\forall$ sanc : nat)(sanc $\in$ conjSanciones(claves($e$.personalAS), $e$.personalAS) $\Rightarrow$ ($\exists$ nodo : kSanc)(esta?(kSanc, $e$.listaMismasSanc) $\land$ kSanc.sanc = sanc))
+	\\
+	$\land$
+	\\
+	ordenada?($e$.listaMismasSanc)
+	\\
+	$\land$
+	\\
+	($\forall$ nodo : kSanc)(esta?(kSanc, $e$.listaMismasSanc) $\Rightarrow$ agentes(kSanc) $=_{obs}$ agentesKSanc($e$.personalAS, claves($e$.personalAS), sanc(kSanc)))
+	\\
+	$\land$
+	\\
+	$e$.mismasSancModificado $\Rightarrow$ (long($e$.listaMismasSanc) = long(vectorMismasSanc) $\land_L$ mismosNodos($e$.listaMismasSanc, $e$.vectorMismasSanc))
 	
 
 }\mbox{}
@@ -332,7 +332,10 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 \tadOperacion{$\#$ObstaculosAux}{nat,nat,campus}{nat}{}
 \tadOperacion{$\#$SancionesDistintas}{diccNat(agente, datosAgente)}{nat}{}
 \tadOperacion{conjSanciones}{conj(nat), diccNat(agente,datosAgente)}{conj(nat)}{}
-\tadOperacion{cantAgentes}{secu(kSanc}{nat}{}
+\tadOperacion{cantAgentes}{secu(kSanc)}{nat}{}
+\tadOperacion{ordenada?}{secu(kSanc)}{bool}{}
+\tadOperacion{agentesKSanc}{diccNat(agente, datosAgente), conj(agente), nat}{conj(agente)}{}
+\tadOperacion{mismosNodos}{secu(kSanc)/lista, secu(puntero(kSanc))/vec}{bool}{long(lista) = long(vec)}
 
 ~
 
@@ -368,6 +371,41 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\IF $s = <>$ THEN 0
 	ELSE {
 		Long(prim($s$).vectorAgente) + cantAgentes(fin($s$))
+	}
+	FI
+}
+\tadAxioma{ordenada?(lista)}{
+	\IF vacia?(lista) THEN true
+	ELSE{
+		\IF vacia?(fin(lista)) THEN true
+		ELSE{
+			\IF sanc(prim(lista)) < sanc(prim(fin(lista))) THEN ordenada?(fin(lista))
+			ELSE false
+			FI 
+		}
+		FI
+	}
+	FI
+}
+\tadAxioma{agentesKSanc(dicc, claves, k)}{
+	\IF $\emptyset$?(claves) THEN $\emptyset$
+	ELSE{
+		\IF cantSanc(obtener(prim(claves), dicc)) = k THEN
+			Ag(prim(claves), agentesKSanc(dicc, fin(claves), k))
+		ELSE
+			agentesKSanc(dicc, fin(claves), k)
+		FI
+	}
+	FI
+}
+\tadAxioma{mismosNodos(lista, vec)}{
+	\IF vacia?(lista) THEN true
+	ELSE{
+		\IF $\&prim(lista) = prim(vec)$ THEN 
+			mismosNodos(fin(lista), fin(vec))
+		ELSE
+			false
+		FI
 	}
 	FI
 }
