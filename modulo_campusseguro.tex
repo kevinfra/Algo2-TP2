@@ -406,22 +406,35 @@ $\land$
 '\alg{icomenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente, datosAgente)}}{estr}' 
 
 	res.campus $\leftarrow$ c '\ote{1}'
+	res.listaMismasSanc $\leftarrow$ generarListaMismasSanc(d) '\ote{$N_a$}'
 	res.personalAS $\leftarrow$ d '\ote{1}'
-	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) '\ote{}'
+	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) '\ote{(f$*$c)$^2$ + $N_a$}'
 	res.masVigilante $\leftarrow$ menorPlaca(d) '\ote{$N_a$}'
-	res.listaMismasSanc $\leftarrow$ generarListaMismasSanc(d) '\ote{}'
-	res.mismasSancModificado $\leftarrow$ true '\ote{}'
+	res.mismasSancModificado $\leftarrow$ true '\ote{1}'
 	res.hippies $\leftarrow$ Vacio() '\ote{1}'
 	res.estudiantes $\leftarrow$ Vacio() '\ote{1}'
 
-'\ofi{O()}'
+'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) = O((f*c)^2 + N_a)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f}{nat}, \In{c}{nat}}{vector(AS)}'
-	res $\leftarrow$ Vacia()
+	res $\leftarrow$ Vacia() '\ote{1}'
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	itDiccNat(agente, datosAgente): it $\leftarrow$ CrearIt(d) '\ote{1}'
 
-'\ofi{}'
+	while i $<$ f$*$c do '\ote{1}'
+		AgregarAtras(res, tupla(0,NULL)) '\ote{f$*$c}'
+		i $\leftarrow$ i$+1$ '\ote{1}'
+	end while '\ote{(f$*$c)$^2$}'
+	
+	while HaySiguiente(it) do '\ote{1}'
+		res[Siguiente(it).significado.posicion.y $*$ c $+$ 
+				Siguiente(it).significado.posicion.x] $\leftarrow$
+			$\leftarrow$ tupla(Siguiente(it).clave, puntero(Siguiente(it).significado)) '\ote{1}'
+	end while '\ote{$N_a$}
+
+'\ofi{O((f*c)^2 + N_a)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -444,10 +457,26 @@ $\land$
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
+'\alg{generarListaMismasSanc}{\Inout{d}{diccNat(agente, datosAgente)}}{lista(kSanc)}'
+	itDiccNat(agente, datosAgente): itDic $\leftarrow$ CrearIt(d) '\ote{1}'
+	res $\leftarrow$ Vacia() '\ote{1}'
+	AgregarAdelante(res, tupla(0,Vacio())) '\ote{1 (esta vacío el vector)}'
+	itLista(kSanc): itL $\leftarrow$ CrearIt(res) '\ote{1}'
 
-	
-'\ofi{}'
+	while HaySiguiente(itDic) do '\ote{1}'
+		itConj(agente): itC $\leftarrow$ AgregarRapido(res.agentes, Siguiente(itDic).clave) '\ote{1}'
+		Siguiente(itDic).significado.itConjMismasSanc $\leftarrow$ itC '\ote{1}'
+		Siguiente(itDic).significado.itMismasSanc $\leftarrow$ itL '\ote{1}'
+		Avanzar(itDic) '\ote{1}'
+	end while '\ote{$N_a$}'
+
+'\ofi{O(N_a)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
+	if cantHippiesVecinos
+'\ofi{O(|n_a|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
