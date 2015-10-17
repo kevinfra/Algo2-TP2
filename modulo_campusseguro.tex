@@ -514,20 +514,20 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
-	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{1}'
+	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_a!$}'
 		Definir($cs$.estudiantes, e, pos) '\ote{$|n_a|$}'
-	end if '\ote{$|n_a|$}'
+	end if '\ote{$|n_a| + |n_a|$}'
 	
-	Lista(nombre, posicion): listaHippies $\leftarrow$ 
+	conj(nombre, posicion): conjHippiesRod $\leftarrow$ 
 		$\leftarrow$ HippiesRodeados(pos, vecinos(pos, $cs$.campus), $cs$) '\ote{$|n_a|$}'
 
-	if Longitud(listahippies) $>$ 0 then '\ote{1}'
-		itLista(nombre): itL $\leftarrow$ CrearIt(listahippies) '\ote{1}'
-		Definir($cs$.estudiantes, Siguiente(it).nombre, Siguiente(it).posicion) '\ote{$|n_a|$}'
-		Eliminar($cs$.hippies, Siguiente(it).nombre) '\ote{$|n_a|$}'
-	end if '\ote{$|n_a|$}'
+	if Cardinal(conjHippiesRod) $>$ 0 then '\ote{1}'
+		itConj(nombre): itConj $\leftarrow$ CrearIt(conjHippiesRod) '\ote{1}'
+		Definir($cs$.estudiantes, Siguiente(itConj).nombre, Siguiente(itConj).posicion) '\ote{$|n_a|$}'
+		Eliminar($cs$.hippies, Siguiente(itConj).nombre) '\ote{$|n_a|$}'
+	end if '\ote{$|n_a| + |n_a|$}'
 
-'\ofi{O(|n_a|)}'
+'\ofi{O(2|n_a|) + O(|n_a|) + O(2|n_a|) = O(5|n_a|) = O(|n_a|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -548,6 +548,12 @@ $\land$
 		end while '\ote{$|n_a|$}'
 
 '\ofi{O(|n_a|) \text{. Como vecinos como maximo tiene longitud 4, la complejidad sería } O(4*|n_a|) = O(|n_a|)}}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{HippiesRodeados}{\In{pos}{posicion}, \In{c}{conj(posicion}, \In{cs}{estr}}{conj(nombre, posicion)}'
+	
+'\ofi{O(|n_a|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
