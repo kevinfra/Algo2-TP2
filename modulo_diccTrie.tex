@@ -75,7 +75,7 @@ Se representa mediante un árbol n-ario con invariante de trie
 \begin{Estructura}{ Diccionario String($\alpha$)}[estr]
 	\begin{Tupla}[estr]
 		\tupItem{raiz}{arreglo(puntero(Nodo))}%
-		\tupItem{listaIterable}{listaEnlazada(posicion))}%
+		\tupItem{listaIterable}{lista(puntero(Nodo))}%
 	\end{Tupla}
 
 	~
@@ -83,9 +83,11 @@ Se representa mediante un árbol n-ario con invariante de trie
 	\begin{Tupla}[Nodo]
 		\tupItem{arbolTrie}{arreglo(puntero(Nodo))}%
 		\tupItem{\\
-					info}{posicion}%
+					info}{$\alpha$}%
 		\tupItem{\\
-					posEnLista}{iterador(listaEnlazada)}
+					infoValida}{bool}%
+		\tupItem{\\
+					infoEnLista}{iterador(listaIterable)}
 	\end{Tupla}
 
 \end{Estructura}
@@ -95,17 +97,13 @@ Se representa mediante un árbol n-ario con invariante de trie
 \renewcommand{\labelenumi}{(\Roman{enumi})}
 
 \begin{enumerate}
-	\item Raiz es la raiz del arbol con invariante de trie y es un arreglo de 27 posiciones (que representan
-	las letras). Cada posicion contiene un puntero a Nodo.
-	\item listaIterable es una lista de posicion que provee un iterador para poder recorrer todo el arbol en O(n).
-	\item Cada una de las posiciones de la lista tiene que corresonder con una posicion de un elemento del trie.
+	\item Raiz es la raiz del arbol con invariante de trie y es un arreglo de 27 posiciones.
+	\item Cada uno de los elementos de la lista tiene que ser un puntero a un Nodo del trie.
 	\item Nodo es una tupla que contiene un arreglo de 27 posiciones con un puntero a otro Nodo en cada posicion
-	,un elemento info que es la posicion que contiene esa clave del arbol, y un elemento iterador que es un puntero
+	,un elemento info que es el alfa que contiene esa clave del arbol, y un elemento iterador que es un puntero
 	a un nodo de la lista enlazada.
-	\item El iterador a la lista enlazada de cada nodo tiene que apuntar al elemento de la lista que contiene
-	la misma posicion que el nodo.
-	\item No hay posiciones repetidas en la listaEnlazada ya que no puede haber mas de un elemento en cada 				posicion.
-	\item El arbolTrie tampoco tiene posiciones repetidas.
+	\item El iterador a la lista enlazada de cada nodo tiene que apuntar al elemento de la lista que apunta al 
+	mismo Nodo.
 
 \end{enumerate}
 
@@ -113,11 +111,13 @@ Se representa mediante un árbol n-ario con invariante de trie
 
 \Rep[estr][e]
 	\\
-	($\forall c$: campusSeguro)()
+	($\forall c$: diccString($(\alpha)$))()
 
 \Rep[estr][e]{
 	\\
-	($\forall c$: compu)($c$ $\in$ computadoras($e$.topologia) $\Leftrightarrow$ \\
+	tamaño(raiz)==27 $\land$
+	\\
+	($\forall i$ $\in$ [0..tamaño(raiz)($c$ $\in$ computadoras($e$.topologia) $\Leftrightarrow$ \\
 	\- ( \\
 	\- \- ($\exists cd$: compuDCNet)
 	(está?($cd$, $e$.vectorCompusDCNet) $\land$ ($cd$.pc = puntero($c$)) $\land$ \\
@@ -280,61 +280,41 @@ red($dcn$) = $e$.topología $\land$ \\
 \lstset{style=alg}
 
 \begin{lstlisting}[mathescape]
-'\alg{iIniciarDCNet}{\In{topo}{red}}{estr}'
+'\alg{crearDiccionario}{}{estr}'
+	
+    res.raiz $\leftarrow$ CrearArreglo(27) '\ote{1}'
+	nat: i $\leftarrow$ 0 '\ote{1}' 
+    while i < long(res.raiz) do '\ote{1}'
+    	res.raiz[i] $\leftarrow$ null '\ote{1}'
+    end while '\ote{1}'
+    res.listaIterable $\leftarrow$ Vacia() '\ote{1}'
 
-    res.topologia $\leftarrow$ Copiar(topo) '\ote{n! * $n^6$}'
-    res.vectorCompusDCNet $\leftarrow$ Vacia() '\ote{1}'
-    res.diccCompusDCNet $\leftarrow$ CrearDicc() '\ote{1}'
-    res.laQueMasEnvio $\leftarrow$ NULL '\ote{1}'
-    res.conjPaquetesDCNet $\leftarrow$ Vacio() '\ote{1}'
+'\ofi{O(1)}'
 
-    itConj(compu): it $\leftarrow$ CrearIt(Computadoras(topo)) '\ote{1}'
+'\alg{definido?}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{bool}'
 
-    if(HaySiguiente?(it)) then '\ote{1}'
-    	res.laQueMasEnvio $\leftarrow$ puntero(Siguiente(it)) '\ote{1}'
-    end if
-
-    while HaySiguiente?(it) do '\ote{1}'
-    	compuDCNet: compudcnet $\leftarrow$ <puntero(Siguiente(it)), Vacio(), CrearDicc(),
-    		Vacia(), CrearIt(Vacio()), 0> '\ote{1}'
-    	AgregarAtras(res.vectorCompusDCNet, compudcnet) '\ote{n}'
-    	Definir(res.diccCompusDCNet, Siguiente(it).ip, puntero(compudcnet)) '\ote{L}'
-    	Avanzar(it) '\ote{1}'
-    end while '\ote{n * (n + L)}'
-
-'\ofi{O(n * (n + L))}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{iCrearPaquete}{\Inout{dcn}{dcnet}, \In{p}{paquete}}{}'
-
-	puntero(compuDCNet): compudcnet $\leftarrow$
-		Significado(dcn.diccCompusDCNet, p.origen.ip) '\ote{L}'
-	itConj(paquete): itPaq $\leftarrow$ AgregarRapido(compudcnet$\rightarrow$conjPaquetes, p) '\ote{1}'
-	lista(compu): recorr $\leftarrow$ AgregarAtras(Vacia(), p.origen) '\ote{1}'
-	paqueteDCNet: paqDCNet $\leftarrow$ <itPaq, recorr> '\ote{1}'
-
-	itConj(paqueteDCNet): itPaqDCNet $\leftarrow$
-		AgregarRapido(dcn.conjPaquetesDCNet, paqDCNet) '\ote{1}'
-	Definir(compudcnet$\rightarrow$diccPaquetesDCNet, p.id, itPaqDCNet) '\ote{log(k)}'
-	Encolar(compudcnet$\rightarrow$colaPaquetesDCNet, p.prioridad, itPaqDCNet) '\ote{log(k)}'
-
-'\ofi{O(log(k) + L)}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{iAvanzarSegundo}{\Inout{dcn}{dcnet}}{}'
-
-	nat: maxEnviados $\leftarrow$ 0
 	nat: i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if($\neg$EsVacia?(dcn.vectorCompusDCNet[i].colaPaquetesDCNet)) then
-			dcn.vectorCompusDCNet[i].paqueteAEnviar $\leftarrow$
-				Desencolar(dcn.vectorCompusDCNet[i].colaPaquetesDCNet) '\ote{log(k)}'
-		end if
-		i++ '\ote{1}'
-	end while '\ote{n * log(k)}'
+	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
+	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
+	while(i <= longitud(c) and not arr = null) do '\ote{1}'
+		i $\leftarrow$ i + 1 '\ote{1}'
+		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
+		arr $\leftarrow$ (*arr).arreglo[letra] '\ote{1}'
+	end while '\ote{$|n_m|$}'
+	if(i=longitud(c)) then '\ote{1}'
+		res $\leftarrow$ (*arr).infoValida '\ote{1}'
+	else
+		res $\leftarrow$ false '\ote{1}'
+	end if
+	
+'\ofi{O(|n_m|)}'
 
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{definir}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}, \In{s}{$\alpha$}}{}'
+
+	
 	i $\leftarrow$ 0 '\ote{1}'
 	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
 		if(HaySiguiente?(dcn.vectorCompusDCNet[i].paqueteAEnviar)) then '\ote{1}'
