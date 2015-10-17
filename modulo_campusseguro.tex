@@ -237,16 +237,17 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	%done
 	\item La cantidad de estudiantes, hippies, agentes y obstaculos es menor o igual que la cantidad de coordenadas que tiene el campus.
 	%done
-	\item La longitud de la lista mismasSanc es la cantidad de sanciones diferentes que hay.
-	
-%	\item Por cada posición de la lista mismasSanc va a estar el conjunto de todos los agentes que tienen la misma cantidad de sanciones.
+	\item La longitud de listaMismasSanc es la cantidad de sanciones diferentes que hay.
+	\item Para cada cantidad de sanciones distinta hay un nodo en listaMismasSanc con esa cantidad de sanciones.
+	\item listaMismasSanc esta ordenada por cantidad de sanciones.
+	\item En cada nodo de listaMismasSanc va a estar el conjunto de todos los agentes que tienen la cantidad de sanciones indicada en el nodo.
+	\item Si mismasSancModificado es falso, vectorMismasSanc tiene misma cantidad de elementos que listaMismasSanc, y cada elemento apunta a un nodo de listaMismasSanc, respetando el orden de listaMismasSanc
+
 %	\item Todos los agentes de personalAS estan en mismasSanc en la posicion del vector que tiene su sanción.
 %	\item La cantidad de agentes en mismasSanc es la misma cantidad de agentes que personalAS
 %	\item Cada agente de personalAS tiene un iterador (posMismasSanc) que apunta al vector mismasSanc en la posición que tiene su misma cantidad de sanciones y otro iterador (posVectorMismasSanc) que apunta a la posicion del vector vectorAgente que posee la posicion en donde esta el otro iterador en donde esta el agente.
 	
 \end{enumerate}
-
-\pagebreak
 
 \Rep[estr][e]{
 	\\
