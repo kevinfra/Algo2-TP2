@@ -172,7 +172,13 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ personalAS}{diccNat(agente,datosAgente)}%
 		\tupItem{\\ posicionesAgente}{vector(As)}%
 		\tupItem{\\ masVigilante}{As}%
+<<<<<<< HEAD
 		\tupItem{\\ sanciones}{mismasSanc}%
+=======
+		\tupItem{\\ listaMismasSanc}{lista(kSanc)}%
+		\tupItem{\\ vectorMismasSanc}{vector(puntero(kSanc))}
+		\tupItem{\\ mismasSancModificado}{bool}
+>>>>>>> 39c63e3f0b7bda9c5a48ad6c3049a7055cd42579
 		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
 		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
 	\end{Tupla}
@@ -205,7 +211,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 	\begin{Tupla}[kSanc]
 		\tupItem{sanc}{nat}
-		\tupItem{conjAgente}{lista(agente)}
+		\tupItem{agentes}{conj(agente)}
 	\end{Tupla}
 
 \end{Estructura}

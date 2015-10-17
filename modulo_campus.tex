@@ -265,18 +265,41 @@
 \begin{lstlisting}[mathescape]
 '\alg{distancia}{\In{cs}{campus}, \In{pos_1}{posicion}, \In{pos_2}{posicion}}{nat}'
 	
-	res $\leftarrow$ |$pos_1.x$ - $pos_2.x$| + |$pos_1.y$ - $pos_2.y$|
+	res $\leftarrow$ |$pos_1.x$ - $pos_2.x$| + |$pos_1.y$ - $pos_2.y$|	'\ote{1}'
 
 '\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{$\puntito$ $=_{paqdcn}$ $\puntito$}{\In{p_1}{paqueteDCNet}, \In{p_2}{paqueteDCNet},}{bool}'
+'\alg{proxPosicion}{\In{cs}{campus}, \In{pos}{posicion}, \In{dir}{direccion}}{posicion}'
 
-	bool: boolPaq $\leftarrow$ Siguiente($p_1$.it) = Siguiente($p_2$.it) '\ote{1}'
-	bool: boolRecorrido $\leftarrow$ $p_1$.recorrido = $p_2$.recorrido '\ote{n}'
+	if(dir = izq)											'\ote{1}'
+		res $\leftarrow$ tupla(pos.x - 1, pos.y)			'\ote{1}'
+	if(dir = der)											'\ote{1}'
+		res $\leftarrow$ tupla(pos.x + 1, pos.y)			'\ote{1}'
+	if(dir = arriba)										'\ote{1}'
+		res $\leftarrow$ tupla(pos.x, pos.y - 1)			'\ote{1}'
+	if(dir = abajo)											'\ote{1}'
+		res $\leftarrow$ tupla(pos.x, pos.y + 1)			'\ote{1}'
 
-	res $\leftarrow$ boolPaq $\land$ boolRecorrido '\ote{1}'
+'\ofi{O(1)}'
+\end{lstlisting}
 
-'\ofi{O(n)}'
+\begin{lstlisting}[mathescape]
+'alg{ingresosMasCercanos}{\In{cs}{campus}, \In{pos}{posicion}}{conj(posicion)}'
+
+	res $\leftarrow$ Vacio()										'\ote{1}'
+
+	if(distancia(cs, pos, tupla(pos.x, 0)) < 
+	   distancia(cs, pos, tupla(pos.x, cs.filas - 1))) 				'\ote{1}'
+		AgregarRapido(res, tupla(pos.x, 0))							'\ote{1}'
+	else
+		if(distancia(cs, pos, tupla(pos.x, 0)) > 
+		   distancia(cs, pos, tupla(pos.x, cs.filas - 1))) 			'\ote{1}'
+			AgregarRapido(res, tupla(pos.x, cs.filas - 1))			'\ote{1}'
+		else
+			AgregarRapido(res, tupla(pos.x, 0))						'\ote{1}'
+
+
+'\ofi{O(1)}'
 \end{lstlisting}
