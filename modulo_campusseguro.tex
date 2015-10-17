@@ -172,13 +172,9 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ personalAS}{diccNat(agente,datosAgente)}%
 		\tupItem{\\ posicionesAgente}{vector(As)}%
 		\tupItem{\\ masVigilante}{As}%
-<<<<<<< HEAD
-		\tupItem{\\ sanciones}{mismasSanc}%
-=======
 		\tupItem{\\ listaMismasSanc}{lista(kSanc)}%
 		\tupItem{\\ vectorMismasSanc}{vector(puntero(kSanc))}
 		\tupItem{\\ mismasSancModificado}{bool}
->>>>>>> 39c63e3f0b7bda9c5a48ad6c3049a7055cd42579
 		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
 		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
 	\end{Tupla}
@@ -191,13 +187,6 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ cantAtrapados}{nat}%
 		\tupItem{\\ itMismasSanc}{itLista(kSanc)}%
 		\tupItem{\\ itConjMismasSanc}{itConj(agente)}%
-	\end{Tupla}
-
-	~
-	\begin{Tupla}[mismasSanc]
-		\tupItem{lista}{lista(kSanc)}%
-		\tupItem{huboSanc}{bool}%
-		\tupItem{vectorMismasSanc}{vector(puntero(kSanc))}%
 	\end{Tupla}
 
 	~
@@ -450,66 +439,66 @@ $\land$
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{campusSeguro} } {}'
+'\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
 
 	
 '\ofi{}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iIngresarHippie}{\In{h}{nombre}, \In{pos}{posicion}, \Inout{cs}{campusSeguro} }{}'
+'\alg{iIngresarHippie}{\In{h}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} }{}'
 
 	
 '\ofi{}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iMoverEstudiante}{\In{e}{nombre}, \In{d}{dirección}, \Inout{cs}{campusSeguro} }{}'
+'\alg{iMoverEstudiante}{\In{e}{nombre}, \In{d}{dirección}, \Inout{cs}{estr} }{}'
 
 	
 '\ofi{}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{campusSeguro} }{}'
+'\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{estr} }{}'
 
 	
 '\ofi{}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iMoverAgente}{\In{a}{agente}, \Inout{cs}{campusSeguro} }{}'
+'\alg{iMoverAgente}{\In{a}{agente}, \Inout{cs}{estr} }{}'
 
 	
 '\ofi{}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iCampus}{\In{cs}{campusSeguro} }{campus}'
+'\alg{iCampus}{\In{cs}{estr} }{campus}'
 	$res$ $\leftarrow$ $cs$.campus'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iEstudiantes}{\In{cs}{campusSeguro} }{itDiccString(nombre,posición)}'
+'\alg{iEstudiantes}{\In{cs}{estr} }{itDiccString(nombre,posición)}'
 	$res$ $\leftarrow$ CrearIt($cs$.estudiantes)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iHippies}{\In{cs}{campusSeguro} }{itDiccString(nombre,posición)}'
+'\alg{iHippies}{\In{cs}{estr} }{itDiccString(nombre,posición)}'
 	$res$ $\leftarrow$ CrearIt($cs$.hippies)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iAgentes}{\In{cs}{campusSeguro} }{itDiccNat(agente,datosAgente)}'
+'\alg{iAgentes}{\In{cs}{estr} }{itDiccNat(agente,datosAgente)}'
 	$res$ $\leftarrow$ CrearIt($cs$.personalAS)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iPosEstudianteYHippie}{\In{id}{nombre}, \In{cs}{campusSeguro} }{posición}'
+'\alg{iPosEstudianteYHippie}{\In{id}{nombre}, \In{cs}{estr} }{posición}'
 	if Definido?($id$, $cs$.hippies) then '\ote{$|n_m|$}'
 		$res$ $\leftarrow$ Obtener($id$, $cs$.hippies)'\ote{$|n_m|$}'
 	else
@@ -519,31 +508,31 @@ $\land$
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iPosAgente}{\In{a}{agente}, \In{cs}{campusSeguro} }{posición}'
+'\alg{iPosAgente}{\In{a}{agente}, \In{cs}{estr} }{posición}'
 	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS)'\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iCantSanciones}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
+'\alg{iCantSanciones}{\In{a}{agente}, \In{cs}{estr} }{}'
 	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iCantHippiesAtrapados}{\In{a}{agente}, \In{cs}{campusSeguro} }{}'
+'\alg{iCantHippiesAtrapados}{\In{a}{agente}, \In{cs}{estr} }{}'
 	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iConMismasSanciones}{\In{a}{agente}, \In{cs}{campusSeguro} }{lista(agente)}'
+'\alg{iConMismasSanciones}{\In{a}{agente}, \In{cs}{estr} }{lista(agente)}'
 	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).itMismasSanc.conjAgente '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iConKSanciones}{\In{k}{nat}, \In{cs}{campusSeguro} }{lista(agente)}'
+'\alg{iConKSanciones}{\In{k}{nat}, \In{cs}{estr} }{lista(agente)}'
 	if $cs$.sanciones.huboSanc == true then '\ote{1}'
 		rearmarVectorMismasSanc($cs$) '\ote{$N_a$}'
 	end if
@@ -559,7 +548,7 @@ $\land$
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{rearmarVectorMismasSanc}{\Inout{cs}{camspusSeguro}}{}'
+'\alg{rearmarVectorMismasSanc}{\Inout{cs}{estr}}{}'
 	
 '\ofi{O(N_a)}'
 \end{lstlisting}
