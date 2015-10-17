@@ -514,8 +514,40 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
-	if cantHippiesVecinos
+	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{1}'
+		Definir($cs$.estudiantes, e, pos) '\ote{$|n_a|$}'
+	end if '\ote{$|n_a|$}'
+	
+	Lista(nombre, posicion): listaHippies $\leftarrow$ 
+		$\leftarrow$ HippiesRodeados(pos, vecinos(pos, $cs$.campus), $cs$) '\ote{$|n_a|$}'
+
+	if Longitud(listahippies) $>$ 0 then '\ote{1}'
+		itLista(nombre): itL $\leftarrow$ CrearIt(listahippies) '\ote{1}'
+		Definir($cs$.estudiantes, Siguiente(it).nombre, Siguiente(it).posicion) '\ote{$|n_a|$}'
+		Eliminar($cs$.hippies, Siguiente(it).nombre) '\ote{$|n_a|$}'
+	end if '\ote{$|n_a|$}'
+
 '\ofi{O(|n_a|)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{CantHippiesVecinos}{\In{c}{conj(posicion)}, \In{cs}{estr}}{nat}'
+	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	res $\leftarrow$ $0$
+	
+	while HaySiguiente(itC) do '\ote{1}'
+		itDiccString(nombre, posicion): itDic $\leftarrow$ CrearIt($cs$.hippies) '\ote{1}'
+		
+		while HaySiguiente(itDic) do '\ote{1}'
+			if Siguiente(itDic) = Siguiente(itC) '\ote{1}'
+				res $\leftarrow$ res$+1$ '\ote{1}'
+			end if '\ote{1}'
+		end while '\ote{$|n_a|$}'
+
+		Avanzar(itC) '\ote{1}'
+		end while '\ote{$|n_a|$}'
+
+'\ofi{O(|n_a|) \text{. Como vecinos como maximo tiene longitud 4, la complejidad sería } O(4*|n_a|) = O(|n_a|)}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
