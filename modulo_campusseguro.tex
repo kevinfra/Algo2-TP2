@@ -509,19 +509,19 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iPosAgente}{\In{a}{agente}, \In{cs}{estr} }{posición}'
-	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS)'\ote{1 caso promedio}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).posicion '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iCantSanciones}{\In{a}{agente}, \In{cs}{estr} }{}'
-	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{1 caso promedio}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).cantSanc '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iCantHippiesAtrapados}{\In{a}{agente}, \In{cs}{estr} }{}'
-	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS) '\ote{1 caso promedio}'
+	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).cantAtrapados '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
@@ -533,13 +533,13 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iConKSanciones}{\In{k}{nat}, \In{cs}{estr} }{lista(agente)}'
-	if $cs$.sanciones.huboSanc == true then '\ote{1}'
+	if $cs$.mismasSancModificado == true then '\ote{1}'
 		rearmarVectorMismasSanc($cs$) '\ote{$N_a$}'
 	end if
 
-	esta $\leftarrow$ busqBinAgente(k, i, $cs$.sanciones.vectorMismasSanc) '\ote{log(n)}'
+	esta $\leftarrow$ busqBinAgente($k$, $i$, $cs$) '\ote{log(n)}'
 	if esta == true then '\ote{1}'
-		res $\leftarrow$ *$cs$.sanciones.vectorMismasSanc[i].conjAgente '\ote{1}'
+		res $\leftarrow$ *$cs$.vectorMismasSanc[i].agentes '\ote{1}'
 	else
 		res $\leftarrow$ Vacia() '\ote{1}'
 	end if
@@ -551,6 +551,12 @@ $\land$
 '\alg{rearmarVectorMismasSanc}{\Inout{cs}{estr}}{}'
 	
 '\ofi{O(N_a)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{busqBinAgente}{\In{k}{nat}, \Inout{i}{nat}, \In{cs}{estr}}{}'
+
+'\ofi{O(logN_a)}'
 \end{lstlisting}
 
 
