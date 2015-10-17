@@ -173,7 +173,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ posicionesAgente}{vector(As)}%
 		\tupItem{\\ masVigilante}{As}%
 		\tupItem{\\ listaMismasSanc}{lista(kSanc)}%
-		\tupItem{\\ vectorMismasSanc}{vector(puntero(kSanc))}
+		\tupItem{\\ arregloMismasSanc}{arreglo(puntero(kSanc))}
 		\tupItem{\\ mismasSancModificado}{bool}
 		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
 		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
@@ -235,18 +235,19 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	%done
 	\item Las posiciones en posicionesAgente que no tienen agente tienen un puntero a NULL.
 	%done
-	\item La cantidad de estudiantes, hippies, agentes y obstaculos es menor o igual que la cantidad de coordenadas que tiene el campus.
+	\item La dimension del campus es mayor que la cantidad de estudiantes, hippies, agentes y obstaculos .
 	%done
-	\item La longitud de la lista mismasSanc es la cantidad de sanciones diferentes que hay.
-	
-%	\item Por cada posición de la lista mismasSanc va a estar el conjunto de todos los agentes que tienen la misma cantidad de sanciones.
+	\item La longitud de listaMismasSanc es la cantidad de sanciones diferentes que hay.
+	\item Para cada cantidad de sanciones distinta hay un nodo en listaMismasSanc con esa cantidad de sanciones.
+	\item listaMismasSanc esta ordenada por cantidad de sanciones.
+	\item En cada nodo de listaMismasSanc va a estar el conjunto de todos los agentes que tienen la cantidad de sanciones indicada en el nodo.
+	\item Si mismasSancModificado es falso, vectorMismasSanc tiene misma cantidad de elementos que listaMismasSanc, y cada elemento apunta a un nodo de listaMismasSanc, respetando el orden de listaMismasSanc
+
 %	\item Todos los agentes de personalAS estan en mismasSanc en la posicion del vector que tiene su sanción.
 %	\item La cantidad de agentes en mismasSanc es la misma cantidad de agentes que personalAS
 %	\item Cada agente de personalAS tiene un iterador (posMismasSanc) que apunta al vector mismasSanc en la posición que tiene su misma cantidad de sanciones y otro iterador (posVectorMismasSanc) que apunta a la posicion del vector vectorAgente que posee la posicion en donde esta el otro iterador en donde esta el agente.
 	
 \end{enumerate}
-
-\pagebreak
 
 \Rep[estr][e]{
 	\\
@@ -302,27 +303,27 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\\
 	$\land$
 	\\
-	$\#$Claves($e$.personalAS) $+$ $\#$Claves($e$.hippies) $+$ $\#$Claves($e$.estudiantes) $+$ $\#$Obstaculos($e$.campus) $\leq$ filas($e$.campus)*columnas($e$.campus)
+	$\#$claves($e$.personalAS) $+$ $\#$claves($e$.hippies) $+$ $\#$claves($e$.estudiantes) $+$ $\#$Obstaculos($e$.campus) $\leq$ filas($e$.campus)*columnas($e$.campus)
 	\\
 	$\land$
 	\\
-%	Long($e$.mismasSanc) = $\#$SancionesDistintas($e$.personalAS)
-%	\\
-%	$\land$
-%	\\
-%	($\forall a$: nat) def?($a$, $e$.personalAS) $\Leftrightarrow_L$ ($\exists$ i:nat) $i <$ Longitud($e$.mismasSanc) $\land_L$ $e$.mismasSanc[$i$].sanc = Obtener($a$, $e$.personalAS).cantSanc $\land$ ($\exists j:$ nat) $j <$ Longitud($e$.mismasSanc.vectorAgente) $\land_L$ $e$.mismasSanc[$i$].vectorAgente[$j$] = a
-%	\\
-%	$\land$
-%	\\
-%	$\#$Claves($e$.personalAS) = cantAgentes($e$.mismasSanc)
-%	\\
-%	$\land$
-%	\\
-%	($\forall a$: nat) def?($a$, $e$.personalAS) $\Rightarrow_L$ Siguiente(Obtener($a$, $e$.personalAS).posMismasSanc).sanc = Obtener($a$, $e$.personalAS).cantSanc $\land$ Siguiente(Obtener($a$, $e$.personalAS).posVectorMismasSanc) = $a$
-%	\\
-%	$\land$
-%	\\
-
+	long($e$.listaMismasSanc) = $\#$SancionesDistintas($e$.personalAS)
+	\\
+	$\land$
+	\\
+	($\forall$ sanc : nat)(sanc $\in$ conjSanciones(claves($e$.personalAS), $e$.personalAS) $\Rightarrow$ ($\exists$ nodo : kSanc)(esta?(kSanc, $e$.listaMismasSanc) $\land$ kSanc.sanc = sanc))
+	\\
+	$\land$
+	\\
+	ordenada?($e$.listaMismasSanc)
+	\\
+	$\land$
+	\\
+	($\forall$ nodo : kSanc)(esta?(kSanc, $e$.listaMismasSanc) $\Rightarrow$ agentes(kSanc) $=_{obs}$ agentesKSanc($e$.personalAS, claves($e$.personalAS), sanc(kSanc)))
+	\\
+	$\land$
+	\\
+	$e$.mismasSancModificado $\Rightarrow$ (long($e$.listaMismasSanc) = long(vectorMismasSanc) $\land_L$ mismosNodos($e$.listaMismasSanc, $e$.vectorMismasSanc))
 	
 
 }\mbox{}
@@ -331,7 +332,10 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 \tadOperacion{$\#$ObstaculosAux}{nat,nat,campus}{nat}{}
 \tadOperacion{$\#$SancionesDistintas}{diccNat(agente, datosAgente)}{nat}{}
 \tadOperacion{conjSanciones}{conj(nat), diccNat(agente,datosAgente)}{conj(nat)}{}
-\tadOperacion{cantAgentes}{secu(kSanc}{nat}{}
+\tadOperacion{cantAgentes}{secu(kSanc)}{nat}{}
+\tadOperacion{ordenada?}{secu(kSanc)}{bool}{}
+\tadOperacion{agentesKSanc}{diccNat(agente, datosAgente), conj(agente), nat}{conj(agente)}{}
+\tadOperacion{mismosNodos}{secu(kSanc)/lista, secu(puntero(kSanc))/vec}{bool}{long(lista) = long(vec)}
 
 ~
 
@@ -367,6 +371,41 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\IF $s = <>$ THEN 0
 	ELSE {
 		Long(prim($s$).vectorAgente) + cantAgentes(fin($s$))
+	}
+	FI
+}
+\tadAxioma{ordenada?(lista)}{
+	\IF vacia?(lista) THEN true
+	ELSE{
+		\IF vacia?(fin(lista)) THEN true
+		ELSE{
+			\IF sanc(prim(lista)) < sanc(prim(fin(lista))) THEN ordenada?(fin(lista))
+			ELSE false
+			FI 
+		}
+		FI
+	}
+	FI
+}
+\tadAxioma{agentesKSanc(dicc, claves, k)}{
+	\IF $\emptyset$?(claves) THEN $\emptyset$
+	ELSE{
+		\IF cantSanc(obtener(prim(claves), dicc)) = k THEN
+			Ag(prim(claves), agentesKSanc(dicc, fin(claves), k))
+		ELSE
+			agentesKSanc(dicc, fin(claves), k)
+		FI
+	}
+	FI
+}
+\tadAxioma{mismosNodos(lista, vec)}{
+	\IF vacia?(lista) THEN true
+	ELSE{
+		\IF $\&prim(lista) = prim(vec)$ THEN 
+			mismosNodos(fin(lista), fin(vec))
+		ELSE
+			false
+		FI
 	}
 	FI
 }
@@ -406,43 +445,77 @@ $\land$
 '\alg{icomenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente, datosAgente)}}{estr}' 
 
 	res.campus $\leftarrow$ c '\ote{1}'
+	res.listaMismasSanc $\leftarrow$ generarListaMismasSanc(d) '\ote{$N_a$}'
 	res.personalAS $\leftarrow$ d '\ote{1}'
-	
-	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) '\ote{}'
-
-	res.masVigilante $\leftarrow$ menorPlaca(d) '\ote{}'
+	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) '\ote{(f$*$c)$^2$ + $N_a$}'
+	res.masVigilante $\leftarrow$ menorPlaca(d) '\ote{$N_a$}'
+	res.mismasSancModificado $\leftarrow$ true '\ote{1}'
 	res.hippies $\leftarrow$ Vacio() '\ote{1}'
 	res.estudiantes $\leftarrow$ Vacio() '\ote{1}'
 
-'\ofi{O()}'
+'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) = O((f*c)^2 + N_a)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f,c}{nat}}{vector(AS)}'
+'\alg{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f}{nat}, \In{c}{nat}}{vector(AS)}'
+	res $\leftarrow$ Vacia() '\ote{1}'
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	itDiccNat(agente, datosAgente): it $\leftarrow$ CrearIt(d) '\ote{1}'
+
+	while i $<$ f$*$c do '\ote{1}'
+		AgregarAtras(res, tupla(0,NULL)) '\ote{f$*$c}'
+		i $\leftarrow$ i$+1$ '\ote{1}'
+	end while '\ote{(f$*$c)$^2$}'
 	
-	vectorPos $\leftarrow$ Vacio()
+	while HaySiguiente(it) do '\ote{1}'
+		res[Siguiente(it).significado.posicion.y $*$ c $+$ 
+				Siguiente(it).significado.posicion.x] $\leftarrow$
+			$\leftarrow$ tupla(Siguiente(it).clave, puntero(Siguiente(it).significado)) '\ote{1}'
+	end while '\ote{$N_a$}
+
+'\ofi{O((f*c)^2 + N_a)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{menorPlaca}{\In{d}{diccNat(agente, datosAgente)}}{AS}'
+	itDiccNat(agente, datosAgente): it $\leftarrow$ CrearIt(d) '\ote{1}'
+	nat: placaMenor $\leftarrow$ Siguiente(it).clave '\ote{1}'
+	puntero(datosAgente): punt $\leftarrow$ puntero(Siguiente(it).datosAgente '\ote{1}'
+	while HaySiguiente(d) do '\ote{1}'
+		if Siguiente(it).clave < placaMenor	then '\ote{1}'
+			placaMenor $\leftarrow$ Siguiente(it).clave '\ote{1}'
+			punt $\leftarrow$ puntero(Siguiente(it).datosAgente) '\ote{1}'
+		end if '\ote{1}'
+		Avanzar(it) '\ote{1}'
+	end while '\ote{$N_a$}'
 	
-	while i = 0..f*c do '\ote{1}'
-		itd $\leftarrow$ CrearIt(d) '\ote{1}'
-		AgregarAtras(vectorPos, $<0,NILL>$) '\ote{1}'
-	end while
+	res.agente $\leftarrow$ placaMenor '\ote{1}'
+	res.datos $\leftarrow$ punt '\ote{1}'
 
-	itd $\leftarrow$ CrearIt(d) '\ote{1}'
+'\ofi{O(N_a)}'
+\end{lstlisting}
 
-	while HaySiguiente(itd) do
-		
-	
+\begin{lstlisting}[mathescape]
+'\alg{generarListaMismasSanc}{\Inout{d}{diccNat(agente, datosAgente)}}{lista(kSanc)}'
+	itDiccNat(agente, datosAgente): itDic $\leftarrow$ CrearIt(d) '\ote{1}'
+	res $\leftarrow$ Vacia() '\ote{1}'
+	AgregarAdelante(res, tupla(0,Vacio())) '\ote{1 (esta vacío el vector)}'
+	itLista(kSanc): itL $\leftarrow$ CrearIt(res) '\ote{1}'
 
+	while HaySiguiente(itDic) do '\ote{1}'
+		itConj(agente): itC $\leftarrow$ AgregarRapido(res.agentes, Siguiente(itDic).clave) '\ote{1}'
+		Siguiente(itDic).significado.itConjMismasSanc $\leftarrow$ itC '\ote{1}'
+		Siguiente(itDic).significado.itMismasSanc $\leftarrow$ itL '\ote{1}'
+		Avanzar(itDic) '\ote{1}'
+	end while '\ote{$N_a$}'
 
-
-'\ofi{O()}'
+'\ofi{O(N_a)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
-
-	
-'\ofi{}'
+	if cantHippiesVecinos
+'\ofi{O(|n_a|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -534,163 +607,62 @@ $\land$
 \begin{lstlisting}[mathescape]
 '\alg{iConKSanciones}{\In{k}{nat}, \In{cs}{estr} }{lista(agente)}'
 	if $cs$.mismasSancModificado == true then '\ote{1}'
-		rearmarVectorMismasSanc($cs$) '\ote{$N_a$}'
+		hacerArregloMismasSanc($cs$) '\ote{$N_a$}'
+		$cs$.mismasSancModificado $\leftarrow$ false
 	end if
-
-	esta $\leftarrow$ busqBinAgente($k$, $i$, $cs$) '\ote{log(n)}'
-	if esta == true then '\ote{1}'
+	
+	nat: i $\leftarrow$ 0
+	bool: esta $\leftarrow$ busqBinAgente($k$, i, $cs$.vectorMismasSanc) '\ote{$logN_a$}'
+	if esta = true then '\ote{1}'
 		res $\leftarrow$ *$cs$.vectorMismasSanc[i].agentes '\ote{1}'
 	else
 		res $\leftarrow$ Vacia() '\ote{1}'
 	end if
 
-'\ofi{O(N_a) \text{ la primera vez que se llama y } O(log N_a) \text{ en futuras llamadas mientras no ocurran sanciones.}}'
+'\ofi{\text{Si las sanciones no fueron modificadas: } O(N_a) \text{. Si no } O(logN_a)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{rearmarVectorMismasSanc}{\Inout{cs}{estr}}{}'
+'\alg{hacerArregloMismasSanc}{\Inout{cs}{estr}}{}'
+	arreglo(puntero(kSanc)): arregloNuevo $\leftarrow$ CrearArreglo(Longitud($cs$.listaMismasSanc)) 
+	'\ote{$N_a$}'
+	itLista(kSanc): it $\leftarrow$ CrearIt($cs$.listaMismasSanc) '\ote{1}'
+	nat: i $\leftarrow$ $0$ '\ote{1}'
+
+	while HaySiguiente(it) do '\ote{1}'
+		puntero(kSanc): p $\leftarrow$ puntero(Siguiente(it)) '\ote{1}'
+		arregloNuevo[i] $\leftarrow$ p '\ote{1}'
+		i $\leftarrow$ i $+1$ '\ote{1}'
+		Avanzar(it) '\ote{1}'
+	end while '\ote{$N_a$}'
 	
-'\ofi{O(N_a)}'
+	$cs$.arregloMismasSanc $\leftarrow$ arregloNuevo '\ote{1}'
+
+'\ofi{O(N_a) + O(N_a) = O(N_a) \text{ Como máximo va a ser la cantidad de agentes la lista listaMismasSanc} }'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{busqBinAgente}{\In{k}{nat}, \Inout{i}{nat}, \In{cs}{estr}}{}'
+'\alg{busqBinAgente}{\In{k}{nat}, \Inout{i}{nat}, \In{v}{arreglo(puntero(kSanc))}}{bool}'
+	nat: n $\leftarrow$ $0$ '\ote{1}'
+	nat: m $\leftarrow$ Longitud(v) '\ote{1}'
+	nat: med
+	
+	while n $\neq$ m$-1$ do '\ote{1}'
+		med $\leftarrow$ $\frac{n+m}{2}$ '\ote{1}'
+		if med $\leq$ k then '\ote{1}'
+			n $\leftarrow$ med '\ote{1}'
+		else
+			m $\leftarrow$ med '\ote{1}'
+		end if
+	end while '\ote{$log(N_a)$}'
+
+	if v[n] $=$ k then
+		i $\leftarrow$ n
+		$res$ $\leftarrow$ true
+	else
+		$res$ $\leftarrow$ false
+	end if
 
 '\ofi{O(logN_a)}'
 \end{lstlisting}
 
-
-%de aca para abajo es del tp del cuatri pasado.
-\begin{lstlisting}[mathescape]
-'\alg{Red}{\In{dcn}{dcnet}}{red}'
-
-	res $\leftarrow$ dcn.topologia '\ote{1}'
-
-'\ofi{O(1)}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{CaminoRecorrido}{\In{dcn}{dcnet}, \In{p}{paquete}}{lista(compu)}'
-
-	nat: i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if Definido?(dcn.vectorCompusDCNet[i].diccPaquetesDCNet, p.id) then '\ote{log(k)}'
-			res $\leftarrow$ Siguiente(Obtener(dcn.vectorCompusDCNet[i].diccPaquetesDCNet,
-				p.id)).recorrido '\ote{log(k)}'
-		end if
-		i++ '\ote{1}'
-	end while '\ote{n * log(k)}'
-
-'\ofi{O(n * log(k))}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{CantidadEnviados}{\In{dcn}{dcnet}, \In{c}{compu}}{nat}'
-
-	res $\leftarrow$ Obtener(dcn.diccCompusDCNet, c.ip)$\rightarrow$enviados '\ote{L}'
-
-'\ofi{O(L)}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{EnEspera}{\In{dcn}{dcnet}, \In{c}{compu}}{nat}'
-
-	res $\leftarrow$ Obtener(dcn.diccCompusDCNet, c.ip)$\rightarrow$conjPaquetes '\ote{L}'
-
-'\ofi{O(L)}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{PaqueteEnTransito}{\In{dcn}{dcnet}, \In{p}{paquete}}{bool}'
-
-	res $\leftarrow$ false
-	nat: i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if Definido?(dcn.vectorCompusDCNet[i].diccPaquetesDCNet, p.id) then '\ote{log(k)}'
-			res $\leftarrow$ true '\ote{1}'
-		end if
-		i++ '\ote{1}'
-	end while '\ote{n * log(k)}'
-
-'\ofi{O(n * log(k))}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{LaQueMasEnvio}{\In{dcn}{dcnet}}{compu}'
-
-	res $\leftarrow$ *(dcn.laQueMasEnvio$\rightarrow$pc) '\ote{1}'
-
-'\ofi{O(1)}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{$\puntito$ $=_i$ $\puntito$}{\In{dcn_1}{dcnet}, \In{dcn_2}{dcnet}}{bool}'
-
-	bool: boolTopo $\leftarrow$ $dcn_1$.topologia = $dcn_2$.topologia '\ote{n + $L^2$}'
-	bool: boolVec $\leftarrow$ $dcn_1$.vectorCompusDCNet = $dcn_2$.vectorCompusDCNet '\ote{n * k * (k + n)}'
-	bool: boolConj $\leftarrow$ $dcn_1$.conjPaquetesDCNet = $dcn_2$.conjPaquetesDCNet '\ote{$k^3$ * (k + n)}'
-	bool: boolMasEnvio $\leftarrow$ *($dcn_1$.laQueMasEnvio) = *($dcn_2$.laQueMasEnvio) '\ote{1}'
-
-	res $\leftarrow$ boolTopo $\land$ boolVec $\land$ boolTrie $\land$ boolConj $\land$ boolMasEnvio '\ote{1}'
-
-'\ofi{O(n * k^3 * (k + n))}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{$\puntito$ $=_{compudcn}$ $\puntito$}{\In{c_1}{compuDCNet}, \In{c_2}{compuDCNet}}{bool}'
-
-	bool: boolPC $\leftarrow$ *($c_1$.pc) = *($c_2$.pc) '\ote{1}'
-	bool: boolConj $\leftarrow$ $c_1$.conjPaquetes = $c_1$.conjPaquetes '\ote{$k^2$}'
-	bool: boolAVL $\leftarrow$ true '\ote{1}'
-	bool: boolCola $\leftarrow$ true '\ote{1}'
-	bool: boolPaq $\leftarrow$ Siguiente($c_1$.paqueteAEnviar) $=_{paqdcn}$ Siguiente($c_2$.paqueteAEnviar)
-		'\ote{n}'
-	bool: boolEnviados $\leftarrow$ $c_1$.enviados = $c_2$.enviados '\ote{1}'
-
-	if boolConj then '\ote{1}'
-		itConj: $itconj_1$ $\leftarrow$ CrearIt($c_1$.conjPaquetes) '\ote{1}'
-		while HaySiguiente?($itconj_1$) do '\ote{1}'
-			if Definido?($c_2$.diccPaquetesDCNet, Siguiente($itconj_1$)).id then '\ote{log(n)}'
-				if $\neg$(Siguiente(Obtener($c_1$.diccPaquetesDCNet, Siguiente($itconj_1$).id))
-					$=_{paqdcn}$
-					Siguiente(Obtener($c_1$.diccPaquetesDCNet, Siguiente($itconj_1$).id)))
-					then '\ote{n}'
-					boolAVL $\leftarrow$ false '\ote{1}'
-				end if
-			else
-				boolAVL $\leftarrow$ false '\ote{1}'
-			end if
-			Avanzar($itconj_1$) '\ote{1}'
-		end while '\ote{n * k}'
-	end if
-
-	if EsVacia($c_1$.colaPrioridad) then '\ote{1}'
-		if $\neg$EsVacia($c_2$.colaPrioridad) then '\ote{1}'
-			boolCola $\leftarrow$ false '\ote{1}'
-		end if
-	else
-		if EsVacia($c_1$.colaPrioridad) then '\ote{1}'
-			boolCola $\leftarrow$ false '\ote{1}'
-		else
-			if $\neg$(Siguiente(Proximo($c_1$.colaPrioridad)) $=_{paqdcn}$
-				Siguiente(Proximo($c_2$.colaPrioridad))) then '\ote{n}'
-				boolCola $\leftarrow$ false '\ote{1}'
-			end if
-		end if
-	end if
-
-	res $\leftarrow$ boolPC $\land$ boolConj $\land$ boolAVL $\land$ boolCola $\land$ boolPaq $\land$ boolEnviados '\ote{1}'
-
-'\ofi{O(k^2 + n * k) = O(k * (k + n))}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{$\puntito$ $=_{paqdcn}$ $\puntito$}{\In{p_1}{paqueteDCNet}, \In{p_2}{paqueteDCNet},}{bool}'
-
-	bool: boolPaq $\leftarrow$ Siguiente($p_1$.it) = Siguiente($p_2$.it) '\ote{1}'
-	bool: boolRecorrido $\leftarrow$ $p_1$.recorrido = $p_2$.recorrido '\ote{n}'
-
-	res $\leftarrow$ boolPaq $\land$ boolRecorrido '\ote{1}'
-
-'\ofi{O(n)}'
-\end{lstlisting}
