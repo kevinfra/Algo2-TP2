@@ -196,8 +196,10 @@ operación que modifique d sin utilizar las funciones del iterador.]
 \end{Estructura}
 
 \begin{enumerate}
-	\item No existe dos veces el mismo nat en dos posiciones distintas del vector
-	\item La suma del largo de todas las listas enlazadas que salen del vector, tiene que ser igual al largo del vector
+	\item No existe dos veces el mismo nat en dos posiciones distintas del vector.
+	\item La suma del largo de todas las listas enlazadas que salen del vector, tiene que ser igual al largo del vector.
+	\item Todo significado de la tabla es apuntado por un elemento de listaIterable.
+	\item El largo de listaIterable es igual al largo del vector.
 \end{enumerate}
 
 \subsubsection{Invariante de Representación}
@@ -206,11 +208,17 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \Rep[estr][e]{
 	\\
-			($\forall$ $l_1$, $l_2$ : lista(tupla(nat, $\alpha$))) (( (esta?($l_1$,estr) $\land$ esta?($l_2$, estr)) $\\$
-			\- \- $\Rightarrow$ ($\forall$ $t_1$,$t_2$ : tupla(nat, $\alpha$) esta?($t_1$,l) $\land$ esta?($t_2$,l))) $\\$
-			\- \- $\Rightarrow_{L}$	($\forall$ $n_1$, $n_2$ : nat) $n_1 =_{obs} t_1$.clave $\land n_2 =_{obs} \ t_2$.clave $\land$ $t_1$ $\not =$ $t_2$) $\Rightarrow$ $n_1 \not = n_2$ $\\$
-			$\land$ $\\$
-			largosDeListas(estr) $=_{obs}$ longitud(estr)
+	($\forall$ $l_1$, $l_2$ : lista(tupla(nat, $\alpha$))) (( (esta?($l_1$,e.tabla) $\land$ esta?($l_2$, e.tabla)) $\\$
+	\- \- $\Rightarrow$ ($\forall$ $t_1$,$t_2$ : tupla(nat, $\alpha$) esta?($t_1$,l) $\land$ esta?($t_2$,l))) $\\$
+	\- \- $\Rightarrow_{L}$	($\forall$ $n_1$, $n_2$ : nat) $n_1 =_{obs} t_1$.clave $\land n_2 =_{obs} \ t_2$.clave $\land$ $t_1$ $\not =$ $t_2$) $\Rightarrow$ $n_1 \not = n_2$ 
+	$\\ \land \\$
+	largosDeListas(e.tabla) $=_{obs}$ longitud(e.tabla)
+	$\\ \land \\$
+	($\forall$ l : lista(tupla(nat, $\alpha$)))(esta?(l, e.tabla) 
+		\\ $\Rightarrow$ ($\forall$ t : tupla(nat, $\alpha$))(esta?(t, l) 
+		\\ $\Rightarrow$ ($\exists$ p : puntero($\alpha$)($\&$significado(t) $=_{obs}$ p $\land$ esta?(p, e.listaIterable)))))
+	$\\ \land \\$
+	long(e.tabla) $=_{obs}$ long(e.listaIterable)
 }\mbox{}
 
 \tadOperacion{largosDeListas}{secu(secu(tupla(nat,$\alpha$)))}{nat}{}
