@@ -4,7 +4,7 @@
 
 \textbf{se explica con}: \tadNombre{Diccionario(nat, $\alpha$ )}.
 
-\textbf{géneros}: \TipoVariable{DiccNat($\alpha$)}.
+\textbf{géneros}: \TipoVariable{DiccNat($\alpha$)}, \TipoVariable{itDiccNat($\alpha$)}.
 
 \subsubsection{Operaciones básicas de DiccNat($\alpha$)}
 
@@ -78,31 +78,12 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 ~
 
-\InterfazFuncion{HayAnterior}{\In{it}{itDiccNat($\alpha$)}}{bool}
-[true]
-{res $=_{obs}$ hayAnterior?($it$)}
-[$\Theta(1)$]
-[devuelve true si y sólo si en el iterador todavía quedan elementos para retroceder.]
-[]
-
-~
-
 \InterfazFuncion{Siguiente}{\In{it}{itDiccNat($\alpha$)}}{tupla(nat,$\alpha$)}
 [haySiguiente?(it)]
 {alias(res $=_{obs}$ Siguiente($it$))}
 [$\Theta(1)$]
 [devuelve el elemento siguiente del iterador.]
 [res.significado es modificable si y sólo si it es modificable. En cambio, res.clave no es modificable.]
-
-~
-
-
-\InterfazFuncion{SiguienteClave}{\In{it}{itDiccNat($\alpha$)}}{nat}
-[haySiguiente?(it)]
-{alias(res $=_{obs}$ haySiguiente?($it$).clave)}
-[$\Theta(1)$]
-[devuelve la clave del elemento siguiente del iterador.]
-[res no es modificable]
 
 ~
 
@@ -115,47 +96,11 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 ~
 
-\InterfazFuncion{Anterior}{\In{it}{itDiccNat($\alpha$)}}{tupla(nat,$\alpha$)}
-[hayAnterior?(it)]
-{alias(res $=_{obs}$ Anterior($it$))}
-[$\Theta(1)$]
-[devuelve el elemento anterior del iterador.]
-[res.significado es modificable si y sólo si it es modificable. En cambio, res.clave no es modificable.]
-
-~
-
-\InterfazFuncion{AnteriorClave}{\In{it}{itDiccNat($\alpha$)}}{nat}
-[hayAnterior?(it)]
-{alias(res $=_{obs}$ haySiguiente?($it$).clave)}
-[$\Theta(1)$]
-[devuelve la clave del elemento anterior del iterador]
-[res no es modificable.]
-
-~
-
-\InterfazFuncion{AnteriorSignificado}{\In{it}{itDiccNat($\alpha$)}}{$\alpha$}
-[hayAnterior?(it)]
-{alias(res $=_{obs}$ haySiguiente?($it$).significado)}
-[$\Theta(1)$]
-[devuelve el significado del elemento anterior del iterador]
-[res es modificable si y sólo si it es modficable.]
-
-~
-
 \InterfazFuncion{Avanzar}{\Inout{it}{itDiccNat($\alpha$)}}{}
 [it $=$ it$_0$ $\land$ haySiguiente?(it)]
 {it $=_{obs}$ avanzar(it$_0$)}
 [$\Theta(1)$]
 [avanza a la posicion siguiente del iterador.]
-[]
-
-~
-
-\InterfazFuncion{Retroceder}{\Inout{it}{itDiccNat($\alpha$)}}{}
-[it $=$ it$_0$ $\land$ hayAnterior?(it)]
-{it $=_{obs}$ hayAnterior?(it$_0$)}
-[$\Theta(1)$]
-[retrocede a la posicion anterior del iterador.]
 []
 
 ~
@@ -234,29 +179,9 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \subsection{Representaci\'on del iterador de DiccNat}
 
-\begin{Estructura}{itDiccNat($\alpha$)}[itDiccNat donde itDiccNat es $\newline$ \- \- \- \- vector(tupla $<$clave : nat, significado : $\alpha>$))]
+\begin{Estructura}{itDiccNat($\alpha$)}[itDiccNat donde itDiccNat es $\newline$ \- \- \- \- itLista(tupla(nat,$\alpha$))]
 
 \end{Estructura}
-
-\begin{enumerate}
-	\item La suma del largo de las listas siguientes($it$) y anteriores($it$) es igual al numero de claves del diccionario.
-	\item Todas las claves que estan en el diccionario, son vistas por el iterador.
-\end{enumerate}
-
-\subsubsection{Invariante de Representación}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% A SEGUIR CON EL REP Y EL ABS!!!!!!
-
-\Rep[itDiccNat][it]{
-	\\
-			($\forall$ $d$ : DiccNat($\alpha$)) longitud(anteriores($it$)) + longitud(siguientes($it$)) = $\#$claves(d)
-			%\- \- $\Rightarrow$ ($\forall$ $t_1$,$t_2$ : tupla(nat, $\alpha$) esta?($t_1$,l) $\land$ esta?($t_2$,l))) $\\$
-			%\- \- $\Rightarrow_{L}$	($\forall$ $n_1$, $n_2$ : nat) $n_1 =_{obs} t_1$.clave $\land n_2 =_{obs} \ t_2$.clave $\land$ $t_1$ $\not =$ $t_2$) $\Rightarrow$ $n_1 \not = n_2$ $\\$
-			%$\land$ $\\$
-			%largosDeListas(estr) $=_{obs}$ longitud(estr)
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%REP Y ABS!!!
 
 \subsection{Algoritmos}
 
@@ -336,6 +261,47 @@ operación que modifique d sin utilizar las funciones del iterador.]
 '\alg{cantClaves}{\In{d}{DiccNat($\alpha$)}}{nat}'
 
 	res $\leftarrow$ longitud(d) '\ote{1}'
+
+'\ofi{O(1)}'
+\end{lstlisting}
+
+
+\begin{lstlisting}[mathescape]
+'\alg{cantClaves}{\In{d}{DiccNat($\alpha$)}}{nat}'
+
+	res $\leftarrow$ longitud(d) '\ote{1}'
+
+'\ofi{O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{CrearIt}{\In{d}{DiccNat($\alpha$)}}{itDiccNat($\alpha$)}'
+
+	res $\leftarrow$ crearIt(d.listaIterable) '\ote{1}'
+
+'\ofi{O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{HaySiguiente}{\In{it}{itDiccNat($\alpha$)}}{bool}'
+
+	res $\leftarrow$ HaySiguiente(it)
+
+'\ofi{O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{Siguiente}{\In{it}{itDiccNat($\alpha$)}}{tupla(nat,$\alpha$)}'
+
+	res $\leftarrow$ Siguiente(it)
+
+'\ofi{O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{Avanzar}{\Inout{it}{itDiccNat($\alpha$)}}{}'
+
+	res $\leftarrow$ Avanzar(it)
 
 '\ofi{O(1)}'
 \end{lstlisting}
