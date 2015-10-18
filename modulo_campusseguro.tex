@@ -514,8 +514,16 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
+	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$ AND 
+	AND AlMenosUnAgente(vecinos(pos, $cs$.campus) then '\ote{$|n_a|$}'
+		conj(As): conjAgParaSanc $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
+	end if '\ote{1}'
+
 	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_a|$}'
 		Definir($cs$.estudiantes, e, pos) '\ote{$|n_a|$}'
+	else
+		Definir($cs$.hippies, e, pos) '\ote{$|n_a|$}'
 	end if '\ote{$|n_a| + |n_a|$}'
 	
 	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$ 
@@ -547,13 +555,46 @@ $\land$
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
+'\alg{SancionarAgentes}{\In{c}{conj(As)}, \Inout{cs}{estr}}{}'
+	itConj(As): itC $\leftarrow$ CrearIt(c) '\ote{1}'
+
+	while HaySiguiente(itC) do '\ote{1}'
+		*Siguiente(itC).datos.cantSanccantSanc $\leftarrow$
+			$\leftarrow$ *Siguiente(itC).datos.cantSanc$+1$ '\ote{1}'
+		itLista(kSanc): itLis $\leftarrow$ *Siguiente(itC).datos.itMismasSanc'\ote{1}'
+
+		if HaySiguiente(*Siguiente(itC).datos.itMismasSanc) then '\ote{1}'
+			Avanzar(*Siguiente(itC).datos.itMismasSanc)
+			if Siguiente(*Siguiente(itC).datos.itMismasSanc).sanc = 
+			*Siguiente(itC).datos.cantSanc then '\ote{1}'
+			else
+				AgregarComoAnterior(*Siguiente(itC).datos.itMismasSanc,
+					tupla(*Siguiente(itC).datos.cantSanc, Vacio())) '\ote{1}'
+				Retroceder(*Siguiente(itC).datos.itMismasSanc) '\ote{1}'
+			end if
+
+		else
+			AgregarComoSiguiente(*Siguiente(itC).datos.itMismasSanc,
+				tupla(*Siguiente(itC).datos.cantSanc, Vacio()) '\ote{1}'
+			Avanzar(*Siguiente(itC).datos.itMismasSanc) '\ote{1}'
+		end if
+		
+		EliminarSiguiente(*Siguiente(itC).datos.itConjMismasSanc) '\ote{1}'
+		*Siguiente(itC).datos.itConjMismasSanc $\leftarrow$
+			$\leftarrow$ AgregarAdelante(*Siguiente(itC).datos.itMismasSanc.agentes, 
+				*Siguiente(itC).agente) '\ote{1}'
+	end while '\ote{1}'
+
+'\ofi{O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
 '\alg{HippiesRodeadosAs}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(nombre, posicion)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	res $\leftarrow$ Vacio() '\ote{1}'
 
 	while HaySiguiente(itC) do '\ote{1}'
 		itDiccString(nombre, posicion) itDiccS $\leftarrow$ CrearIt($cs$.hippies) '\ote{1}'
-
 		while HaySiguiente(itDiccS) AND Siguiente(itDiccS) $\neq$ Siguiente(itC) do '\ote{1}'
 		Avanzar(itDiccS) '\ote{1}'
 		end while '\ote{$|n_a|$}'
@@ -565,18 +606,18 @@ $\land$
 				Siguiente(itDiccS)) '\ote{1}'
 
 			conj(As): conjAgPremiar $\leftarrow$
-			$\leftarrow$ AgParaPremiar(vecinos(Siguiente(itDiccS), $cs$), $cs$) '\ote{}'
-			PremiarAgentes(conjAgPremiar, $cs$) '\ote{}'
+			$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itDiccS), $cs$), $cs$) '\ote{1}'
+			PremiarAgentes(conjAgPremiar, $cs$) '\ote{1}'
 
 		end if '\ote{$|n_a|$}'
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{$4|n_a|$}'
+	end while '\ote{$4 * 2|n_a|$}'
 
-'\ofi{}'
+'\ofi{O(4 * 2|n_a|) = O(|n_a|) \text{. La cantidad maxima del conjunto de posicion es 4.}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{AgParaPremiar}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(As)}'
+'\alg{AgParaPremSanc}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(As)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	res $\leftarrow$ Vacio() '\ote{1}'
 
