@@ -642,6 +642,27 @@ $\land$
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
+'\alg{TodosEstudiantes}{\In{c}{conj(posicion)}, \In{cs}{estr} }{bool}'
+	itConj(posicion): itC $\leftarrow$ CrearIt(c)
+	res $\leftarrow$ true
+	
+	while HaySiguiente(itC) AND res = true do '\ote{1}'
+		itDiccString(nombre, posicion): itEst $\leftarrow$ CrearIt($cs$.estudiantes) '\ote{1}'
+		while HaySiguiente(itEst) AND Siguiente(itEst) $\neq$ Siguiente(itC) '\ote{1}'
+			Avanzar(itEst) '\ote{1}'
+		end while '\ote{$|n_a|$}'
+
+		if HaySiguiente(itEst) = false then '\ote{1}'
+			res $\leftarrow$ false '\ote{1}'
+		end if '\ote{1}'
+
+		Avanzar(itC) '\ote{1}'
+	end while '\ote{$4|n_a|$}'
+
+'\ofi{O(4|n_a|) = O(|n_a|) \text{. Como el conjunto c tiene como maximo longitud 4, la complejidad sería } O(|n_a|)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
 '\alg{iIngresarHippie}{\In{h}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} }{}'
 
 	
