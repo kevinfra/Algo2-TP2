@@ -11,7 +11,7 @@
 \InterfazFuncion{crearCampus}{\In{alto}{nat}, \In{ancho}{nat}}{campus}
 [true]
 {res $=_{obs}$ crearCampus(alto, ancho)}
-[$O(1)$]
+[$O((alto * ancho)^2)$]
 [Crea un nuevo campus tomando un alto y un ancho]
 []
 
@@ -48,7 +48,7 @@
 \InterfazFuncion{ocupada?}{\In{c}{campus}, \In{pos}{posicion}}{bool}
 [posValida(pos,c)]
 {res $=_{obs}$ ocupada(pos,c)}
-[$O(n)$ donde n es la cantidad de obstaculos]
+[$O(1)$]
 [Devuelve true si la posicion esta ocupada por un obstaculo]
 []
 
@@ -134,7 +134,7 @@
 	\begin{Tupla}[estr]
 		\tupItem{filas}{nat}
 		\tupItem{columnas}{nat}
-		\tupItem{obstaculos}{conj(posicion)}
+		\tupItem{obstaculos}{vector(bool)}
 	\end{Tupla}
 \end{Estructura}
 
@@ -143,15 +143,11 @@
 \renewcommand{\labelenumi}{(\Roman{enumi})}
 
 \begin{enumerate}
-	\item{La cantidad de obstaculos no puede ser mayor al producto de filas por columnas}
-	\item{Las posiciones de los obstaculos deben ser validas, es decir, estar dentro de la grilla}
-
+	\item{El largo del vector es igual al producto de filas por columnas}
 \end{enumerate}
 
 \Rep[estr][e]{
-	\\
-	\#obstaculos $\leq$ filas * columnas $\land$ \\
-	($\forall pos$: posicion)(x(pos) $\leq$ columnas $\land$ y(pos) $\leq$ filas)
+	long(obstaculos) $\leq$ filas * columnas 
 }\mbox{}
 
 \subsubsection{Funci\'on de Abstracci\'on}
@@ -160,7 +156,8 @@
 	\\
 	filas(cs) = e.filas $\land$ \\
 	columnas(cs) = e.columnas $\land$ \\
-	($\forall pos$: posicion)(posValida?(pos,cs) $\Rightarrow_L$ (ocupada?(pos, cs) = pos $\in$ cs))
+	($\forall pos$: posicion)(posValida?(pos,cs) $\Rightarrow_L$ 
+	\\ \- \- \- \- (ocupada?(pos, cs) = e.obstaculos[pos.y * e.columnas + pos.x]))
 }
 
 \subsection{Algoritmos}
@@ -170,9 +167,14 @@
 \begin{lstlisting}[mathescape]
 '\alg{crearCampus}{\In{alto}{nat}, \In{ancho}{nat}}{estr}'
 	
-    res.filas $\leftarrow$ alto '\ote{1}'
-    res.columnas $\leftarrow$ ancho '\ote{1}'
-    res.obstaculos $\leftarrow$ Vacio() '\ote{1}'
+    res.filas $\leftarrow$ alto 					'\ote{1}'
+    res.columnas $\leftarrow$ ancho 				'\ote{1}'
+
+    nat : pos $\leftarrow$ 0 						'\ote{1}'
+    while(pos < alto * ancho) do 					'\ote{1}'
+    	AgregarAtras(res.obstaculos, false)			'\ote{alto * ancho}'
+    end while										'\ote{$(alto * ancho)^2$}'
+    res.obstaculos $\leftarrow$ Vacio() 			'\ote{1}'
     
 '\ofi{O(1)}'
 \end{lstlisting}
@@ -180,7 +182,7 @@
 \begin{lstlisting}[mathescape]
 '\alg{agregarObstaculo}{\Inout{cs}{campus}, \In{pos}{posicion}}{}'
 
-	AgregarRapido(cs.obstaculos, pos) '\ote{1}'	
+	cs.obstaculos[pos.y * cs.columnas + pos.x] $\leftarrow$ true '\ote{1}'	
 
 '\ofi{O(1)}'
 \end{lstlisting}
@@ -204,7 +206,7 @@
 \begin{lstlisting}[mathescape]
 '\alg{ocupada?}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
 
-	res $leftarrow$ Pertenece?(cs.obstaculos, pos) '\ote{n}'
+	res $\leftarrow$ cs.obstaculos[pos.y * cs.columnas + pos.x] '\ote{1}'
 
 '\ofi{O(n)}'
 \end{lstlisting}
@@ -286,7 +288,7 @@
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'alg{ingresosMasCercanos}{\In{cs}{campus}, \In{pos}{posicion}}{conj(posicion)}'
+'\alg{ingresosMasCercanos}{\In{cs}{campus}, \In{pos}{posicion}}{conj(posicion)}'
 
 	res $\leftarrow$ Vacio()										'\ote{1}'
 
