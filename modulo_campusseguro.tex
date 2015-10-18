@@ -627,6 +627,21 @@ $\land$
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
+'\alg{AlMenosUnAgente}{\In{c}{conj(posicion)}, \In{cs}{estr} }{bool}'
+	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	res $\leftarrow$ false '\ote{1}'
+
+	while HaySiguiente(itC) do '\ote{1}'
+		if $cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x].datos $\neq$
+		$\neq$ NULL then '\ote{1}'
+			res $\leftarrow$ true '\ote{1}'
+		end if '\ote{1}'
+	end while '\ote{4}'
+
+'\ofi{O(4) = O(1) \text{. Como el conjunto c tiene maximo 4 posiciones, solo hace el ciclo 4 veces maximo.}}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
 '\alg{iIngresarHippie}{\In{h}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} }{}'
 
 	
