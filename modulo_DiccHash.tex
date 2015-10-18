@@ -53,15 +53,6 @@
 
 ~
 
-\InterfazFuncion{copiar}{\In{d}{DiccNat($\alpha$)}}{DiccNat($\alpha$)}
-[true]
-{res $=_{obs}$ d}
-[$O(n^2 * i * copy(\alpha))$, donde $n$ es el tamaño del DiccNat e $i$ es un valor entre $0$ y $n$ pero que en el caso promedio es $1$]
-[Genera una copia nueva del diccionario.]
-[]
-
-~
-
 \subsubsection{Operaciones básicas del iterador}
 
 Este iterador permite recorrer la tabla de hash sobre la que est\'{a} implementado el diccionario para obtener cada clave con su respectivo significado sin modificar ning\'{u}n dato del diccionario.
@@ -191,14 +182,14 @@ operación que modifique d sin utilizar las funciones del iterador.]
 \begin{Estructura}{DiccNat}[estr]
 	\begin{Tupla}[estr]
 		\tupItem{tabla}{vector(lista(tupla(agente, $\alpha$)))}
-		\tupItem{listaIterable}{lista(puntero($\alpha$))}
+		\tupItem{\\ listaIterable}{lista(puntero(tupla(nat,$\alpha$)))}
 	\end{Tupla}
 \end{Estructura}
 
 \begin{enumerate}
 	\item No existe dos veces el mismo nat en dos posiciones distintas del vector.
 	\item La suma del largo de todas las listas enlazadas que salen del vector, tiene que ser igual al largo del vector.
-	\item Todo significado de la tabla es apuntado por un elemento de listaIterable.
+	\item Toda tupla de la tabla es apuntado por un elemento de listaIterable.
 	\item El largo de listaIterable es igual al largo del vector.
 \end{enumerate}
 
@@ -210,13 +201,13 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	\\
 	($\forall$ $l_1$, $l_2$ : lista(tupla(nat, $\alpha$))) (( (esta?($l_1$,e.tabla) $\land$ esta?($l_2$, e.tabla)) $\\$
 	\- \- $\Rightarrow$ ($\forall$ $t_1$,$t_2$ : tupla(nat, $\alpha$) esta?($t_1$,l) $\land$ esta?($t_2$,l))) $\\$
-	\- \- $\Rightarrow_{L}$	($\forall$ $n_1$, $n_2$ : nat) $n_1 =_{obs} t_1$.clave $\land n_2 =_{obs} \ t_2$.clave $\land$ $t_1$ $\not =$ $t_2$) $\Rightarrow$ $n_1 \not = n_2$ 
+	\- \- $\Rightarrow_{L}$	($\forall$ $n_1$, $n_2$ : nat) $n_1 =_{obs} t_1$.clave $\land n_2 =_{obs} \ t_2$.clave $\land$ $t_1$ $\not =$ $t_2$) $\Rightarrow$ $n_1 \not = n_2$
 	$\\ \land \\$
 	largosDeListas(e.tabla) $=_{obs}$ longitud(e.tabla)
 	$\\ \land \\$
-	($\forall$ l : lista(tupla(nat, $\alpha$)))(esta?(l, e.tabla) 
-		\\ $\Rightarrow$ ($\forall$ t : tupla(nat, $\alpha$))(esta?(t, l) 
-		\\ $\Rightarrow$ ($\exists$ p : puntero($\alpha$)($\&$significado(t) $=_{obs}$ p $\land$ esta?(p, e.listaIterable)))))
+	($\forall$ l : lista(tupla(nat, $\alpha$)))(esta?(l, e.tabla)
+		\\ $\Rightarrow$ ($\forall$ t : tupla(nat, $\alpha$))(esta?(t, l)
+		\\ $\Rightarrow$ ($\exists$ p : puntero($\alpha$)($\&$t $=_{obs}$ p $\land$ esta?(p, e.listaIterable)))))
 	$\\ \land \\$
 	long(e.tabla) $=_{obs}$ long(e.listaIterable)
 }\mbox{}
@@ -236,10 +227,37 @@ operación que modifique d sin utilizar las funciones del iterador.]
 \subsubsection{Funci\'on de Abstracci\'on}
 
 \Abs[estr]{Diccionario}[e]{dicc}{
-	($\forall$ $l$ : lista(tupla(nat, $\alpha$))) ((esta?($l$,estr) $\\$
+	($\forall$ $l$ : lista(tupla(nat, $\alpha$))) ((esta?($l$,e.tabla) $\\$
 	\- \- $\Rightarrow$ ($\forall$ $t$ : tupla(nat, $\alpha$)) esta?($t$,l) $\\$
 	\- $\Rightarrow_{L}$ ($\forall$ $n$ : nat) $n =_{obs} t$.clave $\Leftrightarrow$ $\\$ def?($n$, dicc) $\land_L$ obtener($n$, dicc) $=_{obs}$ $t$.significado))
 }
+
+\subsection{Representaci\'on del iterador de DiccNat}
+
+\begin{Estructura}{itDiccNat($\alpha$)}[itDiccNat donde itDiccNat es $\newline$ \- \- \- \- vector(tupla $<$clave : nat, significado : $\alpha>$))]
+
+\end{Estructura}
+
+\begin{enumerate}
+	\item La suma del largo de las listas siguientes($it$) y anteriores($it$) es igual al numero de claves del diccionario.
+	\item Todas las claves que estan en el diccionario, son vistas por el iterador.
+\end{enumerate}
+
+\subsubsection{Invariante de Representación}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% A SEGUIR CON EL REP Y EL ABS!!!!!!
+
+\Rep[itDiccNat][it]{
+	\\
+			($\forall$ $d$ : DiccNat($\alpha$)) longitud(anteriores($it$)) + longitud(siguientes($it$)) = $\#$claves(d)
+			%\- \- $\Rightarrow$ ($\forall$ $t_1$,$t_2$ : tupla(nat, $\alpha$) esta?($t_1$,l) $\land$ esta?($t_2$,l))) $\\$
+			%\- \- $\Rightarrow_{L}$	($\forall$ $n_1$, $n_2$ : nat) $n_1 =_{obs} t_1$.clave $\land n_2 =_{obs} \ t_2$.clave $\land$ $t_1$ $\not =$ $t_2$) $\Rightarrow$ $n_1 \not = n_2$ $\\$
+			%$\land$ $\\$
+			%largosDeListas(estr) $=_{obs}$ longitud(estr)
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%REP Y ABS!!!
+
 \subsection{Algoritmos}
 
 \lstset{style=alg}
@@ -249,14 +267,16 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 		nat : i $\leftarrow$ 0 '\ote{1}'
 		while i < longitud(v) do '\ote{1}'
-			AgregarAtras(res, vacia()) '\ote{i}'
+			AgregarAtras(res, vacia()) '\ote{1}'
 		end while '\ote{$\sum_{i=0}^{n}$ i}'
 		i $\leftarrow$ 0 '\ote{1}'
 		while i < longitud(v) do '\ote{1}'
 			nat : k $\leftarrow$ v[i].clave mod longitud(v) '\ote{1}'
 			AgregarAtras(res[k], v[i]) '\ote{copy($\alpha$)}'
+			nat : q $\leftarrow$ longitud(res[k]) '\ote{i}'
+			AgregarAtras(res.listaIterable, puntero(res.tabla[k][q-1])) '\ote{1}'
 			i++ '\ote{1}'
-		end while '\ote{n * copy($\alpha$)}'
+		end while '\ote{n * copy($\alpha$) }'
 
 '\ofi{O(n^2 + n * copy(\alpha)))}'
 \end{lstlisting}
@@ -318,21 +338,4 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	res $\leftarrow$ longitud(d) '\ote{1}'
 
 '\ofi{O(1)}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{copiar}{\In{d}{DiccNat($\alpha$)}}{DiccNat($\alpha$)}'
-
-	nat : k $\leftarrow$ 0 '\ote{1}'
-	while k < longitud(d) do '\ote{1}'
-		AgregarAtras(res, vacia()) '\ote{k}'
-		nat : i $\leftarrow$ 0 '\ote{1}'
-		while i < long(d[k]) do '\ote{1}'
-			AgregarAtras(res[k], d[k][i]) '\ote{copy($\alpha$)}'
-			i++ '\ote{1}'
-		end while '\ote{i}'
-		k++ '\ote{1}'
-	end while '\ote{n * k  * i}'
-
-'\ofi{O(n^2 * i * copy(\alpha))} %donde $i$ es 1 en caso promedio y $k$ crece en funcion de $n$ hasta llegar a $n$}'
 \end{lstlisting}
