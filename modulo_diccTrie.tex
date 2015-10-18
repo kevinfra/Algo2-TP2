@@ -1,12 +1,26 @@
 \section{Módulo Diccionario String($\alpha$)}
 
+Se representa mediante un árbol n-ario con invariante de trie. Las claves son strings y permite acceder a un significado en un tiempo en el peor caso igual a la longitud de la palabra (string) más larga y definir un significado en el mismo tiempo más el tiempo 
+de copy(s) ya que los significados se almacenan por copia.
+
 \subsection{Interfaz}
+
+\textbf{parametros formales}
+
+\textbf{géneros}: \TipoVariable{$\alpha$}.
+
+\textbf{funcion}: \InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
+				  [true]
+				  {res $=_{obs}$ s}
+				  [$O(copy(s))$]
+				  [funcion de copia de $\alpha$.]
+				  []
 
 \textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}.
 
-\textbf{géneros}: \TipoVariable{diccString($\alpha$)}.
+\textbf{géneros}: \TipoVariable{diccString($\alpha$), itDiccString($\alpha$)}.
 
-Se representa mediante un árbol n-ario con invariante de trie
+
 
 ~
 
@@ -53,10 +67,85 @@ Se representa mediante un árbol n-ario con invariante de trie
 [$ d \igobs d_0 \land $ def?($d$, $c$)]
 {$ d \igobs$ borrar($d_0$, $c$)}
 [$O(|n_m|)$]
-[Borra la clave $c$ del diccionario.]
+[Borra la clave $c$ del diccionario y su significado.]
 []
 
 ~
+
+\subsubsection{Operaciones básicas del iterador}
+
+Este iterador permite recorrer el trie sobre el que est\'{a} implementado el diccionario para obtener cada clave los significados. Las claves de los elementos iterados no
+pueden modificarse nunca por cuestiones de implementación. El iterador es un iterador de lista, que recorre listaIterable por lo que sus operaciones son identicas a ella.
+
+\InterfazFuncion{CrearIt}{\In{d}{diccString($\alpha$)}}{itDiccString($\alpha$)}
+[true]
+{alias(esPermutación(SecuSuby($res$), $d$)) $\land$ vacia?(Anteriores($res$))}
+[$\Theta(1)$]
+[crea un iterador bidireccional del diccionario, de forma tal que HayAnterior evalúe a false (i.e.,
+que se pueda recorrer los elementos aplicando iterativamente Siguiente).]
+[El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función
+EliminarSiguiente. Además, anteriores(res) y siguientes(res) podrían cambiar completamente ante cualquier
+operación que modifique d sin utilizar las funciones del iterador.]
+
+~
+
+\InterfazFuncion{HaySiguiente}{\In{it}{itDiccString($\alpha$)}}{bool}
+[true]
+{res $=_{obs}$ haySiguiente?($it$)}
+[$\Theta(1)$]
+[devuelve true si y sólo si en el iterador todavía quedan elementos para avanzar.]
+[]
+
+~
+
+\InterfazFuncion{HayAnterior}{\In{it}{itDiccString($\alpha$)}}{bool}
+[true]
+{res $=_{obs}$ hayAnterior?($it$)}
+[$\Theta(1)$]
+[devuelve true si y sólo si en el iterador todavía quedan elementos para retroceder.]
+[]
+
+
+
+~
+
+\InterfazFuncion{SiguienteSignificado}{\In{it}{itDiccString($\alpha$)}}{$\alpha$}
+[haySiguiente?(it)]
+{alias(res $=_{obs}$ haySiguiente?($it$).significado)}
+[$\Theta(1)$]
+[devuelve el significado del elemento siguiente del iterador]
+[res es modificable si y sólo si it es modficable.]
+
+~
+
+
+\InterfazFuncion{AnteriorSignificado}{\In{it}{itDiccString($\alpha$)}}{$\alpha$}
+[hayAnterior?(it)]
+{alias(res $=_{obs}$ haySiguiente?($it$).significado)}
+[$\Theta(1)$]
+[devuelve el significado del elemento anterior del iterador]
+[res es modificable si y sólo si it es modficable.]
+
+~
+
+\InterfazFuncion{Avanzar}{\Inout{it}{itDiccString($\alpha$)}}{}
+[it $=$ it$_0$ $\land$ haySiguiente?(it)]
+{it $=_{obs}$ avanzar(it$_0$)}
+[$\Theta(1)$]
+[avanza a la posicion siguiente del iterador.]
+[]
+
+~
+
+\InterfazFuncion{Retroceder}{\Inout{it}{itDiccString($\alpha$)}}{}
+[it $=$ it$_0$ $\land$ hayAnterior?(it)]
+{it $=_{obs}$ hayAnterior?(it$_0$)}
+[$\Theta(1)$]
+[retrocede a la posicion anterior del iterador.]
+[]
+
+~
+
 
 \pagebreak
 
@@ -90,178 +179,71 @@ Se representa mediante un árbol n-ario con invariante de trie
 	\item Raiz es la raiz del arbol con invariante de trie y es un arreglo de 27 posiciones.
 	\item Cada uno de los elementos de la lista tiene que ser un puntero a un Nodo del trie.
 	\item Nodo es una tupla que contiene un arreglo de 27 posiciones con un puntero a otro Nodo en cada posicion
-	,un elemento info que es el alfa que contiene esa clave del arbol, y un elemento iterador que es un puntero
-	a un nodo de la lista enlazada.
+	,un elemento info que es el alfa que contiene esa clave del arbol, un elemento infoValida y un elemento iterador que es un puntero a un nodo de la lista enlazada.
 	\item El iterador a la lista enlazada de cada nodo tiene que apuntar al elemento de la lista que apunta al 
 	mismo Nodo.
+	\item Cada uno de los nodos de la lista apunta a un nodo del arbol cuyo infoEnLista apunta al mismo nodo de la lista.
 
 \end{enumerate}
 
-\pagebreak
 
-\Rep[estr][e]
-	\\
+
 	($\forall c$: diccString($(\alpha)$))()
 
 \Rep[estr][e]{
 	\\
-	tamaño(raiz)==27 $\land$
+	longitud(e.raiz)==27 $\yluego$
 	\\
-	($\forall i$ $\in$ [0..tamaño(raiz)($c$ $\in$ computadoras($e$.topologia) $\Leftrightarrow$ \\
-	\- ( \\
-	\- \- ($\exists cd$: compuDCNet)
-	(está?($cd$, $e$.vectorCompusDCNet) $\land$ ($cd$.pc = puntero($c$)) $\land$ \\
-	\- \- ($\exists s$: string)(def?($s$, $e$.diccCompusDCNet) $\land$ ($s$ = $c$.ip))) \\
-	\- ) \\
-	) $\yluego$\\
-	($\forall cd$: compuDCNet)(está?($cd$, $e$.vectorCompusDCNet) $\Leftrightarrow$ \\
-	\- ($\exists s$: string)(($s$ = $cd$.pc$\rightarrow$ip) $\land$
-		def?($s$, $e$.diccCompusDCNet) $\yluego$ \\
-	\- obtener($s$, $e$.diccCompusDCNet) = puntero($cd$)) \\
-	) $\yluego$\\
-	($\exists cd$: compuDCNet)(está?($cd$, $e$.vectorCompusDCNet) $\yluego$ \\
-	*($cd$.pc) = compuQueMásEnvió($e$.vectorCompusDCNet) $\land$ $e$.laQueMásEnvió = puntero($cd$)) $\yluego$\\
-	($\forall cd_1$: compuDCNet)(está?($cd_1$, $e$.vectorCompusDCNet) $\implies$ \\
-	\- ($\forall p_1$: paquete)($p_1$ $\in$ $cd_1$.conjPaquetes $\implies$ \\
-	\- \- ($\forall cd_2$: compuDCNet)((está?($cd_2$, $e$.vectorCompusDCNet)
-		$\land$ $cd_1$ $\neq$ $cd_2$) $\implies$ \\
-	\- \- \- ($\forall p_2$: paquete)($p_2$ $\in$ $cd_2$.conjPaquetes $\implies$
-		$p_1$.id $\neq$ $p_2$.id) \\
-	\- \- ) \\
-	\- ) \\
-	) $\yluego$ \\
-	($\forall cd$: compuDCNet)(está?($cd$, $e$.vectorCompusDCNet) $\implies$ \\
-	\- ( \\
-	\- \- ($\forall p$: paquete)($p$ $\in$ $cd$.conjPaquetes $\Leftrightarrow$ \\
-	\- \- \- ( \\
-	\- \- \- \- (($p$.origen $\in$ computadoras($e$.topologia) $\land$ $p$.destino
-		$\in$ computadoras($e$.topologia) $\land$ \\
-	\- \- \- \- $p$.destino $\neq$ *($cd$.pc)) $\yluego$ \\
-	\- \- \- \- ($\exists sc$: secu(compu))($sc$ $\in$
-		caminosMinimos($e$.topologia, $p$.origen, $p$.destino) $\land$
-		está(*($cd$.pc), $sc$))) $\land$ \\
-	\- \- \- \- ($\exists n$: nat)
-		((def?($n$, $cd$.diccPaquetesDCNet) $\land$ $p$.id = $n$) $\yluego$ \\
-	\- \- \- \- \- ($\exists pdn$: paqueteDCNet)($pdn$ $\in$ $e$.conjPaquetesDCNet $\land$ Siguiente($pdn$.it) = $p$ $\land$ \\
-	\- \- \- \- \- \- (($p$.origen = *($cd$.pc) $\land$ $pdn$.recorrido = *($cd$.pc) $\puntito$ <>) $\lor$ \\
-	\- \- \- \- \- \- ($p$.origen $\neq$ *($cd$.pc) $\land$
-		$pdn$.recorrido $\in$ caminosMinimos($e$.topologia, $p$.origen,
-		*($cd$.pc)))) $\land$ \\
-	\- \- \- \- \- \- Siguiente(obtener($n$, $cd$.diccPaquetesDCNet)) = $pdn$ \\
-	\- \- \- \- \- ) \\
-	\- \- \- \- ) \\
-	\- \- \- ) \\
-	\- \- ) $\yluego$ \\
-	\- \- ($\neg$vacía?($cd$.colaPaquetesDCNet) $\Leftrightarrow$ \\
-	\- \- \- ($\exists p$: paquete)(($p$ $\in$ $cd$.conjPaquetes) $\land$
-		($p$ = paqueteMásPrioridad($cd$.conjPaquetes)) $\land$ \\
-	\- \- \- \- ($\exists pdn$: paqueteDCNet)(($pdn$ $\in$
-		$e$.conjPaquetesDCNet) $\land$ (Siguiente($pdn$.it) = $p$) $\land$ \\
-	\- \- \- \-	(Siguiente(proximo($cd$.colaPaquetesDCNet)) = $pdn$)) \\
-	\- \- \- ) \\
-	\- \- ) $\yluego$ \\
-	\- \- ($cd$.enviados $\geq$ enviadosCompu(*($cd$.pc), $e$.vectorCompusDCNet)) $\land$\\
-	\- \- ($\neg$HaySiguiente?(cd.paqueteAEnviar))
-	\- ) \\
-	)
+	($\forall i$ $\in$ [0..longitud(e.raiz)))\\
+	\- \- ((($\neg$ e.raiz[i] == NULL) $\impluego$
+	nodoValido(raiz[i])) $\land$ ($*$e.raiz[i].infoValida == true $\impluego$ \\
+	iteradorValido(raiz[i]))) $\land$
+	\\
+	listaValida(e.listaIterable)
 }\mbox{}
 
-\tadOperacion{compuQueMásEnvió}{secu(compuDCNet)/scd}{compu}{$\neg$vacía?($scd$)}
-\tadOperacion{maxEnviado}{secu(compuDCNet)/scd}{nat}{$\neg$vacía?($scd$)}
-\tadOperacion{enviaronK}{secu(compuDCNet),nat}{conj(compu)}{}
-\tadOperacion{paqueteMásPrioridad}{conj(paquete)/cp}{paquete}{$\neg \emptyset?(cp)$}
-\tadOperacion{paquetesConPrioridadK}{conj(paquete),nat}{conj(paquete)}{}
-\tadOperacion{altaPrioridad}{conj(paquetes)/cp}{nat}{$\neg \emptyset?(cp)$}
-\tadOperacion{enviadosCompu}{compu,secu(compuDCNet)}{nat}{}
-\tadOperacion{aparicionesCompu}{compu,conj(nat)/cn,dicc(nat,itConj(paqueteDCNet))/dp}{nat}{claves($dp$) $\subseteq$ $cn$}
+\tadOperacion{nodoValido}{puntero(Nodo)/nodo}{bool}{}
+\tadOperacion{iteradorValido}{puntero(Nodo)/nodo}{bool}{}
 
 ~
 
-\tadAxioma{compuQueMásEnvió($scd$)}{dameUno(enviaronK($scd$, maxEnviado($scd$)))}
-\tadAxioma{maxEnviado($scd$)}{
-	\IF vacía?(fin($scd$)) THEN
-		prim($scd$).enviados
-	ELSE
-		max(prim($scd$), maxEnviado(fin($scd$)))
-	FI
+\tadAxioma{nodoValido($nodo$)}{
+	longitud(*nodo.arbolTrie) == 27 $\yluego$
+		\\
+		($\forall i$ $\in$ [0..longitud(*nodo.arbolTrie)))
+		\\
+		(($\neg$ *nodo.arbolTrie[i] == NULL) $\impluego$
+	nodoValido(*nodo.arbolTrie[i]))
 }
-\tadAxioma{enviaronK($scd$, $k$)}{
-	\IF vacía?($scd$) THEN
-		$\emptyset$
-	ELSE {
-		\IF prim($scd$).enviados = $k$ THEN
-			Ag(*(prim($scd$).pc), enviaronK(fin($scd$), $k$))
-		ELSE
-			enviaronK(fin($scd$), $k$)
-		FI
-		}
-	FI
+\tadAxioma{iteradorValido($nodo$)}{
+	PunteroValido(nodo) $\yluego$
+		\\
+		($\forall i$ $\in$ [0..longitud(*nodo.arbolTrie)))
+		\\
+		((*nodo.arbolTrie[i].infoValida == true) $\impluego$
+	iteradorValido(*nodo.arbolTrie[i]))
 }
-\tadAxioma{paqueteMásPrioridad($dcn$, $cp$)}{dameUno(paquetesConPrioridadK($cp$, altaPrioridad($cp$)))}
-
-\tadAxioma{altaPrioridad($cp$)}{
-	\IF $\emptyset$?(sinUno($cp$)) THEN
-		dameUno($cp$).prioridad
-	ELSE
-		min(dameUno($cp$).prioridad, altaPrioridad(sinUno($cp$)))
-	FI
+\tadAxioma{PunteroValido(nodo)}{
+	El iterador perteneciente al nodo (infoEnLista) apunta a
+	un nodo de listaIterable (lista(puntero(Nodo))) cuyo puntero
+	apunta al mismo nodo pasado por parámetro. Es decir se trata
+	de una referencia circular.
 }
 
-\tadAxioma{paquetesConPrioridadK($cp$, $k$)}{
-	\IF $\emptyset$?($cp$) THEN
-		$\emptyset$
-	ELSE {
-		\IF dameUno($cp$).prioridad = $k$ THEN
-			 Ag(dameUno($cp$), paquetesConPrioridadK(sinUno($cp$), $k$))
-		ELSE
-			paquetesConPrioridadK(sinUno($cp$), $k$)
-		FI
-		}
-	FI
-}
-
-\tadAxioma{enviadosCompu($c$, $scd$)}{
-	\IF vacía?($scd$) THEN
-		0
-	ELSE {
-			\IF prim($scd$) = $c$ THEN
-				enviadosCompu($c$, fin($scd$))
-			ELSE {
-				aparicionesCompu($c$, claves(prim($scd$).diccPaquetesDCNet), \\
-				prim($scd$).diccPaquetesDCNet) + enviadosCompu($c$, fin($scd$))
-				}
-			FI
-		}
-	FI
-}
-
-\tadAxioma{aparicionesCompu($c$, $cn$, $dpd$)}{
-	\IF	$\emptyset$?($cn$) THEN
-		0
-	ELSE {
-			\IF está?($c$, Siguiente(obtener(dameUno($cn$), $dpd$)).recorrido) THEN
-				1 + aparicionesCompu($c$, sinUno($cn$), $dpd$)
-			ELSE {
-				aparicionesCompu($c$, sinUno($cn$), $dpd$)
-				}
-			FI
-		}
-	FI
+\tadAxioma{listaValida(lista)}{
+	Cada nodo de la lista tiene un puntero a un nodo de la estructura cuyo infoEnLista (iterador) apunta al mismo nodo.
+	Es decir se trata de una referencia circular.
 }
 
 \pagebreak
 
 \subsubsection{Funci\'on de Abstracci\'on}
 
-\Abs[estr]{dcnet}[e]{dcn}{
-red($dcn$) = $e$.topología $\land$ \\
-($\forall cdn$: compuDCNet)(está?($cdn$, $e$.vectorCompusDCNet) $\impluego$ \\
-\- enEspera($dcn$, *($cdn$.pc)) = $cdn$.conjPaquetes $\land$ \\
-\- cantidadEnviados($dcn$, *($cdn$.pc)) = $cdn$.enviados $\land$ \\
-\- ($\forall p$: paquete)($p$ $\in$ $cdn$.conjPaquetes $\impluego$ \\
-\- \- caminoRecorrido($dcn$, $p$) = Siguiente(obtener($p$.id,
-	$cdn$.diccPaquetesDCNet)).recorrido \\
-\- ) \\
+\Abs[estr]{diccString($\alpha$)}[e]{d}{
+($\forall s$: string)(def?($d$, $s$) $\igobs$ \\ Definido?(d,s)
+\- $\land$ \\
+\- def?($d$, $s$) $\impluego$ obtener($s$,$d$) $\igobs$ \\
+\- Obtener($d$,$s$) \\
 )
 }
 
@@ -275,7 +257,7 @@ red($dcn$) = $e$.topología $\land$ \\
     arreglo(puntero(Nodo)): res.raiz $\leftarrow$ CrearArreglo(27) '\ote{1}'
 	nat: i $\leftarrow$ 0 '\ote{1}' 
     while i < long(res.raiz) do '\ote{1}'
-    	res.raiz[i] $\leftarrow$ null '\ote{1}'
+    	res.raiz[i] $\leftarrow$ NULL '\ote{1}'
     end while '\ote{1}'
     res.listaIterable $\leftarrow$ Vacia() '\ote{1}'
 
@@ -286,7 +268,7 @@ red($dcn$) = $e$.topología $\land$ \\
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
 	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
-	while(i < longitud(c) and not arr = null) do '\ote{1}'
+	while(i < longitud(c) and not arr = NULL) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
 		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
 		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
@@ -306,7 +288,7 @@ red($dcn$) = $e$.topología $\land$ \\
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
-	if (d.raiz[letra] = null) then '\ote{1}'
+	if (d.raiz[letra] = NULL) then '\ote{1}'
 		Nodo: nuevo '\ote{1}'
 		arreglo(puntero(Nodo)): nuevo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
 		nuevo.infoValida $\leftarrow$ false '\ote{1}'
@@ -316,7 +298,7 @@ red($dcn$) = $e$.topología $\land$ \\
 	while(i < longitud(c)) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
 		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
-		if (arr.arbolTrie[letra] = null) then '\ote{1}'
+		if (arr.arbolTrie[letra] = NULL) then '\ote{1}'
 			Nodo: nuevoHijo '\ote{1}'
 			arreglo(puntero(Nodo)): nuevoHijo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
 			nuevoHijo.infoValida $\leftarrow$ false '\ote{1}'
@@ -326,8 +308,9 @@ red($dcn$) = $e$.topología $\land$ \\
 	end while '\ote{$|n_m|$}'
     (*arr).info $\leftarrow$ s '\ote{copy(s)}'
     if(not (*arr).infoValida = true) then '\ote{1}'
-    	itLista(puntero(Nodo)) it $\leftarrow$ AgregarAdelante(d.listaIterable,null) '\ote{1}'
+    	itLista(puntero(Nodo)) it $\leftarrow$ AgregarAdelante(d.listaIterable,NULL) '\ote{1}'
     	(*arr).infoValida $\leftarrow$ true '\ote{1}'
+    	(*arr).clave $\leftarrow$ c '\ote{$|n_m|$}'
     	(*arr).infoEnLisa $\leftarrow$ it '\ote{1}'
     	siguiente(it) $\leftarrow$ puntero(*arr) '\ote{1}'
     end if
@@ -369,16 +352,16 @@ red($dcn$) = $e$.topología $\land$ \\
 	else
 		i $\leftarrow$ 1 '\ote{1}'
 		puntero(Nodo): del $\leftarrow$ tope(pil) '\ote{1}'
-		del $\leftarrow$ null '\ote{1}'
+		del $\leftarrow$ NULL '\ote{1}'
 		Desapilar(pil) '\ote{1}'
 		while(i< longitud(c) and not(tieneHermanosEInfo(*tope(pil)))) do '\ote{1}'
 			del $\leftarrow$ tope(pil) '\ote{1}'
-			del $\leftarrow$ null '\ote{1}'
+			del $\leftarrow$ NULL '\ote{1}'
 			Desapilar(pil) '\ote{1}'
 			i $\leftarrow$ i + 1 '\ote{1}'
 		end while '\ote{$|n_m|$}'
 		if(i = longitud(c)) then '\ote{1}'
-			d.raiz[posicion(c[0])] $\leftarrow$ null '\ote{1}'
+			d.raiz[posicion(c[0])] $\leftarrow$ NULL '\ote{1}'
 		end if
 	end if
 
@@ -391,7 +374,7 @@ red($dcn$) = $e$.topología $\land$ \\
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: l $\leftarrow$ longitud((*nodo).arbolTrie)) '\ote{1}'
-	while(i< l and not(*nodo).arbolTrie[i] = null) do '\ote{1}'
+	while(i< l and not(*nodo).arbolTrie[i] = NULL) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
 	end while '\ote{1}' 
 	res $\leftarrow$ i < l '\ote{1}'
