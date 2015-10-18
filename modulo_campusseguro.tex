@@ -471,7 +471,7 @@ $\land$
 		res[Siguiente(it).significado.posicion.y $*$ c $+$ 
 				Siguiente(it).significado.posicion.x] $\leftarrow$
 			$\leftarrow$ tupla(Siguiente(it).clave, puntero(Siguiente(it).significado)) '\ote{1}'
-	end while '\ote{$N_a$}
+	end while '\ote{$N_a$}'
 
 '\ofi{O((f*c)^2 + N_a)}'
 \end{lstlisting}
@@ -514,21 +514,94 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
-	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_a!$}'
+	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_a|$}'
 		Definir($cs$.estudiantes, e, pos) '\ote{$|n_a|$}'
 	end if '\ote{$|n_a| + |n_a|$}'
 	
 	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$ 
-		$\leftarrow$ HippiesRodeadosEstudiantes(pos, vecinos(pos, $cs$.campus), $cs$) '\ote{$|n_a|$}'
+		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{$|n_a|$}'
 
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
-		itConj(nombre, posicion): itConj $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
-		Definir($cs$.estudiantes, Siguiente(itConj).nombre, 
-			Siguiente(itConj).posicion) '\ote{$|n_a|$}'
-		Eliminar($cs$.hippies, Siguiente(itConj).nombre) '\ote{$|n_a|$}'
-	end if '\ote{$|n_a| + |n_a|$}'
+		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
+		
+		while HaySiguiente(itHEst) do '\ote{1}'
+			Definir($cs$.estudiantes, Siguiente(itHEst).nombre, 
+				Siguiente(itHEst).posicion) '\ote{$|n_a|$}'
+			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_a|$}'
+			Avanzar(itHEst) '\ote{1}'
+		end while '\ote{$2|n_a|$}'
+	end if '\ote{$4 * 2|n_a|$}'
 
-'\ofi{O(2|n_a|) + O(|n_a|) + O(2|n_a|) = O(5|n_a|) = O(|n_a|)}'
+	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
+		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
+		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'	
+		while HaySiguiente(itHAs) do '\ote{1}'
+			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_a|$}'
+			Avanzar(itHAs) '\ote{1}'
+		end while '\ote{$4|n_a|$}'
+	end if '\ote{$4|n_a|$}'
+	 
+
+'\ofi{O(2|n_a|) + O(|n_a|) + O(4*2|n_a|) + O(4|n_a|) = O(15|n_a|) = O(|n_a|)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{HippiesRodeadosAs}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(nombre, posicion)}'
+	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	res $\leftarrow$ Vacio() '\ote{1}'
+
+	while HaySiguiente(itC) do '\ote{1}'
+		itDiccString(nombre, posicion) itDiccS $\leftarrow$ CrearIt($cs$.hippies) '\ote{1}'
+
+		while HaySiguiente(itDiccS) AND Siguiente(itDiccS) $\neq$ Siguiente(itC) do '\ote{1}'
+		Avanzar(itDiccS) '\ote{1}'
+		end while '\ote{$|n_a|$}'
+
+		if HaySiguiente(itDiccS) AND 
+		todasOcupadas?(vecinos(Siguiente(itDiccS), $cs$.campus)) AND 
+		AlMenosUnAgente(vecinos(Siguiente(itDiccS), $cs$.campus)) then '\ote{$|n_a|$}'
+			AgregarRapido(res, tupla(DarClave(Siguiente(itDiccS)), 
+				Siguiente(itDiccS)) '\ote{1}'
+
+			conj(As): conjAgPremiar $\leftarrow$
+			$\leftarrow$ AgParaPremiar(vecinos(Siguiente(itDiccS), $cs$), $cs$) '\ote{}'
+			PremiarAgentes(conjAgPremiar, $cs$) '\ote{}'
+
+		end if '\ote{$|n_a|$}'
+		Avanzar(itC) '\ote{1}'
+	end while '\ote{$4|n_a|$}'
+
+'\ofi{}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{AgParaPremiar}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(As)}'
+	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	res $\leftarrow$ Vacio() '\ote{1}'
+
+	while HaySiguiente(itC) do '\ote{1}'
+		if $cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x].datos $\neq$ 
+			$\neq$ NULL then '\ote{1}'
+			AgregarRapido(res, 
+				$cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x]) '\ote{1}'
+		end if '\ote{1}'
+		Avanzar(itC) \ote{1}'
+	end while '\ote{4}'
+
+'\ofi{O(1) + O(1) + O(4) = O(1)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{PremiarAgentes}{\In{c}{conj(As)}, \Inout{cs}{estr}}{}'
+	itConj(As): itC $\leftarrow$ CrearIt(As) '\ote{1}'
+	
+	while HaySiguiente(itC) do '\ote{1}'
+		*Siguiente(itC).datos.cantAtrapados $\leftarrow$
+			$\leftarrow$ *Siguiente(itC).datos.cantAtrapados$+1$ '\ote{1}'
+	end while '\ote{4}'
+
+'\ofi{O(4) = O(1) \text{. La cantidad maxima de agentes va a ser 4.}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -552,7 +625,7 @@ $\land$
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{HippiesRodeadosEstudiantes}{\In{pos}{posicion}, \In{c}{conj(posicion}, \In{cs}{estr}}{conj(nombre, posicion)}'
+'\alg{HippiesRodeadosEstudiantes}{\In{c}{conj(posicion}, \In{cs}{estr}}{conj(nombre, posicion)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	res $\leftarrow$ Vacio() '\ote{1}'
 
@@ -566,7 +639,7 @@ $\land$
 		if HaySiguiente(itDiccS) AND 
 		todasOcupadas?(vecinos(Siguiente(itDiccS), $cs$.campus)) AND 
 		todosEstudiantes(vecinos(Siguiente(itDiccS), $cs$.campus)) then '\ote{$|n_a|$}'
-			AgregarRapido(res, tupla(DarClave(Siguiente(itDiccS)), 
+			AgregarRapido(res, tupla(DarClave($cs$.hippies, Siguiente(itDiccS)), 
 				Siguiente(itDiccS)) '\ote{1}'
 		end if '\ote{$|n_a|$}'
 		Avanzar(itC) '\ote{1}'
