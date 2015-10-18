@@ -188,8 +188,11 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \subsection{Representación de DiccNat($\alpha$)}
 
-\begin{Estructura}{DiccNat($\alpha$)}[estr donde estr es $\newline$ \- \- \- \- vector(lista(tupla $<$clave : nat, significado : $\alpha>$))]
-
+\begin{Estructura}{DiccNat}[estr]
+	\begin{Tupla}[estr]
+		\tupItem{tabla}{vector(lista(tupla(agente, $\alpha$)))}
+		\tupItem{listaIterable}{lista(puntero($\alpha$))}
+	\end{Tupla}
 \end{Estructura}
 
 \begin{enumerate}
