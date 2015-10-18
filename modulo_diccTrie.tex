@@ -282,7 +282,7 @@ red($dcn$) = $e$.topología $\land$ \\
 \begin{lstlisting}[mathescape]
 '\alg{crearDiccionario}{}{estr}'
 	
-    res.raiz $\leftarrow$ CrearArreglo(27) '\ote{1}'
+    arreglo(puntero(Nodo)): res.raiz $\leftarrow$ CrearArreglo(27) '\ote{1}'
 	nat: i $\leftarrow$ 0 '\ote{1}' 
     while i < long(res.raiz) do '\ote{1}'
     	res.raiz[i] $\leftarrow$ null '\ote{1}'
@@ -299,7 +299,7 @@ red($dcn$) = $e$.topología $\land$ \\
 	while(i <= longitud(c) and not arr = null) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
 		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
-		arr $\leftarrow$ (*arr).arreglo[letra] '\ote{1}'
+		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
 	end while '\ote{$|n_m|$}'
 	if(i=longitud(c)) then '\ote{1}'
 		res $\leftarrow$ (*arr).infoValida '\ote{1}'
@@ -314,64 +314,51 @@ red($dcn$) = $e$.topología $\land$ \\
 \begin{lstlisting}[mathescape]
 '\alg{definir}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}, \In{s}{$\alpha$}}{}'
 
-	
-	i $\leftarrow$ 0 '\ote{1}'
-	while i < Longitud(dcn.vectorCompusDCNet) do '\ote{1}'
-		if(HaySiguiente?(dcn.vectorCompusDCNet[i].paqueteAEnviar)) then '\ote{1}'
-
-			dcn.vectorCompusDCNet[i].enviados++ '\ote{1}'
-			if(dcn.vectorCompusDCNet[i].enviados > maxEnviados) then '\ote{1}'
-				dcn.laQueMasEnvio $\leftarrow$ puntero(dcn.vectorCompusDCNet[i]) '\ote{1}'
-			end if
-
-			paquete: pAEnviar $\leftarrow$
-				Siguiente(Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar).it) '\ote{1}'
-			itConj(lista(compu)): itercaminos $\leftarrow$
-				CrearIt(CaminosMinimos(dcn.topologia,
-				*(dcn.vectorCompusDCNet[i].pc), pAEnviar.destino)) '\ote{1}'
-			compu: siguientecompu $\leftarrow$ Siguiente(itercaminos)[1] '\ote{1}'
-
-			if(pAEnviar.destino $\neq$ siguientecompu) then '\ote{1}'
-
-				compuDCNet: siguientecompudcnet $\leftarrow$
-					*(Obtener(dcn.diccCompusDCNet, siguientecompu.ip)) '\ote{L}'
-
-				itConj(paquete): itpaquete $\leftarrow$
-					AgregarRapido(siguientecompudcnet.conjPaquetes, pAEnviar) '\ote{1}'
-
-				itConj(paqueteDCNet): paqAEnviar $\leftarrow$
-					Obtener(dcn.vectorCompusDCNet[i].diccPaquetesDCNet,
-					pAEnviar.id) '\ote{log(k)}'
-
-				AgregarAtras(Siguiente(paqAEnviar).recorrido, siguientecompu) '\ote{1}'
-
-				Encolar(siguientecompudcnet.colaPaquetesDCNet,
-					pAEnviar.prioridad, paqAEnviar) '\ote{log(k)}'
-				Definir(siguientecompudcnet.diccPaquetesDCNet,
-					pAEnviar.id, paqAEnviar) '\ote{log(k)}'
-			end if
-
-			Borrar(dcn.vectorCompusDCNet[i].diccPaquetesDCNet,
-				Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar$\rightarrow$it).id) '\ote{log(k)}'
-			EliminarSiguiente(Siguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar).it)
-				'\ote{1}'
-			EliminarSiguiente(dcn.vectorCompusDCNet[i].paqueteAEnviar) '\ote{1}'
-
-			dcn.vectorCompusDCNet[i].paqueteAEnviar $\leftarrow$ CrearIt(Vacio()) '\ote{1}'
-
-		end if
-		i++ '\ote{1}'
-	end while '\ote{n * (L + log(k))}'
-
-'\ofi{O(n * (L + log(k)))}'
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
+	if (d.raiz[letra] = null) then '\ote{1}'
+		Nodo: nuevo '\ote{1}'
+		arreglo(puntero(Nodo)): nuevo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
+		nuevo.infoValida $\leftarrow$ false '\ote{1}'
+		d.raiz[letra] $\leftarrow$ puntero(nuevo) '\ote{1}'
+	end if
+	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
+	while(i <= longitud(c)) do '\ote{1}'
+		i $\leftarrow$ i + 1 '\ote{1}'
+		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
+		if (arr.arbolTrie[letra] = null) then '\ote{1}'
+			Nodo: nuevoHijo '\ote{1}'
+			arreglo(puntero(Nodo)): nuevoHijo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
+			nuevoHijo.infoValida $\leftarrow$ false '\ote{1}'
+			arr.arbolTrie[letra] $\leftarrow$ puntero(nuevoHijo) '\ote{1}'	
+		end if			
+		arr $\leftarrow$ (*arr).arreglo[letra] '\ote{1}' '\ote{1}'
+	end while '\ote{$|n_m|$}'
+    (*arr).info $\leftarrow$ s '\ote{copy(s)}'
+    if(not (*arr).infoValida = true) then '\ote{1}'
+    	itLista(puntero(Nodo)) it $\leftarrow$ AgregarAdelante(d.listaIterable,null) '\ote{1}'
+    	(*arr).infoValida $\leftarrow$ true '\ote{1}'
+    	(*arr).infoEnLisa $\leftarrow$ it '\ote{1}'
+    	siguiente(it) $\leftarrow$ puntero(*arr) '\ote{1}'
+    end if
+    	
+'\ofi{O(|n_m| + copy(s))}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{Red}{\In{dcn}{dcnet}}{red}'
+'\alg{obtener}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{$\alpha$}'
 
-	res $\leftarrow$ dcn.topologia '\ote{1}'
-
-'\ofi{O(1)}'
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
+	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
+	while(i <= longitud(c)) do '\ote{1}'
+		i $\leftarrow$ i + 1 '\ote{1}'
+		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
+		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
+	end while '\ote{$|n_m|$}'
+	res $\leftarrow$ (*arr).info '\ote{1}'
+	
+'\ofi{O(|n_m|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
