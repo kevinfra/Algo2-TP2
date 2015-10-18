@@ -518,12 +518,13 @@ $\land$
 		Definir($cs$.estudiantes, e, pos) '\ote{$|n_a|$}'
 	end if '\ote{$|n_a| + |n_a|$}'
 	
-	conj(nombre, posicion): conjHippiesRod $\leftarrow$ 
-		$\leftarrow$ HippiesRodeados(pos, vecinos(pos, $cs$.campus), $cs$) '\ote{$|n_a|$}'
+	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$ 
+		$\leftarrow$ HippiesRodeadosEstudiantes(pos, vecinos(pos, $cs$.campus), $cs$) '\ote{$|n_a|$}'
 
-	if Cardinal(conjHippiesRod) $>$ 0 then '\ote{1}'
-		itConj(nombre): itConj $\leftarrow$ CrearIt(conjHippiesRod) '\ote{1}'
-		Definir($cs$.estudiantes, Siguiente(itConj).nombre, Siguiente(itConj).posicion) '\ote{$|n_a|$}'
+	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
+		itConj(nombre, posicion): itConj $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
+		Definir($cs$.estudiantes, Siguiente(itConj).nombre, 
+			Siguiente(itConj).posicion) '\ote{$|n_a|$}'
 		Eliminar($cs$.hippies, Siguiente(itConj).nombre) '\ote{$|n_a|$}'
 	end if '\ote{$|n_a| + |n_a|$}'
 
@@ -545,15 +546,84 @@ $\land$
 		end while '\ote{$|n_a|$}'
 
 		Avanzar(itC) '\ote{1}'
-		end while '\ote{$|n_a|$}'
+	end while '\ote{$|n_a|$}'
 
 '\ofi{O(|n_a|) \text{. Como vecinos como maximo tiene longitud 4, la complejidad sería } O(4*|n_a|) = O(|n_a|)}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{HippiesRodeados}{\In{pos}{posicion}, \In{c}{conj(posicion}, \In{cs}{estr}}{conj(nombre, posicion)}'
+'\alg{HippiesRodeadosEstudiantes}{\In{pos}{posicion}, \In{c}{conj(posicion}, \In{cs}{estr}}{conj(nombre, posicion)}'
+	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	res $\leftarrow$ Vacio() '\ote{1}'
+
+	while HaySiguiente(itC) do '\ote{1}'
+		itDiccString(nombre, posicion) itDiccS $\leftarrow$ CrearIt($cs$.hippies) '\ote{1}'
+
+		while HaySiguiente(itDiccS) AND Siguiente(itDiccS) $\neq$ Siguiente(itC) do '\ote{1}'
+		Avanzar(itDiccS) '\ote{1}'
+		end while '\ote{$|n_a|$}'
+
+		if HaySiguiente(itDiccS) AND 
+		todasOcupadas?(vecinos(Siguiente(itDiccS), $cs$.campus)) AND 
+		todosEstudiantes(vecinos(Siguiente(itDiccS), $cs$.campus)) then '\ote{$|n_a|$}'
+			AgregarRapido(res, tupla(DarClave(Siguiente(itDiccS)), 
+				Siguiente(itDiccS)) '\ote{1}'
+		end if '\ote{$|n_a|$}'
+		Avanzar(itC) '\ote{1}'
+	end while '\ote{$4|n_a|$}'
+
+'\ofi{O(4|n_a|) = O(|n_a|) \text{. Como el conjunto c tiene como maximo longitud 4, la complejidad sería } O(|n_a|)}}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{todasOcupadas?}{\In{c}{conj(posicion)}, \In{cs}{estr}}{bool}'
+	res $\leftarrow$ false '\ote{1}'
+	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	
-'\ofi{O(|n_a|)}'
+	while HaySiguiente(itC) do '\ote{1}'
+		itDiccString(nombre, posicion): itHippies $\leftarrow$ CrearIt($cs$.hipies) '\ote{1}'
+		while HaySiguiente(itHippies) AND Siguiente(itHippies) $\neq$ Siguiente(itC) '\ote{1}'
+			Avanzar(itHippies) '\ote{1}'
+		end while '\ote{$|n_a|$}'
+
+		if HaySiguiente(itHippies) then '\ote{1}'
+			res $\leftarrow$ true '\ote{1}'
+		end if '\ote{1}'
+
+		Avanzar(itC) '\ote{1}'
+	end while '\ote{$4|n_a|$}'
+
+	itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	while HaySiguiente(itC) do '\ote{1}'
+		itDiccString(nombre, posicion): itEst $\leftarrow$ CrearIt($cs$.estudiantes) '\ote{1}'
+		while HaySiguiente(itEst) AND Siguiente(itEst) $\neq$ Siguiente(itC) '\ote{1}'
+			Avanzar(itEst) '\ote{1}'
+		end while '\ote{$|n_a|$}'
+
+		if HaySiguiente(itEst) then '\ote{1}'
+			res $\leftarrow$ true '\ote{1}'
+		end if '\ote{1}'
+
+		Avanzar(itC) '\ote{1}'
+	end while '\ote{$4|n_a|$}'
+
+	itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	while HaySiguiente(itC) do '\ote{1}'
+		if $cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x].datos $\neq$
+		$\neq$ NULL then '\ote{1}'
+			res $\leftarrow$ true '\ote{1}'
+		end if '\ote{1}'
+	end while '\ote{4}'
+
+	itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	while HaySiguiente(itC) do '\ote{1}'
+		if Ocupada?($cs$.campus, Siguiente(itC)) '\ote{1}'
+			res $\leftarrow$ true
+		end if '\ote{1}'
+		Avanzar(itC) '\ote{1}'
+	end while '\ote{4}'
+
+'\ofi{O(4|n_a|) = O(|n_a|) \text{. Como el conjunto c tiene como maximo longitud 4, la complejidad sería } O(|n_a|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
