@@ -469,7 +469,7 @@ $\land$
 	res.estudiantes $\leftarrow$ Vacio() '\ote{1}'
 	res.posicionesHippies $\leftarrow$ Vacio() '\ote{1}'
 	res.posicionesEstudiantes $\leftarrow$ Vacio '\ote{1}'
-	
+
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	while i $<$ filas(c)*columnas(c) do '\ote{1}'
 		AgregarAtras(res.posicionesHippies, " ") '\ote{1}'
@@ -988,7 +988,7 @@ $\land$
  	if(not (pos.y = 1 OR pos.y = cd.campus.filas)) then '\ote{1}'
 		if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_m|$}'
 			Definir($cs$.estudiantes, e, pos) '\ote{$|n_m|$}'
-			$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus) 
+			$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus)
 				+ actualPos.x] $\leftarrow$ "" '\ote{1}'
 			$cs$.posicionesEstudiantes[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
 		else
@@ -1063,7 +1063,7 @@ $\land$
 			while HaySiguiente(itEstAs) do '\ote{1}'
 				if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
 				AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
-					conj(As): conjAgParaSanc $\leftarrow$ 
+					conj(As): conjAgParaSanc $\leftarrow$
 						AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
 					SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
 				end if '\ote{1}'
@@ -1072,7 +1072,7 @@ $\land$
 		end if '\ote{4}'
 	else
 		Borrar(cs.estudiantes,e) '\ote{$|n_m|$}'
-		$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus) + actualPos.x] 
+		$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus) + actualPos.x]
 			$\leftarrow$ "" '\ote{1}'
 	end if
 
@@ -1168,12 +1168,12 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{ProxPos}{\In{pos}{posicion}, \In{d}{dicString(nombre,posicion)}, \In{cs}{estr}}{posicion}'
-	
+
 	itDicString(nombre,posicion): itDic $\leftarrow$ CrearIt(d) '\ote{1}'
 	int: distCorta $\leftarrow$ DistanciaMasCorta(pos, d) '\ote{$\#$Claves(d)}'
 
 	conj(posicion): conjDondeIr $\leftarrow$ DondeIr(pos, distCorta, d) '\ote{$\#$Claves(d)}'
-	conj(posicion): conjLugaresPosibles $\leftarrow$ 
+	conj(posicion): conjLugaresPosibles $\leftarrow$
 		$\leftarrow$ LugaresPosibles(pos,conjDondeIr, cs) '\ote{Cardinal(c)}'
 
 	if Cardinal(conjLugaresPosibles)$=0$ then '\ote{1}'
@@ -1190,7 +1190,7 @@ $\land$
 '\alg{LugaresPosibles}{\In{pos}{posicion}, \In{c}{conj(posicion)}, \In{cs}{estr}}{conj(posicion)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	res $\leftarrow$ Vacio() '\ote{1}'
-	
+
 	while HaySiguiente(itC) do '\ote{1}'
 		if Siguiente(itC).x $>$ pos.x AND Siguiente(itC).y $>$ pos.y '\ote{1}'
 			AgregarRapido(res, tupla(pos.x+1, pos.y)) '\ote{1}'
@@ -1213,12 +1213,12 @@ $\land$
 		else if Siguiente(itC).x $>$ pos.x AND Siguiente(itC).y $=$ pos.y '\ote{1}'
 			AgregarRapido(res, tupla(pos.x+1, pos.y)) '\ote{1}'
 		end if '\ote{1}'
-		
+
 		Avanzar(itC) '\ote{1}'
 	end while '\ote{Cardinal(c)}'
-	
+
 	itConj(posicion) itPosibles $\leftarrow$ CrearIt(res) '\ote{1}'
-	
+
 	while HaySiguiente(itPosibles) do '\ote{1}'
 		if HayAlgoEnPos(Siguiente(itPosibles), $cs$) then '\ote{1}'
 			EliminarSiguiente(itPosibles) '\ote{1}'
@@ -1232,7 +1232,7 @@ $\land$
 \begin{lstlisting}[mathescape]
 '\alg{HayAlgoEnPos}{\In{pos}{posicion}, \In{cs}{estr}}{bool}'
 	res $\leftarrow$ false '\ote{1}'
-	
+
 	if $cs$.posicionesAgente[pos.y*Columnas($cs$.campus) + pos.x].datos $\neq$ NULL then '\ote{1}'
 		res $\leftarrow$ true '\ote{1}'
 	end if '\ote{1}'
@@ -1244,7 +1244,7 @@ $\land$
 	if $cs$.posicionesEstudiantes[pos.y*Columnas($cs$.campus) + pos.x].datos $\neq$ " " then '\ote{1}'
 		res $\leftarrow$ true '\ote{1}'
 	end if '\ote{1}'
-	
+
 	if Ocupada?(pos, $cs$.campus) then '\ote{1}'
 		res $\leftarrow$ true '\ote{1}'
 	end if '\ote{1}'
@@ -1261,16 +1261,16 @@ $\land$
 	while HaySiguiente(itDicc) do '\ote{1}'
 		if dist = Distancia(pos,Siguiente(itDicc)) then '\ote{1}'
 			AgregarRapido(res, Siguiente(itDicc)) '\ote{1}'
-		end if '\ote{}'
-		Avanzar(itDicc)
-	end while '\ote{$\#$Claves(d)}
+		end if '\ote{1}'
+		Avanzar(itDicc) '\ote{1}'
+	end while '\ote{$\#$Claves(d)}'
 
-'\ofi{\#Claves(d)}'
+'\ofi{O(\# Claves(d))}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}'
-	
+
 	itDiccString(nombre,posicion): itDicc $\leftarrow$ CrearIt(d) '\ote{1}'
 	res $\leftarrow$ Distancia(pos, Siguiente(itDicc)) '\ote{1}'
 	Avanzar(itDicc) '\ote{1}'
@@ -1295,19 +1295,19 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iMoverAgente}{\In{a}{agente}, \Inout{cs}{estr} }{}'
-	vector(tupla(agente, puntero(datosAgente))) 
+	vector(tupla(agente, puntero(datosAgente)))
 		placas $\leftarrow$ ordenadoPorClave(cs.personalAS)						'\ote{1}'
 	puntero(datosAgente) as $\leftarrow$ busqBinPorPlaca(placas, a)				'\ote{$log(N_a)$}'
 
 	// Actualizo la posicion del agente
 	posicion nuevaPos $\leftarrow$ ProxPos((*as).posicion, cs.hippies, cs)		'\ote{$N_h$}'
-	posicionesAgentes[(*as).posicion.y * columnas(cs.campus) + (*as).posicion.x].datos 
+	posicionesAgentes[(*as).posicion.y * columnas(cs.campus) + (*as).posicion.x].datos
 		$\leftarrow$ NULL														'\ote{1}'
-	posicionesAgentes[nuevaPos.y * columnas(cs.campus) + nuevaPos.x] 
+	posicionesAgentes[nuevaPos.y * columnas(cs.campus) + nuevaPos.x]
 		$\leftarrow$ tupla(a, as)												'\ote{1}'
 	(*as).posicion $\leftarrow$ nuevaPos										'\ote{1}'
 
-	// Me fijo a quienes atrapa 
+	// Me fijo a quienes atrapa
 	posicion posArr $\leftarrow$ moverDir(cs.campus, nuevaPos, arriba)			'\ote{1}'
 	actualizarAgente(cs, posArr, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
 
@@ -1335,7 +1335,7 @@ $\land$
 	   			if((*as).cantAtrapados > (*cs.masVigilante.datos).cantAtrapados) then
 	   				cs.masVigilante $\leftarrow$ tupla(a, as)					'\ote{1}'
 	   			end if
-	   			borrar(cs.hippies, posicionesHippies[pos.y * 
+	   			borrar(cs.hippies, posicionesHippies[pos.y *
 	   			       columnas(cs.campus) + pos.x])							'\ote{$|n_m|$}'
 	   			posicionesHippies[pos.y * columnas(cs.campus) + pos.x]
 	   				$\leftarrow$ ""												'\ote{1}'
@@ -1361,12 +1361,12 @@ $\land$
 
 	   			   	if(Siguiente(iterLista).sanc = sanciones + 1) then 			'\ote{1}'
 	   			   		// Lo agrego al conjunto
-	   			   		(*as).itConjMismasSanc $\leftarrow$ 
+	   			   		(*as).itConjMismasSanc $\leftarrow$
 	   			   			AgregarRapido(a, Siguiente(iterLista).agentes)		'\ote{1}'
 	   			   	else
 	   			   		// Creo un nuevo nodo en el medio
 	   			   		conj(agente) conj $\leftarrow$ Vacio()					'\ote{1}'
-	   			   		(*as).itConjMismasSanc $\leftarrow$ 
+	   			   		(*as).itConjMismasSanc $\leftarrow$
 	   			   			AgregarRapido(a, conj)								'\ote{1}'
 	   			   		kSanc nodo $\leftarrow$ tupla(sanciones + 1, conj)		'\ote{1}'
 	   			   		AgregarComoAnterior(iterLista, nodo)					'\ote{1}'
@@ -1376,7 +1376,7 @@ $\land$
 	   			else
 	   				// Creo un nuevo nodo
 	   				conj(agente) conj $\leftarrow$ Vacio()					'\ote{1}'
-	   				(*as).itConjMismasSanc $\leftarrow$ 
+	   				(*as).itConjMismasSanc $\leftarrow$
    			   			AgregarRapido(a, conj)								'\ote{1}'
    			   		kSanc nodo $\leftarrow$ tupla(sanciones + 1, conj)		'\ote{1}'
    			   		AgregarComoSiguiente(iterLista, nodo)					'\ote{1}'
@@ -1388,7 +1388,7 @@ $\land$
 	   				// Borro el nodo anterior de la lista porque no tiene agentes
 	   				EliminarSiguiente(iterListaAnterior)					'\ote{1}'
 	   			end if
-	   			
+
 	   			(*as).cantSanc++;											'\ote{1}'
 	   		end if
 	   	end if
