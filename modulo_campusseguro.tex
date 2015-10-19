@@ -901,8 +901,8 @@ $\land$
 		
 		while HaySiguiente(itHEst) do '\ote{1}'
 			Definir($cs$.estudiantes, Siguiente(itHEst).nombre, 
-				Siguiente(itHEst).posicion) '\ote{$|n_a|$}'
-			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_a|$}'
+				Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
+			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_m|$}'
 			
 			$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) + 
 			+ Siguiente(itHEst).posicion.x] $\leftarrow$ 
@@ -913,41 +913,41 @@ $\land$
 			+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
 			
 			Avanzar(itHEst) '\ote{1}'
-		end while '\ote{$4*2|n_a|$}'
-	end if '\ote{$4*2|n_a|$}'
+		end while '\ote{$4*2|n_m|$}'
+	end if '\ote{$4*2|n_m|$}'
 
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
 		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'	
 		while HaySiguiente(itHAs) do '\ote{1}'
-			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_a|$}'
+			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_m|$}'
 			
 			$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
 		+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4|n_a|$}'
-	end if '\ote{$4|n_a|$}'
+		end while '\ote{$4|n_m|$}'
+	end if '\ote{$4|n_m|$}'
 
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'	
 		while HaySiguiente(itEstH) do '\ote{1}'
-			Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_a|$}'
+			Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_m|$}'
 			
 			$cs$.posicionesEstudiantes[Siguiente(itEstH).y*Columnas($cs$.campus) +
 		+ Siguiente(itEstH).x] $\leftarrow$ " " '\ote{1}'
 
 			Definir($cs$.hippies, Siguiente(itEstH).nombre, 
-				Siguiente(itEstH).posicion) '\ote{$|n_a|$}'
+				Siguiente(itEstH).posicion) '\ote{$|n_m|$}'
 			
 			$cs$.posicionesHippies[Siguiente(itEstH).y*Columnas($cs$.campus) +
 		+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
 		
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4*2|n_a|$}'
-	end if '\ote{$4*2|n_a|$}'
+		end while '\ote{$4*2|n_m|$}'
+	end if '\ote{$4*2|n_m|$}'
 
 	conj(posicion): conjEstRodAs $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
