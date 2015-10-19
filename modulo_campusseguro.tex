@@ -45,7 +45,7 @@
 
 ~
 
-\InterfazFuncion{moverHippie}{\In{h}{nombre}, \In{d}{direccion}, \Inout{cs}{campusSeguro}}{}
+\InterfazFuncion{moverHippie}{\In{h}{nombre}, \Inout{cs}{campusSeguro}}{}
 [$cs =_{obs} cs_o \land h \in$ hippies($cs$) $\land$ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)), $cs$)]
 {$cs =_{obs}$ moverHippie($h$,$d$,$cs_o$}
 [$O(|n_m|) + O(N_e)$]
@@ -1076,7 +1076,88 @@ $\land$
 \begin{lstlisting}[mathescape]
 '\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{estr} }{}'
 
-'\ofi{}'
+	posicion : actualPos $\leftarrow$ obtener(h, cs.hippies) '\ote{$|n_m|$}'
+	posicion : pos $\leftarrow$ porxPos(actualPos, cs.estudiantes, cs) '\ote{$N_e$}'
+	if actualPos $\neq_{obs}$ pos then '\ote{1}'
+		definir(cs.hippies, h, pos) '\ote{$|n_m|$}'
+		cs.posicionesHippies[actualPos.y * columnas(cs.campus)
+								+ actualPos.x] $\leftarrow$ "" '\ote{1}'
+		cs.posicionesHippies[pos.y * columnas(cs.campus) + pos.x] $\leftarrow$ h '\ote{1}'
+
+	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
+		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+
+	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
+		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
+
+		while HaySiguiente(itHEst) do '\ote{1}'
+			Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
+				Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
+			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_m|$}'
+
+			$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+			+ Siguiente(itHEst).posicion.x] $\leftarrow$
+			$\leftarrow$ $cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+			+ Siguiente(itHest).posicion.x] '\ote{1}'
+
+			$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+			+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
+
+			Avanzar(itHEst) '\ote{1}'
+		end while '\ote{$2|n_m|$}'
+	end if '\ote{$4 * 2|n_m|$}'
+
+	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
+		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
+		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
+		while HaySiguiente(itHAs) do '\ote{1}'
+			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_m|$}'
+
+			$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
+		+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
+			Avanzar(itHAs) '\ote{1}'
+		end while '\ote{$4|n_m|$}'
+	end if '\ote{$4|n_m|$}'
+
+	conj(nombre, posicion): conjEstRodHip $\leftarrow$
+		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
+		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
+		while HaySiguiente(itEstH) do '\ote{1}'
+			Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_m|$}'
+
+			$cs$.posicionesEstudiantes[Siguiente(itEstH).y*Columnas($cs$.campus) +
+		+ Siguiente(itEstH).x] $\leftarrow$ " " '\ote{1}'
+
+			Definir($cs$.hippies, Siguiente(itEstH).nombre,
+				Siguiente(itEstH).posicion) '\ote{$|n_m|$}'
+
+			$cs$.posicionesHippies[Siguiente(itEstH).y*Columnas($cs$.campus) +
+		+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
+
+			Avanzar(itHAs) '\ote{1}'
+		end while '\ote{$4*2|n_m|$}'
+	end if '\ote{$4*2|n_m|$}'
+
+	conj(posicion): conjEstRodAs $\leftarrow$
+		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
+		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
+
+		while HaySiguiente(itEstAs) do '\ote{1}'
+			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
+			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
+				conj(As): conjAgParaSanc $\leftarrow$
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
+				SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
+			end if '\ote{1}'
+		end while '\ote{4}'
+
+	end if '\ote{4}'
+	end if
+
+'\ofi{O(N_e + |n_m|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -1230,6 +1311,6 @@ $\land$
 	end while '\ote{$log(N_a)$}'
 
 	$res$ $\leftarrow$ v[inf].p
-	
+
 '\ofi{O(logN_a)}'
 \end{lstlisting}
