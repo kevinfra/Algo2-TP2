@@ -988,10 +988,12 @@ $\land$
  	if(not (pos.y = 1 OR pos.y = cd.campus.filas)) then '\ote{1}'
 		if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_m|$}'
 			Definir($cs$.estudiantes, e, pos) '\ote{$|n_m|$}'
+			$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus) + actualPos.x] $\leftarrow$ "" '\ote{1}'
 			$cs$.posicionesEstudiantes[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
 		else
 			Definir($cs$.hippies, e, pos) '\ote{$|n_m|$}'
 			$cs$.posicionesHippies[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
+			$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus) + actualPos.x] $\leftarrow$ "" '\ote{1}'
 		end if '\ote{$|n_m| + |n_m|$}'
 
 		conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
@@ -1011,7 +1013,7 @@ $\land$
 				+ Siguiente(itHest).posicion.x] '\ote{1}'
 
 				$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
-				+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
+				+ Siguiente(itHest).posicion.x] $\leftarrow$ "" '\ote{1}'
 
 				Avanzar(itHEst) '\ote{1}'
 			end while '\ote{$2|n_m|$}'
@@ -1025,7 +1027,7 @@ $\land$
 				Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_m|$}'
 
 				$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
-			+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
+			+ Siguiente(itHAs).x] $\leftarrow$ "" '\ote{1}'
 				Avanzar(itHAs) '\ote{1}'
 			end while '\ote{$4|n_m|$}'
 		end if '\ote{$4|n_m|$}'
@@ -1038,7 +1040,7 @@ $\land$
 				Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_m|$}'
 
 				$cs$.posicionesEstudiantes[Siguiente(itEstH).y*Columnas($cs$.campus) +
-			+ Siguiente(itEstH).x] $\leftarrow$ " " '\ote{1}'
+			+ Siguiente(itEstH).x] $\leftarrow$ "" '\ote{1}'
 
 				Definir($cs$.hippies, Siguiente(itEstH).nombre,
 					Siguiente(itEstH).posicion) '\ote{$|n_m|$}'
@@ -1067,6 +1069,7 @@ $\land$
 		end if '\ote{4}'
 	else
 		Borrar(cs.estudiantes,e) '\ote{$|n_m|$}'
+		$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus) + actualPos.x] $\leftarrow$ "" '\ote{1}'
 	end if
 
 '\ofi{O(|n_m|)}'
