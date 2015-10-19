@@ -994,6 +994,7 @@ $\land$
 			Definir($cs$.hippies, e, pos) '\ote{$|n_m|$}'
 			$cs$.posicionesHippies[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
 			$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus) + actualPos.x] $\leftarrow$ "" '\ote{1}'
+			Borrar(cs.estudiantes,e) '\ote{$|n_m|$}'
 		end if '\ote{$|n_m| + |n_m|$}'
 
 		conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
