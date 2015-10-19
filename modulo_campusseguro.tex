@@ -11,7 +11,7 @@
 \InterfazFuncion{comenzarRastrillaje}{\In{c}{campus}, \In{d}{dicc(placa,AS)}}{campusSeguro}
 [($\forall a$ : agente) (def?($a$,$d$) $\Rightarrow_L$ (posVálida(obtener($a$,$d$)) $\land$ $\neg$ocupada?(obtener($a$,$d$,$c$))) $\land$ ($\forall a, a2$ : agente) ((def?($a$,$d$) $\land$ def?($a2$,$d$) $\land a \neq a2$) $\Rightarrow_L$ obtener($a$,$d$) $\neq$ obtener($a2$,$d$))]
 {res $=_{obs}$ comenzarRastrillaje(c,d)}
-[$O(N_a) + O(N_a) + O((f*c)^2 + N_a) = O((f*c)^2 + N_a)$]
+[$O((f*c)^2 + N_a)$]
 [Crea un nuevo campusSeguro tomando un campus y un diccionario con agentes.]
 []
 
@@ -469,8 +469,15 @@ $\land$
 	res.estudiantes $\leftarrow$ Vacio() '\ote{1}'
 	res.posicionesHippies $\leftarrow$ Vacio() '\ote{1}'
 	res.posicionesEstudiantes $\leftarrow$ Vacio '\ote{1}'
+	
+	nat: i $\leftarrow$ 0
+	while i $<$ filas(c)*columnas(c) do '\ote{1}'
+		AgregarAtras(res.posicionesHippies, " ")
+		AgregarAtras(res.posicionesEstudiantes, " ")
+		i $\leftarrow$ i$+1$
+	end while '\ote{(f*c)$^2$}'
 
-'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) = O((f*c)^2 + N_a)}'
+'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) + O((f*c)^2) = O((f*c)^2 + N_a)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -970,7 +977,6 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{estr} }{}'
-
 	
 '\ofi{}'
 \end{lstlisting}
@@ -978,7 +984,6 @@ $\land$
 \begin{lstlisting}[mathescape]
 '\alg{iMoverAgente}{\In{a}{agente}, \Inout{cs}{estr} }{}'
 
-	
 '\ofi{}'
 \end{lstlisting}
 
