@@ -12,7 +12,7 @@
 [true]
 {(($\forall$ $t$ : tupla(nat, $\alpha$)) esta?($t$, v)) $\Rightarrow$ ((definido?(t.clave, res))
 	$\land_L$ obtener(t.clave,res) $=_{obs}$ t.significado) $\land$ cantClaves(res) $=_{obs}$ longitud(v)}
-[$O(copy(\alpha) * n)$ donde n es el largo del vector]
+[$O(n^2 + copy(\alpha) * n)$ donde n es el largo del vector]
 [Agrega las tuplas de clave-significado pasadas por parametro al diccionario $d$]
 [Los elementos pasados por parámetros se copian al diccionario]
 
@@ -50,6 +50,15 @@
 [$O(1)$]
 [Devuelve la cantidad de claves definidas en el diccionario.]
 []
+
+~
+
+\InterfazFuncion{OrdenadoPorClave}{\In{d}{DiccNat($\alpha$)}}{vector(tupla(nat,puntero($\alpha$)))}
+[true]
+{$\forall$ n : nat (def?(n,d) $\Leftarrow$ esta?((n, obtener(n,d)), res)) $\land$ estaOrdenado(res)}
+[$O(1)$]
+[Devuelve el vector ordenado de manera creciente según el natural de la clave]
+[La informacion a la que apunta la segunda parte de la tupla es una referencia al significado correspondiente de la primera parte de la tupla]
 
 ~
 
@@ -126,8 +135,9 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \begin{Estructura}{DiccNat}[estr]
 	\begin{Tupla}[estr]
-		\tupItem{tabla}{vector(lista(tupla(agente, $\alpha$)))}
-		\tupItem{\\ listaIterable}{lista(puntero(tupla(nat,$\alpha$)))}
+		\tupItem{tabla}{vector(lista(tupla(clave : nat, significado : $\alpha$)))}
+		\tupItem{\\ listaIterable}{lista(puntero(tupla(clave : nat, significado : $\alpha$)))}
+		\tupItem{\\ vectorOrdenClaves}{vector(tupla(clave : nat, significado : puntero($\alpha$)))}
 	\end{Tupla}
 \end{Estructura}
 
@@ -136,6 +146,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	\item La suma del largo de todas las listas enlazadas que salen del vector, tiene que ser igual al largo del vector.
 	\item Toda tupla de la tabla es apuntado por un elemento de listaIterable.
 	\item El largo de listaIterable es igual al largo del vector.
+	\item El vectorOrdenClaves tiene todas las claves de la tabla, el largo es igual al largo de la lista y los punteros van al significado de la clave correspondiente en la tabla
 \end{enumerate}
 
 \subsubsection{Invariante de Representación}
@@ -155,6 +166,10 @@ operación que modifique d sin utilizar las funciones del iterador.]
 		\\ $\Rightarrow$ ($\exists$ p : puntero($\alpha$)($\&$t $=_{obs}$ p $\land$ esta?(p, e.listaIterable)))))
 	$\\ \land \\$
 	long(e.tabla) $=_{obs}$ long(e.listaIterable)
+	$\\ \land \\$
+	long(e.vectorOrdenClaves) $=_{obs}$ long(e.tabla) $\land$ ($\forall$ l : lista(tupla(nat, $\alpha$)))(esta?(l, e.tabla)
+		\\ $\Rightarrow$ ($\forall$ t : tupla(nat, $\alpha$)) (esta?(t, l) \\ $\Rightarrow$ ($\forall$ n : nat) (n $=_{obs}$ t.clave)) \\$\Rightarrow_L$
+		($\exists$ p : puntero($\alpha$)) ($\&$t.significado $=_{obs}$ p) $\land$ esta?((t.clave, p), e.vectorOrdenClaves))
 }\mbox{}
 
 \tadOperacion{largosDeListas}{secu(secu(tupla(nat,$\alpha$)))}{nat}{}
@@ -192,16 +207,30 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 		nat : i $\leftarrow$ 0 '\ote{1}'
 		while i < longitud(v) do '\ote{1}'
-			AgregarAtras(res, vacia()) '\ote{1}'
-		end while '\ote{$\sum_{i=0}^{n}$ i}'
+			AgregarAtras(res.tabla, vacia()) '\ote{1}'
+		end while '\ote{1}'
 		i $\leftarrow$ 0 '\ote{1}'
 		while i < longitud(v) do '\ote{1}'
 			nat : k $\leftarrow$ v[i].clave mod longitud(v) '\ote{1}'
-			AgregarAtras(res[k], v[i]) '\ote{copy($\alpha$)}'
-			nat : q $\leftarrow$ longitud(res[k]) '\ote{i}'
+			AgregarAtras(res.tabla[k], v[i]) '\ote{copy($\alpha$)}'
+			nat : q $\leftarrow$ longitud(res.tabla[k]) '\ote{i}'
 			AgregarAtras(res.listaIterable, puntero(res.tabla[k][q-1])) '\ote{1}'
 			i++ '\ote{1}'
 		end while '\ote{n * copy($\alpha$) }'
+
+		i $\leftarrow$ 0 '\ote{1}'
+		while i < longitud(res.vectorOrdenClaves) do '\ote{1}'
+			nat : j $\leftarrow$ i '\ote{1}'
+			while j > 0 $\land$ res.vectorOrdenClaves[j] <
+										res.vectorOrdenClaves[j-1]) do '\ote{1}'
+				tupla(nat, puntero($\alpha$)) : temp $\leftarrow$ res.vectorOrdenClaves[j] '\ote{1}'
+				res.vectorOrdenClaves[j] $\leftarrow$ res.vectorOrdenClaves[j-1] '\ote{1}'
+				res.vectorOrdenClaves[j-1] $\leftarrow$ temp '\ote{1}'
+				j-- '\ote{1}'
+			end while '\ote{i}'
+			i++ '\ote{1}'
+		end while '\ote{$\sum_{i=0}^{longitud(res.vectorOrdenClaves)}$ i}'
+
 
 '\ofi{O(n^2 + n * copy(\alpha)))}'
 \end{lstlisting}
@@ -212,8 +241,8 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
 	nat : i $\leftarrow$ 0 '\ote{1}'
 	while i < longitud(d[k]) '\ote{1}'
-		IF d[k][i].clave $=_{obs}$ n THEN '\ote{1}'
-			d[k][i].significado $\leftarrow$ a '\ote{i}'
+		IF d.tabla[k][i].clave $=_{obs}$ n THEN '\ote{1}'
+			d.tabla[k][i].significado $\leftarrow$ a '\ote{i}'
 			i $\leftarrow$ longitud(d[k]) '\ote{1}'
 		ELSE
 			i++ '\ote{1}'
@@ -229,8 +258,8 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
 	res $\leftarrow$ NULL '\ote{1}'
 	while 1 < longitud(d[k]) do '\ote{1}'
-		IF d[k][i].clave $=_{obs}$ n THEN '\ote{i}'
-			res $\leftarrow$ *d[k][i].significado '\ote{i}'
+		IF d.tabla[k][i].clave $=_{obs}$ n THEN '\ote{i}'
+			res $\leftarrow$ *d.tabla[k][i].significado '\ote{i}'
 			i $\leftarrow$ longitud(d[k]) '\ote{1}'
 		ELSE
 			i++ '\ote{1}'
@@ -247,9 +276,9 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	nat : i $\leftarrow$ 0 '\ote{1}'
 	res $\leftarrow$ false '\ote{1}'
 	while i < longitud(d[k]) do '\ote{1}'
-		IF d[k][i].clave $=_{obs}$ n THEN '\ote{i}'
+		IF d.tabla[k][i].clave $=_{obs}$ n THEN '\ote{i}'
 			res $\leftarrow$ true '\ote{1}'
-			i $\leftarrow$ longitud(d[k]) '\ote{1}'
+			i $\leftarrow$ longitud(d.tabla[k]) '\ote{1}'
 		FI
 		i++ '\ote{1}'
 	end while '\ote{i}'
@@ -265,11 +294,10 @@ operación que modifique d sin utilizar las funciones del iterador.]
 '\ofi{O(1)}'
 \end{lstlisting}
 
-
 \begin{lstlisting}[mathescape]
-'\alg{cantClaves}{\In{d}{DiccNat($\alpha$)}}{nat}'
+'\alg{OrdenadoPorClave}{\In{d}{DiccNat($\alpha$)}}{vector(tupla(nat, $\alpha$))}'
 
-	res $\leftarrow$ longitud(d) '\ote{1}'
+	res $\leftarrow$ d.vectorOrdenClaves '\ote{1}'
 
 '\ofi{O(1)}'
 \end{lstlisting}
