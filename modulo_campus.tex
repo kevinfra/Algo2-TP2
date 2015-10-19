@@ -108,7 +108,7 @@
 
 ~
 
-\InterfazFuncion{proxPosicion}{\In{c}{campus}, \In{pos}{posicion}, \In{dir}{direccion}}{posicion}
+\InterfazFuncion{moverDir}{\In{c}{campus}, \In{pos}{posicion}, \In{dir}{direccion}}{posicion}
 [posValida(pos,c)]
 {$res =_{obs}$ proxPosicion(pos,dir,c)}
 [$O(1)$]
@@ -273,7 +273,7 @@
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{proxPosicion}{\In{cs}{campus}, \In{pos}{posicion}, \In{dir}{direccion}}{posicion}'
+'\alg{moverDir}{\In{cs}{campus}, \In{pos}{posicion}, \In{dir}{direccion}}{posicion}'
 
 	if(dir = izq)											'\ote{1}'
 		res $\leftarrow$ tupla(pos.x - 1, pos.y)			'\ote{1}'

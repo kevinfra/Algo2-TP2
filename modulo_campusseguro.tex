@@ -903,8 +903,105 @@ $\land$
 \begin{lstlisting}[mathescape]
 '\alg{iMoverAgente}{\In{a}{agente}, \Inout{cs}{estr} }{}'
 
-	
-'\ofi{}'
+	vector(tupla(agente, puntero(datosAgente))) 
+		placas $\leftarrow$ ordenadoPorClave(cs.personalAS)						'\ote{1}'
+	puntero(datosAgente) as $\leftarrow$ busqBinPorPlaca(placas, a)				'\ote{$log(N_a)$}'
+
+	// Actualizo la posicion del agente
+	posicion nuevaPos $\leftarrow$ ProxPos((*as).posicion, cs.hippies, cs)		'\ote{$N_h$}'
+	posicionesAgentes[(*as).posicion.y * columnas(cs.campus) + (*as).posicion.x].datos 
+		$\leftarrow$ NULL														'\ote{1}'
+	posicionesAgentes[nuevaPos.y * columnas(cs.campus) + nuevaPos.x] 
+		$\leftarrow$ tupla(a, as)												'\ote{1}'
+	(*as).posicion $\leftarrow$ nuevaPos										'\ote{1}'
+
+	// Me fijo a quienes atrapa 
+	posicion posArr $\leftarrow$ moverDir(cs.campus, nuevaPos, arriba)			'\ote{1}'
+	actualizarAgente(cs, posArr, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
+
+	posicion posAba $\leftarrow$ moverDir(cs.campus, nuevaPos, abajo)			'\ote{1}'
+	actualizarAgente(cs, posAba, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
+
+	posicion posDer $\leftarrow$ moverDir(cs.campus, nuevaPos, der)				'\ote{1}'
+	actualizarAgente(cs, posDer, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
+
+	posicion posIzq $\leftarrow$ moverDir(cs.campus, nuevaPos, izq)				'\ote{1}'
+	actualizarAgente(cs, posIzq, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
+
+
+'\ofi{O(log(N_a) + |n_m| + N_h)}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{puntero(datosAgente)}{as}}{}'
+	if(posValida?(cs.campus, pos) then 										'\ote{1}'
+
+	   	if(posicionesHippies[pos.y * columnas(cs.campus) + pos.x] $\not$= "") then
+	   		if(atrapado?(cs, pos)) then										'\ote{1}'
+	   			// Le sumo uno a sus capturas, actualizo masVigilante y mato al hippie
+	   			(*as).cantAtrapados++;											'\ote{1}'
+	   			if((*as).cantAtrapados > (*cs.masVigilante.datos).cantAtrapados) then
+	   				cs.masVigilante $\leftarrow$ tupla(a, as)					'\ote{1}'
+	   			end if
+	   			borrar(cs.hippies, posicionesHippies[pos.y * 
+	   			       columnas(cs.campus) + pos.x])							'\ote{$|n_m|$}'
+	   			posicionesHippies[pos.y * columnas(cs.campus) + pos.x]
+	   				$\leftarrow$ ""												'\ote{1}'
+	   		end if
+	   	end if
+
+	   	if(posicionesEstudiantes[pos.y * columnas(cs.campus) + pos.x] $\not$= "") then
+	   		if(atrapado?(cs, pos)) then 										'\ote{1}'
+	   			// Actualizo las sanciones y las estructuras relacionadas
+	   			cs.mismasSancModificado $\leftarrow$ true						'\ote{1}'
+
+	   			itConj(agente) iterConj $\leftarrow$ (*as).itConjMismasSanc 	'\ote{1}'
+	   			EliminarSiguiente(iterConj)										'\ote{1}'
+
+	   			itLista(kSanc) iterLista $\leftarrow$ (*as).itMismasSanc 		'\ote{1}'
+	   			// Me guardo un iterador para borrar el nodo de la lista
+	   			// si es que queda sin agentes
+	   			itLista(kSanc) iterListaAnterior $\leftarrow$ (*as).itMismasSanc '\ote{1}'
+	   			if(HaySiguiente?(iterLista) then 								'\ote{1}'
+	   			   	// Me fijo si el siguiente es la siguiente sancion
+	   			   	nat : sanciones $\leftarrow$ Siguiente(iterLista).sanc 		'\ote{1}'
+	   			   	Avanzar(iterLista) 											'\ote{1}'
+
+	   			   	if(Siguiente(iterLista).sanc = sanciones + 1) then 			'\ote{1}'
+	   			   		// Lo agrego al conjunto
+	   			   		(*as).itConjMismasSanc $\leftarrow$ 
+	   			   			AgregarRapido(a, Siguiente(iterLista).agentes)		'\ote{1}'
+	   			   	else
+	   			   		// Creo un nuevo nodo en el medio
+	   			   		conj(agente) conj $\leftarrow$ Vacio()					'\ote{1}'
+	   			   		(*as).itConjMismasSanc $\leftarrow$ 
+	   			   			AgregarRapido(a, conj)								'\ote{1}'
+	   			   		kSanc nodo $\leftarrow$ tupla(sanciones + 1, conj)		'\ote{1}'
+	   			   		AgregarComoAnterior(iterLista, nodo)					'\ote{1}'
+	   			   		Retroceder(iterLista)									'\ote{1}'
+	   			   		(*as).itMismasSanc $leftarrow$ iterLista				'\ote{1}'
+	   			   	end if
+	   			else
+	   				// Creo un nuevo nodo
+	   				conj(agente) conj $\leftarrow$ Vacio()					'\ote{1}'
+	   				(*as).itConjMismasSanc $\leftarrow$ 
+   			   			AgregarRapido(a, conj)								'\ote{1}'
+   			   		kSanc nodo $\leftarrow$ tupla(sanciones + 1, conj)		'\ote{1}'
+   			   		AgregarComoSiguiente(iterLista, nodo)					'\ote{1}'
+   			   		Avanzar(iterLista)										'\ote{1}'
+	   			   	(*as).itMismasSanc $leftarrow$ iterLista				'\ote{1}'
+	   			end if
+
+	   			if(!HaySiguiente?(iterConj) then							'\ote{1}'
+	   				// Borro el nodo anterior de la lista porque no tiene agentes
+	   				EliminarSiguiente(iterListaAnterior)					'\ote{1}'
+	   			end if
+	   			
+	   			(*as).cantSanc++;											'\ote{1}'
+	   		end if
+	   	end if
+	end if
+'\ofi{O(log(N_a) + |n_m| + N_h)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
