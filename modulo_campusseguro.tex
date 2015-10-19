@@ -278,7 +278,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\\
 	$\land$
 	\\
-	($\forall a$: nat) def?($a$, $e$.personalAS) $\Rightarrow_L$ Obtener($a$, $e$.personalAS).cantSanc $\leq$ *masVigilante.datos.cantSanc 
+	($\forall a$: nat) def?($a$, $e$.personalAS) $\Rightarrow_L$ Obtener($a$, $e$.personalAS).cantSanc $\leq$ *masVigilante.datos.cantSanc
 	\\
 	$\land$
 	\\
@@ -311,7 +311,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	$\land$
 	\\
 	$\#$claves($e$.personalAS) $+$ $\#$claves($e$.hippies) $+$ $\#$claves($e$.estudiantes) $+$ $\#$Obstaculos($e$.campus) $\leq$ filas($e$.campus)*columnas($e$.campus)
-	
+
 }\mbox{}
 \\
 	$\land$
@@ -396,7 +396,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		ELSE{
 			\IF sanc(prim(lista)) < sanc(prim(fin(lista))) THEN ordenada?(fin(lista))
 			ELSE false
-			FI 
+			FI
 		}
 		FI
 	}
@@ -416,7 +416,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 \tadAxioma{mismosNodos(lista, vec)}{
 	\IF vacia?(lista) THEN true
 	ELSE{
-		\IF $\&prim(lista) = prim(vec)$ THEN 
+		\IF $\&prim(lista) = prim(vec)$ THEN
 			mismosNodos(fin(lista), fin(vec))
 		ELSE
 			false
@@ -429,7 +429,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 \subsubsection{Función de Abstracción}
 \Abs[estr]{campusSeguro}[e]{cs}{
-$e$.campus $=$ campus($cs$) 
+$e$.campus $=$ campus($cs$)
 \\
 $\land$
 \\
@@ -457,7 +457,7 @@ $\land$
 \lstset{style=alg}
 
 \begin{lstlisting}[mathescape]
-'\alg{icomenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente, datosAgente)}}{estr}' 
+'\alg{icomenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente, datosAgente)}}{estr}'
 
 	res.campus $\leftarrow$ c '\ote{1}'
 	res.listaMismasSanc $\leftarrow$ generarListaMismasSanc(d) '\ote{$N_a$}'
@@ -490,9 +490,9 @@ $\land$
 		AgregarAtras(res, tupla(0,NULL)) '\ote{f$*$c}'
 		i $\leftarrow$ i$+1$ '\ote{1}'
 	end while '\ote{(f$*$c)$^2$}'
-	
+
 	while HaySiguiente(it) do '\ote{1}'
-		res[Siguiente(it).significado.posicion.y $*$ c $+$ 
+		res[Siguiente(it).significado.posicion.y $*$ c $+$
 				Siguiente(it).significado.posicion.x] $\leftarrow$
 			$\leftarrow$ tupla(Siguiente(it).clave, puntero(Siguiente(it).significado)) '\ote{1}'
 	end while '\ote{$N_a$}'
@@ -512,7 +512,7 @@ $\land$
 		end if '\ote{1}'
 		Avanzar(it) '\ote{1}'
 	end while '\ote{$N_a$}'
-	
+
 	res.agente $\leftarrow$ placaMenor '\ote{1}'
 	res.datos $\leftarrow$ punt '\ote{1}'
 
@@ -538,85 +538,85 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
-	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$ AND 
+	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$ AND
 	AND AlMenosUnAgente(vecinos(pos, $cs$.campus) then '\ote{1}'
 		conj(As): conjAgParaSanc $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 		SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
 	end if '\ote{1}'
 
-	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_a|$}'
-		Definir($cs$.estudiantes, e, pos) '\ote{$|n_a|$}'
+	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_m|$}'
+		Definir($cs$.estudiantes, e, pos) '\ote{$|n_m|$}'
 		$cs$.posicionesEstudiantes[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
 	else
-		Definir($cs$.hippies, e, pos) '\ote{$|n_a|$}'
+		Definir($cs$.hippies, e, pos) '\ote{$|n_m|$}'
 		$cs$.posicionesHippies[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
-	end if '\ote{$|n_a| + |n_a|$}'
-	
-	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$ 
+	end if '\ote{$|n_m| + |n_m|$}'
+
+	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
 		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
-		
+
 		while HaySiguiente(itHEst) do '\ote{1}'
-			Definir($cs$.estudiantes, Siguiente(itHEst).nombre, 
-				Siguiente(itHEst).posicion) '\ote{$|n_a|$}'
-			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_a|$}'
-			
-			$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) + 
-			+ Siguiente(itHEst).posicion.x] $\leftarrow$ 
-			$\leftarrow$ $cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) + 
+			Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
+				Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
+			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_m|$}'
+
+			$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+			+ Siguiente(itHEst).posicion.x] $\leftarrow$
+			$\leftarrow$ $cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
 			+ Siguiente(itHest).posicion.x] '\ote{1}'
-			
-			$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) + 
+
+			$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
 			+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
-			
+
 			Avanzar(itHEst) '\ote{1}'
-		end while '\ote{$4*2|n_a|$}'
-	end if '\ote{$4*2|n_a|$}'
+		end while '\ote{$2|n_m|$}'
+	end if '\ote{$4 * 2|n_m|$}'
 
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
 		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
-		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'	
+		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
-			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_a|$}'
-			
+			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_m|$}'
+
 			$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
 		+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4|n_a|$}'
-	end if '\ote{$4|n_a|$}'
+		end while '\ote{$4|n_m|$}'
+	end if '\ote{$4|n_m|$}'
 
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
-		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'	
+		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
 		while HaySiguiente(itEstH) do '\ote{1}'
-			Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_a|$}'
-			
+			Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_m|$}'
+
 			$cs$.posicionesEstudiantes[Siguiente(itEstH).y*Columnas($cs$.campus) +
 		+ Siguiente(itEstH).x] $\leftarrow$ " " '\ote{1}'
 
-			Definir($cs$.hippies, Siguiente(itEstH).nombre, 
-				Siguiente(itEstH).posicion) '\ote{$|n_a|$}'
-			
+			Definir($cs$.hippies, Siguiente(itEstH).nombre,
+				Siguiente(itEstH).posicion) '\ote{$|n_m|$}'
+
 			$cs$.posicionesHippies[Siguiente(itEstH).y*Columnas($cs$.campus) +
 		+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
-		
+
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4*2|n_a|$}'
-	end if '\ote{$4*2|n_a|$}'
+		end while '\ote{$4*2|n_m|$}'
+	end if '\ote{$4*2|n_m|$}'
 
 	conj(posicion): conjEstRodAs $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
 		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
-		
+
 		while HaySiguiente(itEstAs) do '\ote{1}'
-			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND 
+			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
 			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
-				conj(As): conjAgParaSanc $\leftarrow$ 
+				conj(As): conjAgParaSanc $\leftarrow$
 					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
 				SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
 			end if '\ote{1}'
@@ -624,7 +624,7 @@ $\land$
 
 	end if '\ote{4}'
 
-'\ofi{O(2|n_a|) + O(4*2|n_a|) + O(4|n_a|) + O(4*2|n_a|) = O(22|n_a|) = O(|n_a|)}'
+'\ofi{O(2|n_m|) + O(4*2|n_m|) + O(4|n_m|) + O(4*2|n_m|) = O(22|n_m|) = O(|n_m|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -666,7 +666,7 @@ $\land$
 '\alg{HippiesAtrapando}{\In{c}{conj(posicion)}, \In{cs}{estr}}{bool}'
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
-	
+
 	while HaySiguiente(itC) do '\ote{1}'
 		if $cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
 		+ Siguiente(itC).x] $\neq$ " " then '\ote{1}'
@@ -674,7 +674,7 @@ $\land$
 		end if '\ote{1}'
 		Avanzar(itC) '\ote{1}'
 	end while '\ote{4}'
-	
+
 	res $\leftarrow$ i $\geq 2$ '\ote{1}'
 
 '\ofi{O(1)}'
@@ -691,7 +691,7 @@ $\land$
 
 		if HaySiguiente(*Siguiente(itC).datos.itMismasSanc) then '\ote{1}'
 			Avanzar(*Siguiente(itC).datos.itMismasSanc)
-			if Siguiente(*Siguiente(itC).datos.itMismasSanc).sanc = 
+			if Siguiente(*Siguiente(itC).datos.itMismasSanc).sanc =
 			*Siguiente(itC).datos.cantSanc then '\ote{1}'
 			else
 				AgregarComoAnterior(*Siguiente(itC).datos.itMismasSanc,
@@ -704,10 +704,10 @@ $\land$
 				tupla(*Siguiente(itC).datos.cantSanc, Vacio()) '\ote{1}'
 			Avanzar(*Siguiente(itC).datos.itMismasSanc) '\ote{1}'
 		end if
-		
+
 		EliminarSiguiente(*Siguiente(itC).datos.itConjMismasSanc) '\ote{1}'
 		*Siguiente(itC).datos.itConjMismasSanc $\leftarrow$
-			$\leftarrow$ AgregarAdelante(*Siguiente(itC).datos.itMismasSanc.agentes, 
+			$\leftarrow$ AgregarAdelante(*Siguiente(itC).datos.itMismasSanc.agentes,
 				*Siguiente(itC).agente) '\ote{1}'
 	end while '\ote{1}'
 
@@ -720,13 +720,13 @@ $\land$
 	res $\leftarrow$ Vacio() '\ote{1}'
 
 	while HaySiguiente(itC) do '\ote{1}'
-		if $cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) + 
-		+ Siguiente(itC).y] $\neq$ " "  AND 
-		todasOcupadas?(vecinos(Siguiente(itDiccS), $cs$.campus)) AND 
+		if $cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
+		+ Siguiente(itC).y] $\neq$ " "  AND
+		todasOcupadas?(vecinos(Siguiente(itDiccS), $cs$.campus)) AND
 		AlMenosUnAgente(vecinos(Siguiente(itDiccS), $cs$.campus)) then '\ote{1}'
-			AgregarRapido(res, 
+			AgregarRapido(res,
 			tupla($cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
-			+ Siguiente(itC).y], 
+			+ Siguiente(itC).y],
 				Siguiente(itC)) '\ote{1}'
 
 			conj(As): conjAgPremiar $\leftarrow$
@@ -746,9 +746,9 @@ $\land$
 	res $\leftarrow$ Vacio() '\ote{1}'
 
 	while HaySiguiente(itC) do '\ote{1}'
-		if $cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x].datos $\neq$ 
+		if $cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x].datos $\neq$
 			$\neq$ NULL then '\ote{1}'
-			AgregarRapido(res, 
+			AgregarRapido(res,
 				$cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x]) '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(itC) \ote{1}'
@@ -760,7 +760,7 @@ $\land$
 \begin{lstlisting}[mathescape]
 '\alg{PremiarAgentes}{\In{c}{conj(As)}, \Inout{cs}{estr}}{}'
 	itConj(As): itC $\leftarrow$ CrearIt(As) '\ote{1}'
-	
+
 	while HaySiguiente(itC) do '\ote{1}'
 		*Siguiente(itC).datos.cantAtrapados $\leftarrow$
 			$\leftarrow$ *Siguiente(itC).datos.cantAtrapados$+1$ '\ote{1}'
@@ -773,20 +773,20 @@ $\land$
 '\alg{CantHippiesVecinos}{\In{c}{conj(posicion)}, \In{cs}{estr}}{nat}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	res $\leftarrow$ $0$
-	
+
 	while HaySiguiente(itC) do '\ote{1}'
 		itDiccString(nombre, posicion): itDic $\leftarrow$ CrearIt($cs$.hippies) '\ote{1}'
-		
+
 		while HaySiguiente(itDic) do '\ote{1}'
 			if Siguiente(itDic) = Siguiente(itC) '\ote{1}'
 				res $\leftarrow$ res$+1$ '\ote{1}'
 			end if '\ote{1}'
-		end while '\ote{$|n_a|$}'
+		end while '\ote{$|n_m|$}'
 
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{$|n_a|$}'
+	end while '\ote{$|n_m|$}'
 
-'\ofi{O(|n_a|) \text{. Como vecinos como maximo tiene longitud 4, la complejidad sería } O(4*|n_a|) = O(|n_a|)}}'
+'\ofi{O(|n_m|) \text{. Como vecinos como maximo tiene longitud 4, la complejidad sería } O(4*|n_m|) = O(|n_m|)}}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -796,12 +796,12 @@ $\land$
 
 	while HaySiguiente(itC) do '\ote{1}'
 		if $cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
-		+ Siguiente(itC).x] $\neq$ " "  AND 
-		todasOcupadas?(vecinos(Siguiente(itC), $cs$.campus)) AND 
+		+ Siguiente(itC).x] $\neq$ " "  AND
+		todasOcupadas?(vecinos(Siguiente(itC), $cs$.campus)) AND
 		TodosEstudiantes(vecinos(Siguiente(itC), $cs$.campus)) then '\ote{1}'
-			AgregarRapido(res, 
+			AgregarRapido(res,
 				tupla(, $cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
-		+ Siguiente(itC).x] 
+		+ Siguiente(itC).x]
 				Siguiente(itC)) '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(itC) '\ote{1}'
@@ -814,7 +814,7 @@ $\land$
 '\alg{todasOcupadas?}{\In{c}{conj(posicion)}, \In{cs}{estr}}{bool}'
 	res $\leftarrow$ false '\ote{1}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
-	
+
 	while HaySiguiente(itC) do '\ote{1}'
 		if $cs$.posicionesHippies[Siguiente(itC)*Columnas($cs$.campus) +
 		+ Siguiente(itC).y] $\neq$ " " then '\ote{1}'
@@ -823,7 +823,7 @@ $\land$
 		if $cs$.posicionesEstudiantes[Siguiente(itC)*Columnas($cs$.campus) +
 		+ Siguiente(itC).y] $\neq$ " " then '\ote{1}'
 			res $\leftarrow$ true '\ote{1}'
-	
+
 		Avanzar(itC) '\ote{1}'
 	end while '\ote{1}'
 
@@ -865,7 +865,7 @@ $\land$
 '\alg{TodosEstudiantes}{\In{c}{conj(posicion)}, \In{cs}{estr} }{bool}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c)
 	res $\leftarrow$ true
-	
+
 	while HaySiguiente(itC) AND res = true do '\ote{1}'
 		if $cs$.posicionesEstudiantes[Siguiente(itC).y*Columnas($cs$.campus) +
 		+ Siguiente(itC).x] $=$ " " then '\ote{1}'
@@ -880,104 +880,200 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarHippie}{\In{h}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} }{}'
-	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$) AND 
+	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$) AND
 	AND AlMenosUnAgente(vecinos(pos, $cs$.campus) then '\ote{1}'
 		conj(As): conjAgParaPrem $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 		PremiarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
 	else if todasOcuapadas?(vecinos(pos, $cs$.campus), $cs$) AND
 	AND TodosEstudiantes(vecinos(pos, $cs$.campus), $cs$) then '\ote{1}'
-		Definir($cs$.estudiantes, h, pos) '\ote{$|n_a|$}'
+		Definir($cs$.estudiantes, h, pos) '\ote{$|n_m|$}'
 		$cs$.posicionesEstudiantes[pos.y*Columnas($cs$.campus) + pos.x] $\leftarrow$ h
 	else
-		Definir($cs$.hippies, h, pos) '\ote{$|n_a|$}'
+		Definir($cs$.hippies, h, pos) '\ote{$|n_m|$}'
 		$cs$.posicionesHippies[pos.y*Columnas($cs$.campus) + pos.x] $\leftarrow$ h
-	end if '\ote{$|n_a|$}'
-	
-	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$ 
+	end if '\ote{$|n_m|$}'
+
+	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
 		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
-		
+
 		while HaySiguiente(itHEst) do '\ote{1}'
-			Definir($cs$.estudiantes, Siguiente(itHEst).nombre, 
-				Siguiente(itHEst).posicion) '\ote{$|n_a|$}'
-			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_a|$}'
-			
-			$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) + 
-			+ Siguiente(itHEst).posicion.x] $\leftarrow$ 
-			$\leftarrow$ $cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) + 
+			Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
+				Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
+			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_m|$}'
+
+			$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+			+ Siguiente(itHEst).posicion.x] $\leftarrow$
+			$\leftarrow$ $cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
 			+ Siguiente(itHest).posicion.x] '\ote{1}'
-			
-			$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) + 
+
+			$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
 			+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
-			
+
 			Avanzar(itHEst) '\ote{1}'
-		end while '\ote{$4*2|n_a|$}'
-	end if '\ote{$4*2|n_a|$}'
+		end while '\ote{$4*2|n_m|$}'
+	end if '\ote{$4*2|n_m|$}'
 
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
 		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
-		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'	
+		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
-			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_a|$}'
-			
+			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_m|$}'
+
 			$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
 		+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4|n_a|$}'
-	end if '\ote{$4|n_a|$}'
+		end while '\ote{$4|n_m|$}'
+	end if '\ote{$4|n_m|$}'
 
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
-		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'	
+		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
 		while HaySiguiente(itEstH) do '\ote{1}'
-			Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_a|$}'
-			
+			Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_m|$}'
+
 			$cs$.posicionesEstudiantes[Siguiente(itEstH).y*Columnas($cs$.campus) +
 		+ Siguiente(itEstH).x] $\leftarrow$ " " '\ote{1}'
 
-			Definir($cs$.hippies, Siguiente(itEstH).nombre, 
-				Siguiente(itEstH).posicion) '\ote{$|n_a|$}'
-			
+			Definir($cs$.hippies, Siguiente(itEstH).nombre,
+				Siguiente(itEstH).posicion) '\ote{$|n_m|$}'
+
 			$cs$.posicionesHippies[Siguiente(itEstH).y*Columnas($cs$.campus) +
 		+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
-		
+
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4*2|n_a|$}'
-	end if '\ote{$4*2|n_a|$}'
+		end while '\ote{$4*2|n_m|$}'
+	end if '\ote{$4*2|n_m|$}'
 
 	conj(posicion): conjEstRodAs $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
 		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
-		
+
 		while HaySiguiente(itEstAs) do '\ote{1}'
-			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND 
+			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
 			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
-				conj(As): conjAgParaSanc $\leftarrow$ 
+				conj(As): conjAgParaSanc $\leftarrow$
 					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
 				SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
 			end if '\ote{1}'
 		end while '\ote{4}'
 
 	end if '\ote{4}'
-	
-'\ofi{O(|n_a|) + O(4*2|n_a|) + O(4|n_a|) + O(4*2|n_a|) = O(21|n_a|) = O(|n_a|)}'
+
+'\ofi{O(|n_m|)}'
+
+
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iMoverEstudiante}{\In{e}{nombre}, \In{d}{dirección}, \Inout{cs}{estr} }{}'
-	
-'\ofi{}'
+
+	Posicion: actualPos $\leftarrow$ Obtener(cs.estudiantes,e) '\ote{$|n_m|$}'
+	Posicion: pos $\leftarrow$ actualPos '\ote{1}'
+	if(d=Izquierda) then '\ote{1}'
+		pos.x $\leftarrow$ pos.x - 1 '\ote{1}'
+	else if (d=derecha) then '\ote{1}'
+		pos.x $\leftarrow$ pos.x + 1 '\ote{1}'
+	else if (d=Arriba) then '\ote{1}'
+		pos.y $\leftarrow$ pos.y + 1 '\ote{1}'
+ 	else if (d=Abajo) then '\ote{1}'
+ 		pos.y $\leftarrow$ pos.y - 1 '\ote{1}'
+ 	end if
+
+ 	if(not (pos.y = 1 OR pos.y = cd.campus.filas)) then '\ote{1}'
+		if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_m|$}'
+			Definir($cs$.estudiantes, e, pos) '\ote{$|n_m|$}'
+			$cs$.posicionesEstudiantes[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
+		else
+			Definir($cs$.hippies, e, pos) '\ote{$|n_m|$}'
+			$cs$.posicionesHippies[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
+		end if '\ote{$|n_m| + |n_m|$}'
+
+		conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
+			$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+
+		if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
+			itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
+
+			while HaySiguiente(itHEst) do '\ote{1}'
+				Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
+					Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
+				Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_m|$}'
+
+				$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+				+ Siguiente(itHEst).posicion.x] $\leftarrow$
+				$\leftarrow$ $cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+				+ Siguiente(itHest).posicion.x] '\ote{1}'
+
+				$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+				+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
+
+				Avanzar(itHEst) '\ote{1}'
+			end while '\ote{$2|n_m|$}'
+		end if '\ote{$4 * 2|n_m|$}'
+
+		conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
+			$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
+			itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
+			while HaySiguiente(itHAs) do '\ote{1}'
+				Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_m|$}'
+
+				$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
+			+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
+				Avanzar(itHAs) '\ote{1}'
+			end while '\ote{$4|n_m|$}'
+		end if '\ote{$4|n_m|$}'
+
+		conj(nombre, posicion): conjEstRodHip $\leftarrow$
+			$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
+			itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
+			while HaySiguiente(itEstH) do '\ote{1}'
+				Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_m|$}'
+
+				$cs$.posicionesEstudiantes[Siguiente(itEstH).y*Columnas($cs$.campus) +
+			+ Siguiente(itEstH).x] $\leftarrow$ " " '\ote{1}'
+
+				Definir($cs$.hippies, Siguiente(itEstH).nombre,
+					Siguiente(itEstH).posicion) '\ote{$|n_m|$}'
+
+				$cs$.posicionesHippies[Siguiente(itEstH).y*Columnas($cs$.campus) +
+			+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
+
+				Avanzar(itHAs) '\ote{1}'
+			end while '\ote{$4*2|n_m|$}'
+		end if '\ote{$4*2|n_m|$}'
+
+		conj(posicion): conjEstRodAs $\leftarrow$
+			$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
+			itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
+
+			while HaySiguiente(itEstAs) do '\ote{1}'
+				if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
+				AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
+					conj(As): conjAgParaSanc $\leftarrow$
+						$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
+					SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
+				end if '\ote{1}'
+			end while '\ote{4}'
+
+		end if '\ote{4}'
+	else
+		Borrar(cs.estudiantes,e) '\ote{$|n_m|$}'
+	end if
+
+'\ofi{O(|n_m|)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{estr} }{}'
-	
-	
 
 '\ofi{}'
 \end{lstlisting}
@@ -1179,7 +1275,7 @@ $\land$
 		hacerArregloMismasSanc($cs$) '\ote{$N_a$}'
 		$cs$.mismasSancModificado $\leftarrow$ false
 	end if
-	
+
 	nat: i $\leftarrow$ 0
 	bool: esta $\leftarrow$ busqBinAgente($k$, i, $cs$.vectorMismasSanc) '\ote{$logN_a$}'
 	if esta = true then '\ote{1}'
@@ -1193,7 +1289,7 @@ $\land$
 
 \begin{lstlisting}[mathescape]
 '\alg{hacerArregloMismasSanc}{\Inout{cs}{estr}}{}'
-	arreglo(puntero(kSanc)): arregloNuevo $\leftarrow$ CrearArreglo(Longitud($cs$.listaMismasSanc)) 
+	arreglo(puntero(kSanc)): arregloNuevo $\leftarrow$ CrearArreglo(Longitud($cs$.listaMismasSanc))
 	'\ote{$N_a$}'
 	itLista(kSanc): it $\leftarrow$ CrearIt($cs$.listaMismasSanc) '\ote{1}'
 	nat: i $\leftarrow$ $0$ '\ote{1}'
@@ -1204,7 +1300,7 @@ $\land$
 		i $\leftarrow$ i $+1$ '\ote{1}'
 		Avanzar(it) '\ote{1}'
 	end while '\ote{$N_a$}'
-	
+
 	$cs$.arregloMismasSanc $\leftarrow$ arregloNuevo '\ote{1}'
 
 '\ofi{O(N_a) + O(N_a) = O(N_a) \text{ Como máximo va a ser la cantidad de agentes la lista listaMismasSanc} }'
@@ -1215,7 +1311,7 @@ $\land$
 	nat: n $\leftarrow$ $0$ '\ote{1}'
 	nat: m $\leftarrow$ Longitud(v) '\ote{1}'
 	nat: med
-	
+
 	while n $\neq$ m$-1$ do '\ote{1}'
 		med $\leftarrow$ $\frac{n+m}{2}$ '\ote{1}'
 		if med $\leq$ k then '\ote{1}'
@@ -1233,5 +1329,33 @@ $\land$
 	end if
 
 '\ofi{O(logN_a)}'
+
 \end{lstlisting}
 
+\begin{lstlisting}[mathescape]
+
+'\alg{Atrapado?}{\In{c}{campus}, \In{pos}{Posicion}}{bool}'
+	$res$ $\leftarrow$ todasOcupadas?(vecinos(pos,cs.campus)) '\ote{1}'
+'\ofi{O(1)}'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+'\alg{busqBinPorPlaca}{\In{a}{agente}, \In{v}{vector(tupla(clave : agente, p : puntero(datosAgente))}}{puntero(datosAgente)}'
+	nat: inf $\leftarrow$ $0$ '\ote{1}'
+	nat: sup $\leftarrow$ Longitud(v) '\ote{1}'
+	nat: med $\leftarrow$ $\frac{inf+sup}{2}$ '\ote{1}'
+
+	while inf $\neq$ sup$-1$ do '\ote{1}'
+		med $\leftarrow$ $\frac{inf+sup}{2}$ '\ote{1}'
+		if v[med].clave $\leq$ a then '\ote{1}'
+			inf $\leftarrow$ med '\ote{1}'
+		else
+			sup $\leftarrow$ med '\ote{1}'
+		end if
+	end while '\ote{$log(N_a)$}'
+
+	$res$ $\leftarrow$ v[inf].p
+	
+'\ofi{O(logN_a)}'
+\end{lstlisting}
