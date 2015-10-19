@@ -63,7 +63,7 @@ de copy(s) ya que los significados se almacenan por copia.
 
 ~
 
-\InterfazFuncion{Borrar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}
+\InterfazFuncion{Eliminar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}
 [$ d \igobs d_0 \land $ def?($d$, $c$)]
 {$ d \igobs$ borrar($d_0$, $c$)}
 [$O(|n_m|)$]
@@ -335,7 +335,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{borrar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}'
+'\alg{eliminar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
