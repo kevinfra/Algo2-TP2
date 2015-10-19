@@ -1069,7 +1069,8 @@ $\land$
 		Borrar(cs.estudiantes,e) '\ote{$|n_m|$}'
 	end if
 
-'\ofi{}'
+'\ofi{O(|n_m|)}'
+
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -1202,6 +1203,15 @@ $\land$
 	end if
 
 '\ofi{O(logN_a)}'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{Atrapado?}{\In{c}{campus}, \In{pos}{Posicion}}{bool}'
+	$res$ $\leftarrow$ todasOcupadas?(vecinos(pos,cs.campus)) '\ote{1}'
+'\ofi{O(1)}'
+
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
