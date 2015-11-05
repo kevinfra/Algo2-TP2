@@ -173,7 +173,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 		\tupItem{\\ posicionesAgente}{vector(As)}%
 		\tupItem{\\ masVigilante}{As}%
 		\tupItem{\\ listaMismasSanc}{lista(kSanc)}%
-		\tupItem{\\ arregloMismasSanc}{arreglo(puntero(kSanc))}
+		\tupItem{\\ arregloMismasSanc}{arreglo(itLista(kSanc))}
 		\tupItem{\\ mismasSancModificado}{bool}
 		\tupItem{\\ hippies}{dicString(nombre,posicion)}%
 		\tupItem{\\ estudiantes}{dicString(nombre, posicion)}%
@@ -195,7 +195,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 	\begin{Tupla}[As]
 		\tupItem{agente}{agente}%
-		\tupItem{datos}{puntero(datosAgente)}%
+		\tupItem{datos}{itDiccNat(agente,datosAgente)}%
 	\end{Tupla}
 
 	~
@@ -229,15 +229,18 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	%done
 	\item Para todo nombre que esta definido en el diccionario de hippies no puede estar definido en el diccionario de estudiantes y viceversa.
 	%done
-	\item La cantidad de elementos que tiene posicionesAgente, posicionesHippies y posicionesEstudiantes es la cantidad de coordenadas que tiene la grilla.
+	\item La cantidad de elementos que tiene posicionesAgente, posicionesHippies y posicionesEstudiantes es la cantidad de coordenadas que tiene el campus.
 	%done
 	\item Los agentes de posicionesAgente son los mismos que los de personalAs y viceversa.
 	%done
 	\item La posicion de todos los agentes de posicionesAgente se mapea con la posicion que tienen en personalAs y viceversa.
 	%done
 	\item Las posiciones en posicionesAgente que no tienen agente tienen un puntero a NULL.
+	%TODO
+	\item Las posiciones en posicionesHippies que no tienen un hippie poseenel caracter de espacio " ".
+	\item Las posiciones en posicionesEstudiantes que no tienen un estudiante poseen el caracter de espacio " ".
 	%done
-	\item La dimension del campus es mayor que la cantidad de estudiantes, hippies, agentes y obstaculos .
+	\item La dimension del campus es mayor que la cantidad de estudiantes, hippies, agentes y obstaculos.
 	%done
 	\item La longitud de listaMismasSanc es la cantidad de sanciones diferentes que hay.
 	\item Para cada cantidad de sanciones distinta hay un nodo en listaMismasSanc con esa cantidad de sanciones.
