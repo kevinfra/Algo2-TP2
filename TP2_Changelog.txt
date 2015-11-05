@@ -1,0 +1,21 @@
+TP2 Changelog - Lista de cambios
+*********************************
+
++ 28/09/15 - v1.0
++ 07/10/15 - v1.1
+  - conMismasSanciones ahora es O(1) en el caso promedio
+  - se sacó el log(Na) de las funciones moverHippie, ingresarEstudiante, ingresarHippie y moverEstudiante
++ 09/10/15 - v1.2
+  - Se corrigieron varios typos.
+  - hayHippie y hayEstudiante ahora son hayHippieOEstudiante, una sola función que puede recibir el conjunto de hippies o estudiantes.
+  - cantHippiesAtrapados ya no tiene axiomas truncos por el fin de hoja.
+  - Se cambió la función alMenos1Estudiante por todosEstudiantes (junto con su axiomatizaci\'on, obvio).
+  - HippiesRodeados ahora pide que para que los hippies estén rodeados haya entre sus vecinos un agente por lo menos, o 4 estudiantes.
+  - posEstudiantesYHippies no existe m\'as, porque era un nombre viejo de posEstudianteYHippie.
+  - hayHippieOEstudiante ahora no pide un conjunto de DNI (que ni est\'a definido el renombre) sino que pide un conj(nombre).
++ 25/10/15 - v1.3
+  - Ahora las funciones que describen el observador estudiantes no agregan al conjunto a los hippies capturados en ese turno.
+  - CantHippiesAtrapados(ingresarHippie) ahora solo suma una sancion cuando el hippie que ingresa es capturado por el agente correspondiente (y no por cualquiera).
+  - CantHippiesAtrapados(ingresarEstudiante) ahora considera que el estudiante quizas se convirtio a hippie y luego desaparecio, y tambien que terminara de encerrar a sus vecinos.
+  - Ahora un hippie/estudiante que ingresa solo puede desencadenar una captura en un vecino suyo si él mismo no fue sacado del tablero automáticamente
+  
