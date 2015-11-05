@@ -8,19 +8,19 @@
 
 \subsubsection{Operaciones básicas de CampusSeguro}
 
-\InterfazFuncion{comenzarRastrillaje}{\In{c}{campus}, \In{d}{dicc(placa,AS)}}{campusSeguro}
+\InterfazFuncion{comenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente,datosAgente)}}{campusSeguro}
 [($\forall a$ : agente) (def?($a$,$d$) $\Rightarrow_L$ (posVálida(obtener($a$,$d$)) $\land$ $\neg$ocupada?(obtener($a$,$d$,$c$))) $\land$ ($\forall a, a2$ : agente) ((def?($a$,$d$) $\land$ def?($a2$,$d$) $\land a \neq a2$) $\Rightarrow_L$ obtener($a$,$d$) $\neq$ obtener($a2$,$d$))]
 {res $=_{obs}$ comenzarRastrillaje(c,d)}
-[$O((f*c)^2 + N_a)$]
+[$O((f*c) + N_a)$]
 [Crea un nuevo campusSeguro tomando un campus y un diccionario con agentes.]
-[]
+[Se genera aliasing campus y en el diccionario que se pasan por parametro.]
 
 ~
 
 \InterfazFuncion{ingresarEstudiante}{\In{e}{nombre}, \In{p}{posición}, \Inout{cs}{campusSeguro}}{}
 [$cs =_{obs} cs_o \land e \not\in$ (estudiantes($cs$) $\bigcup$ hippies($cs$)) $\land$ esIngreso?($p$,campus($cs$)) $\land$ $\neg$estaOcupada?($p$,$cs$)]
 {$cs =_{obs}$ ingresarEstudiante($e$,$p$,$cs_o$)}
-[$O(|n_m|) + O(log(N_a))$]
+[$O(|n_m|)$]
 [Ingresa un nuevo estudiante al campusSeguro]
 []
 
@@ -73,30 +73,30 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 ~
 
-\InterfazFuncion{estudiantes}{\In{cs}{campusSeguro}}{conj(nombre)}
+\InterfazFuncion{estudiantes}{\In{cs}{campusSeguro}}{itDiccString(nombre, posicion)}
 [true]
 {$res =_{obs}$ estudiantes($cs$)}
 [$O(1)$]
 [Devuelve el conjunto de los estudiantes que estan en el campus.]
-[$res$ es una referencia no modificable.]
+[$res$ es un iterador no modificable.]
 
 ~
 
-\InterfazFuncion{hippies}{\In{cs}{campusSeguro}}{conj(nombre)}
+\InterfazFuncion{hippies}{\In{cs}{campusSeguro}}{itDiccString(nombre, posicion)}
 [true]
 {$res =_{obs}$ hippies($cs$)}
 [$O(1)$]
 [Devuelve el conjunto de los hippies que estan en el campus.]
-[$res$ es una referencia no modificable.]
+[$res$ es un iterador no modificable.]
 
 ~
 
-\InterfazFuncion{agentes}{\In{cs}{campusSeguro}}{conj(agentes)}
+\InterfazFuncion{agentes}{\In{cs}{campusSeguro}}{itDiccNat(agente,datosAgente)}
 [true]
 {$res =_{obs}$ agentes($cs$)}
 [$O(1)$]
-[Devuelve el conjunto de los agentes que estan en el campus.]
-[$res$ es una referencia no modificable.]
+[Devuelve un iterador al diccionario de los agentes que estan en el campus.]
+[$res$ es un interador no modificable.]
 
 ~
 
@@ -148,7 +148,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 \InterfazFuncion{conMismasSanciones}{\In{a}{agente}, \In{cs}{campusSeguro}}{conj(agentes)}
 [$a \in$ agentes($cs$)]
 {$res =_{obs}$ conMismasSanciones($a$,$cs$)}
-[$O(1)$]
+[$O(1)$ en el caso promedio.]
 [Devuelve el conjunto de los agentes que tienen el mismo numero de sanciones que el agente pasado como parametro.]
 [$res$ es una referencia no modificable.]
 
@@ -194,7 +194,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	~
 
 	\begin{Tupla}[As]
-		\tupItem{agente}{nat}%
+		\tupItem{agente}{agente}%
 		\tupItem{datos}{puntero(datosAgente)}%
 	\end{Tupla}
 
