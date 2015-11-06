@@ -496,10 +496,10 @@ $\land$
 \begin{lstlisting}[mathescape]
 '\alg{icomenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente, datosAgente)}}{estr}'
 
-	res.campus $\leftarrow$ c '\ote{1}'
+	res.campus $\leftarrow$ c $\emph{(1)}$ '\ote{1}'
 	res.listaMismasSanc $\leftarrow$ generarListaMismasSanc(d) '\ote{$N_a$}'
-	res.personalAS $\leftarrow$ d '\ote{1}'
-	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) '\ote{(f$*$c)$^2$ + $N_a$}'
+	res.personalAS $\leftarrow$ d $\emph{(2)}$ '\ote{1}'
+	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) '\ote{(f$*$c) + $N_a$}'
 	res.masVigilante $\leftarrow$ menorPlaca(d) '\ote{$N_a$}'
 	res.mismasSancModificado $\leftarrow$ true '\ote{1}'
 	res.hippies $\leftarrow$ Vacio() '\ote{1}'
@@ -512,10 +512,21 @@ $\land$
 		AgregarAtras(res.posicionesHippies, " ") '\ote{1}'
 		AgregarAtras(res.posicionesEstudiantes, " ") '\ote{1}'
 		i $\leftarrow$ i$+1$
-	end while '\ote{(f*c)$^2$}'
+	end while '\ote{(f*c)}'
 
-'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) + O((f*c)^2) = O((f*c)^2 + N_a)}'
+'\ofi{O(N_a) + O(N_a) + O((f*c) + N_a) + O((f*c)) = O((f*c) + N_a)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+\InterfazFuncion{vectorizarPos}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f}{nat}, \In{c}{nat}}{vector(AS)}'
@@ -526,7 +537,7 @@ $\land$
 	while i $<$ f$*$c do '\ote{1}'
 		AgregarAtras(res, tupla(0,NULL)) '\ote{f$*$c}'
 		i $\leftarrow$ i$+1$ '\ote{1}'
-	end while '\ote{(f$*$c)$^2$}'
+	end while '\ote{(f$*$c)}'
 
 	while HaySiguiente(it) do '\ote{1}'
 		res[Siguiente(it).significado.posicion.y $*$ c $+$
@@ -534,8 +545,19 @@ $\land$
 			$\leftarrow$ tupla(Siguiente(it).clave, puntero(Siguiente(it).significado)) '\ote{1}'
 	end while '\ote{$N_a$}'
 
-'\ofi{O((f*c)^2 + N_a)}'
+'\ofi{O((f*c) + N_a)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+\InterfazFuncion{menorPlaca}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{menorPlaca}{\In{d}{diccNat(agente, datosAgente)}}{AS}'
@@ -556,6 +578,18 @@ $\land$
 '\ofi{O(N_a)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{generarListaMismasSanc}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{generarListaMismasSanc}{\Inout{d}{diccNat(agente, datosAgente)}}{lista(kSanc)}'
 	itDiccNat(agente, datosAgente): itDic $\leftarrow$ CrearIt(d) '\ote{1}'
@@ -572,6 +606,11 @@ $\land$
 
 '\ofi{O(N_a)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
@@ -664,6 +703,18 @@ $\land$
 '\ofi{O(2|n_m|) + O(4*2|n_m|) + O(4|n_m|) + O(4*2|n_m|) = O(22|n_m|) = O(|n_m|)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{EstudiantesRodeadosAs}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{EstudiantesRodeadosAs}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(posicion)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
@@ -679,6 +730,18 @@ $\land$
 
 '\ofi{O(4) = O(1)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{EstudiantesRodeadosHippies}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{EstudiantesRodeadosHippies}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(nombre, posicion)}'
@@ -699,6 +762,18 @@ $\land$
 '\ofi{O(1)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{HippiesAtrapando}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{HippiesAtrapando}{\In{c}{conj(posicion)}, \In{cs}{estr}}{bool}'
 	nat: i $\leftarrow$ 0 '\ote{1}'
@@ -716,6 +791,18 @@ $\land$
 
 '\ofi{O(1)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{SancionarAgentes}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{SancionarAgentes}{\In{c}{conj(As)}, \Inout{cs}{estr}}{}'
@@ -751,6 +838,18 @@ $\land$
 '\ofi{O(1)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{HippiesRodeadosAs}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{HippiesRodeadosAs}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(nombre, posicion)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
@@ -777,6 +876,18 @@ $\land$
 '\ofi{O(4) = O(1) \text{. La cantidad maxima del conjunto de posicion es 4.}}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{AgParaPremSanc}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{AgParaPremSanc}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(As)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
@@ -794,6 +905,18 @@ $\land$
 '\ofi{O(1) + O(1) + O(4) = O(1)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{PremiarAgentes}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{PremiarAgentes}{\In{c}{conj(As)}, \Inout{cs}{estr}}{}'
 	itConj(As): itC $\leftarrow$ CrearIt(As) '\ote{1}'
@@ -805,6 +928,18 @@ $\land$
 
 '\ofi{O(4) = O(1) \text{. La cantidad maxima de agentes va a ser 4.}}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{CantHippiesVecinos}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{CantHippiesVecinos}{\In{c}{conj(posicion)}, \In{cs}{estr}}{nat}'
@@ -826,6 +961,18 @@ $\land$
 '\ofi{O(|n_m|) \text{. Como vecinos como maximo tiene longitud 4, la complejidad sería } O(4*|n_m|) = O(|n_m|)}}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{HippiesRodeadosEstudiantes}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{HippiesRodeadosEstudiantes}{\In{c}{conj(posicion}, \In{cs}{estr}}{conj(nombre, posicion)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
@@ -846,6 +993,18 @@ $\land$
 
 '\ofi{O(4) = O(1) \text{. Como el conjunto c tiene como maximo longitud 4, la complejidad sería } O(1)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{todasOcupadas?}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{todasOcupadas?}{\In{c}{conj(posicion)}, \In{cs}{estr}}{bool}'
@@ -883,6 +1042,18 @@ $\land$
 '\ofi{O(1) \text{. Como el conjunto c tiene como maximo longitud 4, la complejidad sería } O(1)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{AlMenosUnAgente}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{AlMenosUnAgente}{\In{c}{conj(posicion)}, \In{cs}{estr} }{bool}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
@@ -897,6 +1068,18 @@ $\land$
 
 '\ofi{O(4) = O(1) \text{. Como el conjunto c tiene maximo 4 posiciones, solo hace el ciclo 4 veces maximo.}}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{TodosEstudiantes}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{TodosEstudiantes}{\In{c}{conj(posicion)}, \In{cs}{estr} }{bool}'
@@ -1003,9 +1186,12 @@ $\land$
 	end if '\ote{4}'
 
 '\ofi{O(|n_m|)}'
-
-
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
 
 \begin{lstlisting}[mathescape]
 '\alg{iMoverEstudiante}{\In{e}{nombre}, \In{d}{dirección}, \Inout{cs}{estr} }{}'
@@ -1116,6 +1302,11 @@ $\land$
 '\ofi{O(|n_m|)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
 \begin{lstlisting}[mathescape]
 '\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{estr} }{}'
 
@@ -1203,6 +1394,18 @@ $\land$
 '\ofi{O(N_e + |n_m|)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{ProxPos}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{ProxPos}{\In{pos}{posicion}, \In{d}{dicString(nombre,posicion)}, \In{cs}{estr}}{posicion}'
 
@@ -1222,6 +1425,18 @@ $\land$
 
 '\ofi{O(\#Claves(d)) + Cardinal(c) = O(\#Claves(d)) \text{. El Cardinal(c) depende de las claves del diccionario.}}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{LugaresPosibles}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{LugaresPosibles}{\In{pos}{posicion}, \In{c}{conj(posicion)}, \In{cs}{estr}}{conj(posicion)}'
@@ -1266,6 +1481,18 @@ $\land$
 '\ofi{Cardinal(c)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{HayAlgoEnPos}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{HayAlgoEnPos}{\In{pos}{posicion}, \In{cs}{estr}}{bool}'
 	res $\leftarrow$ false '\ote{1}'
@@ -1289,6 +1516,18 @@ $\land$
 '\ofi{O(1)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{DondeIr}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{DondeIr}{\In{pos}{posicion}, \In{dist}{nat}, \In{d}{diccString(nombre,posicion)}}{conj(posicion)}'
 
@@ -1304,6 +1543,18 @@ $\land$
 
 '\ofi{O(\# Claves(d))}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{DistanciaMasCorta}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}'
@@ -1321,6 +1572,18 @@ $\land$
 
 '\ofi{O(\#Claves(d))}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{Distancia}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{Distancia}{\In{pos1,pos2}{posicion}}{nat}'
@@ -1360,6 +1623,18 @@ $\land$
 
 '\ofi{O(log(N_a) + |n_m| + N_h)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{actualizarAgente}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{puntero(datosAgente)}{as}}{}'
@@ -1433,11 +1708,21 @@ $\land$
 '\ofi{O(log(N_a) + |n_m| + N_h)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
 \begin{lstlisting}[mathescape]
 '\alg{iCampus}{\In{cs}{estr} }{campus}'
 	$res$ $\leftarrow$ $cs$.campus'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
 
 \begin{lstlisting}[mathescape]
 '\alg{iEstudiantes}{\In{cs}{estr} }{itDiccString(nombre,posición)}'
@@ -1445,17 +1730,32 @@ $\land$
 '\ofi{O(1)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
 \begin{lstlisting}[mathescape]
 '\alg{iHippies}{\In{cs}{estr} }{itDiccString(nombre,posición)}'
 	$res$ $\leftarrow$ CrearIt($cs$.hippies)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
 \begin{lstlisting}[mathescape]
 '\alg{iAgentes}{\In{cs}{estr} }{itDiccNat(agente,datosAgente)}'
 	$res$ $\leftarrow$ CrearIt($cs$.personalAS)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
 
 \begin{lstlisting}[mathescape]
 '\alg{iPosEstudianteYHippie}{\In{id}{nombre}, \In{cs}{estr} }{posición}'
@@ -1467,11 +1767,21 @@ $\land$
 '\ofi{O(|n_m|) + O(4*2|n_m|) = O(|n_m|)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
 \begin{lstlisting}[mathescape]
 '\alg{iPosAgente}{\In{a}{agente}, \In{cs}{estr} }{posición}'
 	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).posicion '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
 
 \begin{lstlisting}[mathescape]
 '\alg{iCantSanciones}{\In{a}{agente}, \In{cs}{estr} }{}'
@@ -1479,17 +1789,32 @@ $\land$
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
 \begin{lstlisting}[mathescape]
 '\alg{iCantHippiesAtrapados}{\In{a}{agente}, \In{cs}{estr} }{}'
 	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).cantAtrapados '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
 \begin{lstlisting}[mathescape]
 '\alg{iConMismasSanciones}{\In{a}{agente}, \In{cs}{estr} }{lista(agente)}'
 	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).itMismasSanc.conjAgente '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
 
 \begin{lstlisting}[mathescape]
 '\alg{iConKSanciones}{\In{k}{nat}, \In{cs}{estr} }{lista(agente)}'
@@ -1509,6 +1834,18 @@ $\land$
 '\ofi{\text{Si las sanciones no fueron modificadas: } O(N_a) \text{. Si no } O(logN_a)}'
 \end{lstlisting}
 
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{hacerArregloMismasSanc}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
+
 \begin{lstlisting}[mathescape]
 '\alg{hacerArregloMismasSanc}{\Inout{cs}{estr}}{}'
 	arreglo(puntero(kSanc)): arregloNuevo $\leftarrow$ CrearArreglo(Longitud($cs$.listaMismasSanc))
@@ -1527,6 +1864,18 @@ $\land$
 
 '\ofi{O(N_a) + O(N_a) = O(N_a) \text{ Como máximo va a ser la cantidad de agentes la lista listaMismasSanc} }'
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{busqBinAgente}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{busqBinAgente}{\In{k}{nat}, \Inout{i}{nat}, \In{v}{arreglo(puntero(kSanc))}}{bool}'
@@ -1551,16 +1900,36 @@ $\land$
 	end if
 
 '\ofi{O(logN_a)}'
-
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{Atrapado?}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
-
 '\alg{Atrapado?}{\In{c}{campus}, \In{pos}{Posicion}}{bool}'
 	$res$ $\leftarrow$ todasOcupadas?(vecinos(pos,cs.campus)) '\ote{1}'
-'\ofi{O(1)}'
-
 \end{lstlisting}
+
+\textbf{Complejidad:} Analizar complejidad.
+
+~
+
+
+\InterfazFuncion{busqBinPorPlaca}{\In{}{} }{ }
+[]
+{}
+[]
+[]
+[]
 
 \begin{lstlisting}[mathescape]
 '\alg{busqBinPorPlaca}{\In{a}{agente}, \In{v}{vector(tupla(clave : agente, p : puntero(datosAgente))}}{puntero(datosAgente)}'
@@ -1581,3 +1950,7 @@ $\land$
 
 '\ofi{O(logN_a)}'
 \end{lstlisting}
+
+
+\textbf{Complejidad:} Analizar complejidad.
+
