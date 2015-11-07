@@ -11,7 +11,7 @@
 \InterfazFuncion{comenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente,datosAgente)}}{campusSeguro}
 [($\forall a$ : agente) (def?($a$,$d$) $\Rightarrow_L$ (posVálida(obtener($a$,$d$)) $\land$ $\neg$ocupada?(obtener($a$,$d$,$c$))) $\land$ ($\forall a, a2$ : agente) ((def?($a$,$d$) $\land$ def?($a2$,$d$) $\land a \neq a2$) $\Rightarrow_L$ obtener($a$,$d$) $\neq$ obtener($a2$,$d$))]
 {res $=_{obs}$ comenzarRastrillaje(c,d)}
-[$O((f*c) + N_a)$]
+[$O(f*c)^3 + N_a)$]
 [Crea un nuevo campusSeguro tomando un campus y un diccionario con agentes.]
 [Se genera aliasing campus y en el diccionario que se pasan por parametro.]
 
@@ -496,99 +496,101 @@ $\land$
 \begin{lstlisting}[mathescape]
 '\alg{icomenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente, datosAgente)}}{estr}'
 
-	res.campus $\leftarrow$ c $\emph{(1)}$ '\ote{1}'
-	res.listaMismasSanc $\leftarrow$ generarListaMismasSanc(d) '\ote{$N_a$}'
-	res.personalAS $\leftarrow$ d $\emph{(2)}$ '\ote{1}'
-	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) '\ote{(f$*$c) + $N_a$}'
-	res.masVigilante $\leftarrow$ menorPlaca(d) '\ote{$N_a$}'
+	res.campus $\leftarrow$ c $\textit{\textbf{(genera aliasing)}}$ '\ote{1}'
+	res.listaMismasSanc $\leftarrow$ generarListaMismasSanc(d) $\textit{\textbf{(c1)}}$ '\ote{$N_a$}'
+	res.personalAS $\leftarrow$ d $\textit{\textbf{(genera aliasing)}}$ '\ote{1}'
+	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) $\textit{\textbf{(c2)}}$ '\ote{(f$*$c)$^3$ + $N_a$}'
+	res.masVigilante $\leftarrow$ menorPlaca(d) $\textit{\textbf{(c3)}}$ '\ote{$N_a$}'
 	res.mismasSancModificado $\leftarrow$ true '\ote{1}'
 	res.hippies $\leftarrow$ Vacio() '\ote{1}'
 	res.estudiantes $\leftarrow$ Vacio() '\ote{1}'
 	res.posicionesHippies $\leftarrow$ Vacio() '\ote{1}'
-	res.posicionesEstudiantes $\leftarrow$ Vacio '\ote{1}'
+	res.posicionesEstudiantes $\leftarrow$ Vacio() '\ote{1}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	while i $<$ filas(c)*columnas(c) do '\ote{1}'
-		AgregarAtras(res.posicionesHippies, " ") '\ote{1}'
-		AgregarAtras(res.posicionesEstudiantes, " ") '\ote{1}'
-		i $\leftarrow$ i$+1$
-	end while '\ote{(f*c)}'
+		AgregarAtras(res.posicionesHippies, " ") '\ote{k, siendo k la cantidad de elementos del vector}'
+		AgregarAtras(res.posicionesEstudiantes, " ") '\ote{k, idem anterior}'
+		i $\leftarrow$ i$+1$ '\ote{1}'
+	end while $\textit{\textbf{(c4)}}$ '\ote{(f*c)*2k}'
 
-'\ofi{O(N_a) + O(N_a) + O((f*c) + N_a) + O((f*c)) = O((f*c) + N_a)}'
+'\ofi{O(N_a) + O(N_a) + O((f*c)^3 + N_a) + O((f*c)*\sum_{k=0}^{f*c - 1}(k)) = max\{2O(N_a) , O((f*c)^3 + N_a)\} + O((f*c)*(f*c-1)*(f*c)/2) = O((f*c)^3 + N_a) + O((f*c)*(f*c-1)*(f*c)/2) \leq O((f*c)^3 + N_a) + O((f*c)^3) = O((f*c)^3 + N_a)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} Complejidad de generarListaMismasSanc es $O(N_a)$. \\
+\textit{\textbf{(c2)}} Complejidad de vectorizarPos es $O(f*c)^3 + N_a)$. \\
+\textit{\textbf{(c3)}} Complejidad de menorPlaca es $O(N_a)$. \\
+\textit{\textbf{(c4)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(2k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O((f*c)*\sum_{k=0}^{f*c - 1}(2k)) = O(2*(f*c)*(f*c-1)*(f*c)/2) \leq O(2*(f*c)^3)$.
 
 ~
 
-\InterfazFuncion{vectorizarPos}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f}{nat}, \In{c}{nat}}{vector(As)}
+[true]
+{res $=_{obs}$ vectorizarPos(d,f,c)}
+
 
 \begin{lstlisting}[mathescape]
-'\alg{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f}{nat}, \In{c}{nat}}{vector(AS)}'
-	res $\leftarrow$ Vacia() '\ote{1}'
+'\alg{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f}{nat}, \In{c}{nat}}{vector(As)}'
+	res $\leftarrow$ Vacio() '\ote{1}'
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	itDiccNat(agente, datosAgente): it $\leftarrow$ CrearIt(d) '\ote{1}'
+	
+	vector(tupla(agente, datosAgente)) vVacio $\leftarrow$ Vacio() '\ote{1}'
+	diccNat(agente, datosAgente) dVacio $\leftarrow$ crearDiccionario(vVacio) '\ote{1}'
+	itDiccNat(agente, datosAgente): itVacio $\leftarrow$ CrearIt(dVacio) '\ote{1}'
 
 	while i $<$ f$*$c do '\ote{1}'
-		AgregarAtras(res, tupla(0,NULL)) '\ote{f$*$c}'
+		AgregarAtras(res, tupla(0,itVacio)) '\ote{k, siendo k la cantidad de elementos en el vector.}'
 		i $\leftarrow$ i$+1$ '\ote{1}'
-	end while '\ote{(f$*$c)}'
+	end while $\textit{\textbf{(c1)}}$ '\ote{ ((f$*$c) $*$ k) }'
 
 	while HaySiguiente(it) do '\ote{1}'
+		itDiccNat(agente, datosAgente): itPos $\leftarrow$ it $\textbf{por copia}$ '\ote{1}'
 		res[Siguiente(it).significado.posicion.y $*$ c $+$
 				Siguiente(it).significado.posicion.x] $\leftarrow$
-			$\leftarrow$ tupla(Siguiente(it).clave, puntero(Siguiente(it).significado)) '\ote{1}'
-	end while '\ote{$N_a$}'
+			$\leftarrow$ tupla(Siguiente(it).clave, itPos) '\ote{1}'
+	end while $\textit{\textbf{(c2)}}$ '\ote{$N_a$}'
 
-'\ofi{O((f*c) + N_a)}'
+'\ofi{O((f*c)*\sum_{k=0}^{f*c - 1}(k) + N_a) = O((f*c)*(f*c-1)*(f*c)/2 + N_a) \leq O((f*c)^3 + N_a)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O((f*c)*\sum_{k=0}^{f*c - 1}(k)) = O((f*c)*(f*c-1)*(f*c)/2) \leq O((f*c)^3)$. \\
+\textit{\textbf{(c2)}} En cada iteración del iterador del diccionario de agentes me crea una copia del iterador (que tarda $O(1)$) y va agregando en el vector de posiciones en la posicion que corresponde al agente que apunta el iterador, con la copia del iterador en esa posición. Esto lo hace por todos los agentes por eso la complejidad de este ciclo es $O(N_a)$. \\
+Como estos dos ciclos son los que predominan en complejidad (el resto de las funciones es $O(1)$) entonces la complejidad queda como $O((f*c)^3 + N_a)$.
+
 
 ~
 
-\InterfazFuncion{menorPlaca}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{menorPlaca}{\In{d}{diccNat(agente,datosAgente)}}{As}
+[true]
+{res $=_{obs}$ menorPlaca(d)}
 
 \begin{lstlisting}[mathescape]
-'\alg{menorPlaca}{\In{d}{diccNat(agente, datosAgente)}}{AS}'
+'\alg{menorPlaca}{\In{d}{diccNat(agente, datosAgente)}}{As}'
 	itDiccNat(agente, datosAgente): it $\leftarrow$ CrearIt(d) '\ote{1}'
 	nat: placaMenor $\leftarrow$ Siguiente(it).clave '\ote{1}'
-	puntero(datosAgente): punt $\leftarrow$ puntero(Siguiente(it).datosAgente '\ote{1}'
 	while HaySiguiente(d) do '\ote{1}'
 		if Siguiente(it).clave < placaMenor	then '\ote{1}'
 			placaMenor $\leftarrow$ Siguiente(it).clave '\ote{1}'
-			punt $\leftarrow$ puntero(Siguiente(it).datosAgente) '\ote{1}'
+			itDiccNat(agente, datosAgente) itMenor $\leftarrow$ it $\textbf{por copia}$ '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(it) '\ote{1}'
-	end while '\ote{$N_a$}'
+	end while $\textit{\textbf{(c1)}}$ '\ote{$N_a$}'
 
 	res.agente $\leftarrow$ placaMenor '\ote{1}'
-	res.datos $\leftarrow$ punt '\ote{1}'
+	res.datos $\leftarrow$ itMenor '\ote{1}'
 
 '\ofi{O(N_a)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} Va iterando sobre todos los agentes y buscando el que tiene menor placa, cuando lo encuentra crea una copia del iterador que apunta a ese agente y de la placa. Como itera sobre todos los agentes para buscarlo toma $O(N_a)$.
 
 ~
 
 
-\InterfazFuncion{generarListaMismasSanc}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{generarListaMismasSanc}{\Inout{d}{diccNat(agente, datosAgente)}}{lista(kSanc)}
+[true]
+{res $=_{obs}$ generarListaMismasSanc $\land$ ($\forall$ a: nat)(def?(a,d) $\Rightarrow_L$ HaySiguiente(Obtener(a,d).itMismasSanc) $\land$ HaySiguiente(Obtener(a,d).itConjMismasSanc) $\land_L$ Siguiente(Obtener(a,d).itMismasSanc).sanc = Obtener(a,d).cantSanc $\land$ Pertenece(a,Siguiente(Obtener(a,d).itMismasSanc).agentes) $\land$ Siguiente(Obtener(a,d).itConjMismasSanc) = a}
 
 \begin{lstlisting}[mathescape]
 '\alg{generarListaMismasSanc}{\Inout{d}{diccNat(agente, datosAgente)}}{lista(kSanc)}'
@@ -602,12 +604,12 @@ $\land$
 		Siguiente(itDic).significado.itConjMismasSanc $\leftarrow$ itC '\ote{1}'
 		Siguiente(itDic).significado.itMismasSanc $\leftarrow$ itL '\ote{1}'
 		Avanzar(itDic) '\ote{1}'
-	end while '\ote{$N_a$}'
+	end while $\textit{\textbf{(c1)}}$ '\ote{$N_a$}'
 
 '\ofi{O(N_a)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} Por cada agente, va agregandolo al conjunto de agentes que tiene el nodo de la lista y va agregando los iteradores correspondientes al agente. Como es por cada agente esto toma $O(N_a)$.
 
 ~
 
