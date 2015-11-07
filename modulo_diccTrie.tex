@@ -28,7 +28,7 @@ de copy(s) ya que los significados se almacenan por copia.
 
 \InterfazFuncion{CrearDiccionario}{}{}
 {res $=_{obs}$ vacío()}
-[$O(1)$]
+[$O(1)$ Justificación: Sólo crea un arreglo de 27 posiciones inicializadas con null y una lista vacía]
 [Crea un diccionario vacío.]
 []
 
@@ -39,7 +39,7 @@ de copy(s) ya que los significados se almacenan por copia.
 \InterfazFuncion{Definido?}{\In{d}{diccString$(\alpha)$}, \In{c}{string})}{bool}
 [true]
 {$res$ $\igobs$ def?($d$, $c$)}
-[$O(|n_m|)$]
+[$O(|n_m|)$ Justificación: Debe acceder a la clave c, recorriendo una por una las partes de la clave (caracteres)]
 [Devuelve true si la clave está definida en el diccionario y false en caso contrario.]
 []
 
@@ -48,7 +48,7 @@ de copy(s) ya que los significados se almacenan por copia.
 \InterfazFuncion{Definir}{\Inout{d}{diccString$(\alpha)$}, \In{c}{string}, \In{s}{$\alpha$}}{}
 [$ d \igobs d_0 $]
 {$ d \igobs$ definir($c$, $s$, $d_0$)}
-[$O(|n_m| + copy(s))$ ]
+[$O(|n_m| + copy(s))$ Justificación: Debe definir la clave c, recorriendo una por una las partes de la clave y después copiar el contenido del significado.]
 [Define la clave $c$ con el significado $s$]
 [Almacena una copia de $s$.]
 
@@ -57,7 +57,7 @@ de copy(s) ya que los significados se almacenan por copia.
 \InterfazFuncion{Obtener}{\In{d}{diccString$(\alpha)$}, \In{c}{string}}{$\alpha$}
 [def?($c$, $d$)]
 {alias($res$ $\igobs$ obtener($c$, $d$))}
-[$O(|n_m|)$]
+[$O(|n_m|)$ Justificación: Debe acceder a la clave c, recorriendo una por una las partes de la clave (caracteres)]
 [Devuelve el significado correspondiente a la clave $c$.]
 [Devuelve el significado almacenado en el diccionario, por lo que $res$ es modificable si y sólo si $d$ lo es.]
 
@@ -66,7 +66,7 @@ de copy(s) ya que los significados se almacenan por copia.
 \InterfazFuncion{Eliminar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}
 [$ d \igobs d_0 \land $ def?($d$, $c$)]
 {$ d \igobs$ borrar($d_0$, $c$)}
-[$O(|n_m|)$]
+[$O(|n_m|)$ Justificación: Debe acceder a la clave c, recorriendo una por una las partes de la clave (caracteres) e invalidar su significado]
 [Borra la clave $c$ del diccionario y su significado.]
 []
 
@@ -252,7 +252,9 @@ operación que modifique d sin utilizar las funciones del iterador.]
 \lstset{style=alg}
 
 \begin{lstlisting}[mathescape]
-'\alg{crearDiccionario}{}{estr}'
+
+Pre={true}
+'\alg{iCrearDiccionario}{}{estr}'
 	
     arreglo(puntero(Nodo)): res.raiz $\leftarrow$ CrearArreglo(27) '\ote{1}'
 	nat: i $\leftarrow$ 0 '\ote{1}' 
@@ -261,9 +263,11 @@ operación que modifique d sin utilizar las funciones del iterador.]
     end while '\ote{1}'
     res.listaIterable $\leftarrow$ Vacia() '\ote{1}'
 
-'\ofi{O(1)}'
+'\ofi{O(1)} Justificación: Crea un arreglo de 27 posiciones y lo recorre inicializándolo en NULL. Luego crea una lista vacía'
+Post={res $=_{obs}$ vacio()}
 
-'\alg{definido?}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{bool}'
+Pre={true}
+'\alg{iDefinido?}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{bool}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
@@ -279,12 +283,15 @@ operación que modifique d sin utilizar las funciones del iterador.]
 		res $\leftarrow$ false '\ote{1}'
 	end if
 	
-'\ofi{O(|n_m|)}'
+'\ofi{O(|n_m|)} Justificación: Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego itera sobre los caracteres restantes hasta el final del String c, por lo que hace |$n_m$| operaciones. Finalmente pregunta si el significado encontrado es válido o no'
+Post={res $=_{obs}$ def?(d,c)}
 
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{definir}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}, \In{s}{$\alpha$}}{}'
+
+Pre={d $=_{obs}$ d$_0$}
+'\alg{iDefinir}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}, \In{s}{$\alpha$}}{}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
@@ -315,11 +322,14 @@ operación que modifique d sin utilizar las funciones del iterador.]
     	siguiente(it) $\leftarrow$ puntero(*arr) '\ote{1}'
     end if
     	
-'\ofi{O(|n_m| + copy(s))}'
+'\ofi{O(|n_m| + copy(s))} Justificación: Itera sobre la cantidad de caracteres del String c y en caso de que algún caracter no esté definido crea un arrelglo de 27 posiciones, por lo que realiza |$n_m$| operaciones. Luego copia el significado pasado por parámetro en O(copy(s)) y finalmente agrega en la lista un puntero al nodo creado'
+Post={d $=_{obs}$ definir(c,s,d$_0$)}
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{obtener}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{$\alpha$}'
+
+Pre={def?(c,d)}
+'\alg{iObtener}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{$\alpha$}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
@@ -331,11 +341,15 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	end while '\ote{$|n_m|$}'
 	res $\leftarrow$ (*arr).info '\ote{1}'
 	
-'\ofi{O(|n_m|)}'
+'\ofi{O(|n_m|)} Justificación: Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego itera sobre los caracteres restantes hasta el final del String c, por lo que hace |$n_m$| operaciones. Finalmente retorna el significado almacenado. Todas las demás operaciones se realizan en O(1) porque son comparaciones o asignaciones de valores enteros o de punteros'
+Post={alias(res $=_{obs}$ obtener(c,d)}
+
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{eliminar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}'
+
+Pre={d $=_{obs}$ d$_0$ $\land$ def?(d,c)}
+'\alg{iEliminar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
@@ -365,11 +379,13 @@ operación que modifique d sin utilizar las funciones del iterador.]
 		end if
 	end if
 
-'\ofi{O(|n_m|)}'
+'\ofi{O(|n_m|)} Justificación: Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego crea una pila en O(1). Recorre el resto de los caracteres del String c y apila cada uno de los Nodos encontrado en la pila (0(1)) por lo que en total realiza |$n_m$| operaciones. Llama a la función tieneHermanos y le pasa por parámetro el nodo encontrado O(1) (ver Algoritmo "tieneHermanos"). Luego recorre todos los elementos apilados preguntando si hay alguno que no tiene hermanos para en cuyo caso eliminarlo, realizando en el peor caso |$n_m$| operaciones porque puede ser que sea necesario eliminar todo hasta la raiz.'
+Post={d $=_{obs}$ borrar(d$_0$,c)}
 
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
+Pre={nodo!=NULL}
 '\alg{tieneHermanos}{\In{nodo}{puntero(Nodo)}}{bool}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
@@ -379,16 +395,19 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	end while '\ote{1}' 
 	res $\leftarrow$ i < l '\ote{1}'
 
-'\ofi{O(1)}'
+'\ofi{O(1)} Justificación: Recorre el arreglo de 27 posiciones en caso de que todas las posiciones del mismo tengan NULL. Como es una constante ya que en el peor caso siempre recorre a lo sumo 27 posiciones entonces es O(1)'
+Post={res $=_{obs}$ ($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) (*nodo.arbolTrie[i] != NULL))}
 
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
+Pre={nodo!=NULL}
 '\alg{tieneHermanosEInfo}{\In{nodo}{puntero(Nodo)}}{bool}'
 
 	res $\leftarrow$ tieneHermanos(nodo) and (*nodo).infoValida = true '\ote{1}'
 
-'\ofi{O(1)}'
+'\ofi{O(1)} Justificación: Llama a la funcion tieneHermanos que es O(1) y verifica además que el nodo contenga información válida'
+Post={res $=_{obs}$ ($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) (*nodo.arbolTrie[i] != NULL)) $\land$ (*nodo).infoValida = true}
 
 \end{lstlisting}
 
@@ -451,6 +470,6 @@ operación que modifique d sin utilizar las funciones del iterador.]
 		res $\leftarrow$ 26 '\ote{1}'
 	end if
 
-'\ofi{O(1)}'
+'\ofi{O(1)} Justificación: Asigna a cada letra del abecedario un número distino. Se realizan a lo sumo 27 comparaciones. Es O(1)'
 
 \end{lstlisting}
