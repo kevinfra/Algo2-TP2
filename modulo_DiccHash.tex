@@ -155,21 +155,19 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \Rep[estr][e]{
 	\\
-	($\forall$ $l_1$, $l_2$ : lista(tupla(nat, $\alpha$))) (( (esta?($l_1$,e.tabla) $\land$ esta?($l_2$, e.tabla)) $\\$
-	\- \- $\Rightarrow$ ($\forall$ $t_1$,$t_2$ : tupla(nat, $\alpha$) esta?($t_1$,l) $\land$ esta?($t_2$,l))) $\\$
-	\- \- $\Rightarrow_{L}$	($\forall$ $n_1$, $n_2$ : nat) $n_1 =_{obs} t_1$.clave $\land n_2 =_{obs} \ t_2$.clave $\land$ $t_1$ $\not =$ $t_2$) $\Rightarrow$ $n_1 \not = n_2$
+	($\forall$ $l$ : lista(tupla(nat, $\alpha$))) (( $\exists$ $k$ : nat ) ((e.tabla[k] = l) $\Rightarrow$ ($\not \exists$ $q$ : nat) (k $\neq$ q $\land$ e.tabla[q] = l)) $\land$ ($\forall$ $t1$, $t2$ : tupla(nat, $\alpha$)) (esta?($t1$,l) $\land$ esta?($t2$,l) $\Rightarrow$ ($\not \exists$ n,m : nat) ($t1$.clave = n $\land$ $t2$.clave = m $\land_L$ n = m) ))
 	$\\ \land \\$
-	largosDeListas(e.tabla) $=_{obs}$ longitud(e.tabla)
+	largosDeListas(e.tabla) $=$ longitud(e.tabla)
 	$\\ \land \\$
 	($\forall$ l : lista(tupla(nat, $\alpha$)))(esta?(l, e.tabla)
 		\\ $\Rightarrow$ ($\forall$ t : tupla(nat, $\alpha$))(esta?(t, l)
-		\\ $\Rightarrow$ ($\exists$ p : puntero($\alpha$)($\&$t $=_{obs}$ p $\land$ esta?(p, e.listaIterable)))))
+		\\ $\Rightarrow$ ($\exists$ p : puntero($\alpha$)($\&$t $=$ p $\land$ esta?(p, e.listaIterable)))))
 	$\\ \land \\$
 	long(e.tabla) $=_{obs}$ long(e.listaIterable)
 	$\\ \land \\$
-	long(e.vectorOrdenClaves) $=_{obs}$ long(e.tabla) $\land$ ($\forall$ l : lista(tupla(nat, $\alpha$)))(esta?(l, e.tabla)
-		\\ $\Rightarrow$ ($\forall$ t : tupla(nat, $\alpha$)) (esta?(t, l) \\ $\Rightarrow$ ($\forall$ n : nat) (n $=_{obs}$ t.clave)) \\$\Rightarrow_L$
-		($\exists$ p : puntero($\alpha$)) ($\&$t.significado $=_{obs}$ p) $\land$ esta?((t.clave, p), e.vectorOrdenClaves))
+	long(e.vectorOrdenClaves) $=$ long(e.tabla) $\land$ ($\forall$ l : lista(tupla(nat, $\alpha$)))(esta?(l, e.tabla)
+		\\ $\Rightarrow$ ($\forall$ t : tupla(nat, $\alpha$)) (esta?(t, l) \\ $\Rightarrow$ ($\forall$ n : nat) (n $=$ t.clave)) \\$\Rightarrow_L$
+		($\exists$ p : puntero($\alpha$)) ($\&$t.significado $=$ p) $\land$ esta?((t.clave, p), e.vectorOrdenClaves))
 }\mbox{}
 
 \tadOperacion{largosDeListas}{secu(secu(tupla(nat,$\alpha$)))}{nat}{}
