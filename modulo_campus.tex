@@ -11,7 +11,7 @@
 \InterfazFuncion{crearCampus}{\In{alto}{nat}, \In{ancho}{nat}}{campus}
 [true]
 {res $=_{obs}$ crearCampus(alto, ancho)}
-[$O((alto * ancho)^2)$]
+[$O(alto * ancho)$]
 [Crea un nuevo campus tomando un alto y un ancho]
 []
 
@@ -172,11 +172,11 @@
 
     nat : pos $\leftarrow$ 0 						'\ote{1}'
     while(pos < alto * ancho) do 					'\ote{1}'
-    	AgregarAtras(res.obstaculos, false)			'\ote{alto * ancho}'
-    end while										'\ote{$(alto * ancho)^2$}'
+    	AgregarAtras(res.obstaculos, false)			'\ote{1}'
+    end while										'\ote{$alto * ancho$}'
     res.obstaculos $\leftarrow$ Vacio() 			'\ote{1}'
     
-'\ofi{O(1)}'
+'\ofi{O(alto * ancho)}'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
