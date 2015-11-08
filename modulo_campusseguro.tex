@@ -1613,22 +1613,22 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 
 	// Me fijo a quienes atrapa
 	posicion posArr $\leftarrow$ moverDir(cs.campus, nuevaPos, arriba)			'\ote{1}'
-	actualizarAgente(cs, posArr, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
+	actualizarAgente(cs, posArr, a, as) 										'\ote{$|n_m|$}'
 
 	posicion posAba $\leftarrow$ moverDir(cs.campus, nuevaPos, abajo)			'\ote{1}'
-	actualizarAgente(cs, posAba, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
+	actualizarAgente(cs, posAba, a, as) 										'\ote{$|n_m|$}'
 
 	posicion posDer $\leftarrow$ moverDir(cs.campus, nuevaPos, der)				'\ote{1}'
-	actualizarAgente(cs, posDer, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
+	actualizarAgente(cs, posDer, a, as) 										'\ote{$|n_m|$}'
 
 	posicion posIzq $\leftarrow$ moverDir(cs.campus, nuevaPos, izq)				'\ote{1}'
-	actualizarAgente(cs, posIzq, a, as) 				'\ote{$log(N_a) + |n_m| + N_h$}'
+	actualizarAgente(cs, posIzq, a, as) 										'\ote{$|n_m|$}'
 
 
 '\ofi{O(log(N_a) + |n_m| + N_h)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Hace busqueda binaria sobre el vector de agentes ordenado por placa. Esto cuesta $O(log( N_a)$. Luego muevo al agente, para lo cual debo calcular primero la posición. Esto cuesta $O(N_H)$ ya que debo preguntar por las posiciones de todos los hippies para decidir. Finalmente actualizo el estado del agente, fijandome a quienes atrapa. En caso de atrapar un hippie debo borrarlo del diccString, que cuesta $O(|n_m|)$.
 
 ~
 
