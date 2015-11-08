@@ -1709,10 +1709,10 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 	   		end if
 	   	end if
 	end if
-'\ofi{O(log(N_a) + |n_m| + N_h)}'
+'\ofi{O(|n_m|)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Se fija a quién atrapa en la dirección pasada como parametro. Todas las operaciones son de tiempo constante con excepción de la de borrar un hippie del diccString, que se ejecuta en caso de haber atrapado un hippie. Esta operación cuesta $O(|n_m|)$.
 
 ~
 
