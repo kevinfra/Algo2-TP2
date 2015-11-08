@@ -253,8 +253,8 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \begin{lstlisting}[mathescape]
 
-Pre={true}
 '\alg{iCrearDiccionario}{}{estr}'
+{$\textbf{Pre}$ $\equiv$ true}
 	
     arreglo(puntero(Nodo)): res.raiz $\leftarrow$ CrearArreglo(27) '\ote{1}'
 	nat: i $\leftarrow$ 0 '\ote{1}' 
@@ -263,18 +263,22 @@ Pre={true}
     end while '\ote{1}'
     res.listaIterable $\leftarrow$ Vacia() '\ote{1}'
 
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ vacio()}
 '\ofi{O(1)} Justificación: Crea un arreglo de 27 posiciones y lo recorre inicializándolo en NULL. Luego crea una lista vacía'
-Post={res $=_{obs}$ vacio()}
 
-Pre={true}
-'\alg{iDefinido?}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{bool}'
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{iDefinido?}{\In{d}{estr)}, \In{c}{string}}{bool}'
+{$\textbf{Pre}$ $\equiv$ true}
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
-	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
+	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
 	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
 	while(i < longitud(c) and not arr = NULL) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
-		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
+		letra $\leftarrow$ ord(c[i]) '\ote{1}'
 		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
 	end while '\ote{$|n_m|$}'
 	if(i=longitud(c)) then '\ote{1}'
@@ -282,19 +286,19 @@ Pre={true}
 	else
 		res $\leftarrow$ false '\ote{1}'
 	end if
-	
+
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ def?(d,c)}	
 '\ofi{O(|n_m|)} Justificación: Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego itera sobre los caracteres restantes hasta el final del String c, por lo que hace |$n_m$| operaciones. Finalmente pregunta si el significado encontrado es válido o no'
-Post={res $=_{obs}$ def?(d,c)}
 
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 
-Pre={d $=_{obs}$ d$_0$}
-'\alg{iDefinir}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}, \In{s}{$\alpha$}}{}'
+'\alg{iDefinir}{\Inout{d}{estr}, \In{c}{string}, \In{s}{$\alpha$}}{}'
+{$\textbf{Pre}$ $\equiv$ d $=_{obs}$ d$_0$}
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
-	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
+	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
 	if (d.raiz[letra] = NULL) then '\ote{1}'
 		Nodo: nuevo '\ote{1}'
 		arreglo(puntero(Nodo)): nuevo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
@@ -304,7 +308,7 @@ Pre={d $=_{obs}$ d$_0$}
 	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
 	while(i < longitud(c)) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
-		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
+		letra $\leftarrow$ ord(c[i]) '\ote{1}'
 		if (arr.arbolTrie[letra] = NULL) then '\ote{1}'
 			Nodo: nuevoHijo '\ote{1}'
 			arreglo(puntero(Nodo)): nuevoHijo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
@@ -317,47 +321,47 @@ Pre={d $=_{obs}$ d$_0$}
     if(not (*arr).infoValida = true) then '\ote{1}'
     	itLista(puntero(Nodo)) it $\leftarrow$ AgregarAdelante(d.listaIterable,NULL) '\ote{1}'
     	(*arr).infoValida $\leftarrow$ true '\ote{1}'
-    	(*arr).clave $\leftarrow$ c '\ote{$|n_m|$}'
     	(*arr).infoEnLisa $\leftarrow$ it '\ote{1}'
     	siguiente(it) $\leftarrow$ puntero(*arr) '\ote{1}'
     end if
-    	
+
+{$\textbf{Post}$ $\equiv$ d $=_{obs}$ definir(c,s,d$_0$)}    	
 '\ofi{O(|n_m| + copy(s))} Justificación: Itera sobre la cantidad de caracteres del String c y en caso de que algún caracter no esté definido crea un arrelglo de 27 posiciones, por lo que realiza |$n_m$| operaciones. Luego copia el significado pasado por parámetro en O(copy(s)) y finalmente agrega en la lista un puntero al nodo creado'
-Post={d $=_{obs}$ definir(c,s,d$_0$)}
+
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 
-Pre={def?(c,d)}
-'\alg{iObtener}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{$\alpha$}'
+'\alg{iObtener}{\In{d}{estr}, \In{c}{string}}{$\alpha$}'
+{$\textbf{Pre}$ $\equiv$ def?(c,d)}
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
-	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
+	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
 	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
 	while(i < longitud(c)) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
-		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
+		letra $\leftarrow$ ord(c[i]) '\ote{1}'
 		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
 	end while '\ote{$|n_m|$}'
 	res $\leftarrow$ (*arr).info '\ote{1}'
 	
+{$\textbf{Post}$ $\equiv$ alias(res $=_{obs}$ obtener(c,d)}
 '\ofi{O(|n_m|)} Justificación: Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego itera sobre los caracteres restantes hasta el final del String c, por lo que hace |$n_m$| operaciones. Finalmente retorna el significado almacenado. Todas las demás operaciones se realizan en O(1) porque son comparaciones o asignaciones de valores enteros o de punteros'
-Post={alias(res $=_{obs}$ obtener(c,d)}
 
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 
-Pre={d $=_{obs}$ d$_0$ $\land$ def?(d,c)}
-'\alg{iEliminar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}'
+'\alg{iEliminar}{\Inout{d}{estr}, \In{c}{string}}{}'
+{$\textbf{Pre}$ $\equiv$ d $=_{obs}$ d$_0$ $\land$ def?(d,c)}
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
-	nat: letra $\leftarrow$ posicion(c[0]) '\ote{1}'
+	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
 	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
 	pila(puntero(Nodo)): pil $\leftarrow$ Vacia() '\ote{1}'
 	while(i < longitud(c)) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
-		letra $\leftarrow$ posicion(c[i]) '\ote{1}'
+		letra $\leftarrow$ ord(c[i]) '\ote{1}'
 		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
 		Apilar(pil,arr) '\ote{1}'
 	end while '\ote{$|n_m|$}'
@@ -375,18 +379,19 @@ Pre={d $=_{obs}$ d$_0$ $\land$ def?(d,c)}
 			i $\leftarrow$ i + 1 '\ote{1}'
 		end while '\ote{$|n_m|$}'
 		if(i = longitud(c)) then '\ote{1}'
-			d.raiz[posicion(c[0])] $\leftarrow$ NULL '\ote{1}'
+			d.raiz[ord(c[0])] $\leftarrow$ NULL '\ote{1}'
 		end if
 	end if
 
+{$\textbf{Post}$ $\equiv$ d $=_{obs}$ borrar(d$_0$,c)}
 '\ofi{O(|n_m|)} Justificación: Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego crea una pila en O(1). Recorre el resto de los caracteres del String c y apila cada uno de los Nodos encontrado en la pila (0(1)) por lo que en total realiza |$n_m$| operaciones. Llama a la función tieneHermanos y le pasa por parámetro el nodo encontrado O(1) (ver Algoritmo "tieneHermanos"). Luego recorre todos los elementos apilados preguntando si hay alguno que no tiene hermanos para en cuyo caso eliminarlo, realizando en el peor caso |$n_m$| operaciones porque puede ser que sea necesario eliminar todo hasta la raiz.'
-Post={d $=_{obs}$ borrar(d$_0$,c)}
 
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-Pre={nodo!=NULL}
+
 '\alg{tieneHermanos}{\In{nodo}{puntero(Nodo)}}{bool}'
+{$\textbf{Pre}$ $\equiv$ nodo!=NULL} 
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: l $\leftarrow$ longitud((*nodo).arbolTrie)) '\ote{1}'
@@ -395,81 +400,21 @@ Pre={nodo!=NULL}
 	end while '\ote{1}' 
 	res $\leftarrow$ i < l '\ote{1}'
 
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ ($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) (*nodo.arbolTrie[i] != NULL))}
 '\ofi{O(1)} Justificación: Recorre el arreglo de 27 posiciones en caso de que todas las posiciones del mismo tengan NULL. Como es una constante ya que en el peor caso siempre recorre a lo sumo 27 posiciones entonces es O(1)'
-Post={res $=_{obs}$ ($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) (*nodo.arbolTrie[i] != NULL))}
 
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-Pre={nodo!=NULL}
+
 '\alg{tieneHermanosEInfo}{\In{nodo}{puntero(Nodo)}}{bool}'
+{$\textbf{Pre}$ $\equiv$ nodo!=NULL}
 
 	res $\leftarrow$ tieneHermanos(nodo) and (*nodo).infoValida = true '\ote{1}'
 
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ 
+($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) 
+(*nodo.arbolTrie[i] != NULL)) $\land$ (*nodo).infoValida = true}
 '\ofi{O(1)} Justificación: Llama a la funcion tieneHermanos que es O(1) y verifica además que el nodo contenga información válida'
-Post={res $=_{obs}$ ($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) (*nodo.arbolTrie[i] != NULL)) $\land$ (*nodo).infoValida = true}
-
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{posicion}{\In{ch}{char}}{nat}'
-
-	if(ch=a) then '\ote{1}'
-		res $\leftarrow$ 0 '\ote{1}'
-	else if (ch=b) then '\ote{1}'
-		res $\leftarrow$ 1 '\ote{1}'
-	else if(ch=c) then '\ote{1}'
-		res $\leftarrow$ 2 '\ote{1}'
-	else if(ch=d) then '\ote{1}'
-		res $\leftarrow$ 3 '\ote{1}'
-	else if(ch=e) then '\ote{1}'
-		res $\leftarrow$ 4 '\ote{1}'
-	else if(ch=f) then '\ote{1}'
-		res $\leftarrow$ 5 '\ote{1}'
-	else if(ch=g) then '\ote{1}'
-		res $\leftarrow$ 6 '\ote{1}'
-	else if(ch=h) then '\ote{1}'
-		res $\leftarrow$ 7 '\ote{1}'
-	else if(ch=i) then '\ote{1}'
-		res $\leftarrow$ 8 '\ote{1}'
-	else if(ch=j) then '\ote{1}'
-		res $\leftarrow$ 9 '\ote{1}'
-	else if(ch=k) then '\ote{1}'
-		res $\leftarrow$ 10 '\ote{1}'
-	else if(ch=l) then '\ote{1}'
-		res $\leftarrow$ 11 '\ote{1}'
-	else if (ch=m) then '\ote{1}'
-		res $\leftarrow$ 12 '\ote{1}'
-	else if(ch=n) then '\ote{1}'
-		res $\leftarrow$ 13 '\ote{1}'
-	else if(ch=\~n) then '\ote{1}'
-		res $\leftarrow$ 14 '\ote{1}'
-	else if(ch=o) then '\ote{1}'
-		res $\leftarrow$ 15 '\ote{1}'
-	else if(ch=p) then '\ote{1}'
-		res $\leftarrow$ 16 '\ote{1}'
-	else if(ch=q) then '\ote{1}'
-		res $\leftarrow$ 17 '\ote{1}'
-	else if(ch=r) then '\ote{1}'
-		res $\leftarrow$ 18 '\ote{1}'
-	else if(ch=s) then '\ote{1}'
-		res $\leftarrow$ 19 '\ote{1}'
-    else if(ch=t) then '\ote{1}'
-		res $\leftarrow$ 20 '\ote{1}'
-    else if(ch=u) then '\ote{1}'
-		res $\leftarrow$ 21 '\ote{1}'
-    else if(ch=v) then '\ote{1}'
-		res $\leftarrow$ 22 '\ote{1}'
-	else if(ch=w) then '\ote{1}'
-		res $\leftarrow$ 23 '\ote{1}'
-	else if(ch=x) then '\ote{1}'
-		res $\leftarrow$ 24 '\ote{1}'
-    else if(ch=y) then '\ote{1}'
-		res $\leftarrow$ 25 '\ote{1}'
-	else
-		res $\leftarrow$ 26 '\ote{1}'
-	end if
-
-'\ofi{O(1)} Justificación: Asigna a cada letra del abecedario un número distino. Se realizan a lo sumo 27 comparaciones. Es O(1)'
 
 \end{lstlisting}

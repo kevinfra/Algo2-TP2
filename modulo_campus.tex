@@ -28,7 +28,7 @@
 
 \InterfazFuncion{filas}{\In{c}{campus}}{nat}
 [true]
-{res $=_obs$ filas(c)}
+{res $=_{obs}$ filas(c)}
 [$O(1)$]
 [Devuelve la cantidad de filas del campus]
 []
@@ -165,87 +165,112 @@
 \lstset{style=alg}
 
 \begin{lstlisting}[mathescape]
-'\alg{crearCampus}{\In{alto}{nat}, \In{ancho}{nat}}{estr}'
-	
+'\alg{iCrearCampus}{\In{alto}{nat}, \In{ancho}{nat}}{estr}'
+{$\textbf{Pre}$ $\equiv$ true}
+
     res.filas $\leftarrow$ alto 					'\ote{1}'
     res.columnas $\leftarrow$ ancho 				'\ote{1}'
 
     nat : pos $\leftarrow$ 0 						'\ote{1}'
+    res.obstaculos $\leftarrow$ Vacio() 			'\ote{1}'
     while(pos < alto * ancho) do 					'\ote{1}'
     	AgregarAtras(res.obstaculos, false)			'\ote{1}'
+    	pos $\leftarrow$ pos + 1					'\ote{1}'
     end while										'\ote{$alto * ancho$}'
-    res.obstaculos $\leftarrow$ Vacio() 			'\ote{1}'
-    
-'\ofi{O(alto * ancho)}'
+
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ crearCampus(alto, ancho)}}    
+'\ofi{O(alto * ancho)} Justificacion: Realiza alto*ancho veces un agregarAtras en una lista vacia'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{agregarObstaculo}{\Inout{cs}{campus}, \In{pos}{posicion}}{}'
+'\alg{iAgregarObstaculo}{\Inout{cs}{campus}, \In{pos}{posicion}}{}'
+{$\textbf{Pre}$ $\equiv$ $cs =_{obs} cs_0$ $\land$ posValida?(pos,cs) $\yluego$ $\neg$ocupada?(pos,cs)}
 
 	cs.obstaculos[pos.y * cs.columnas + pos.x] $\leftarrow$ true '\ote{1}'	
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ $cs =_{obs}$ agregarObstaculo($pos$,$cs_0$)}
+'\ofi{O(1)} Justificacion: Pone en true el valor almacenado en la lista de obstaculos en la posicion 
+ que se resuelve en tiempo constante con una multiplicacion y una suma'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{filas}{\In{cs}{campus}}{nat}'
+'\alg{iFilas}{\In{cs}{campus}}{nat}'
+{$\textbf{Pre}$ $\equiv$ true}
 
 	res $\leftarrow$ cs.filas '\ote{1}'
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ filas(cs)}
+'\ofi{O(1)} Justificacion: Retorna el campo filas del campus'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{columnas}{\In{cs}{campus}}{nat}'
+'\alg{iColumnas}{\In{cs}{campus}}{nat}'
+{$\textbf{Pre}$ $\equiv$ true}
 
 	res $\leftarrow$ cs.columnas '\ote{1}'
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ columnas(cs)}
+'\ofi{O(1)} Justificacion: Retorna el campo columnas del campus'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{ocupada?}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+'\alg{iOcupada?}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+{$\textbf{Pre}$ $\equiv$ posValida?(c,pos)}
 
 	res $\leftarrow$ cs.obstaculos[pos.y * cs.columnas + pos.x] '\ote{1}'
 
-'\ofi{O(n)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ ocupada?(pos,cs)}
+'\ofi{O(1)} Justificacion: Solo devuelve el campo almcenado en la lista de obstaculos 
+ que contiene el booleano que indica si hay o no un obstaculo'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{posValida?}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+'\alg{iPosValida?}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+{$\textbf{Pre}$ $\equiv$ true}
 
 	res $\leftarrow$ (pos.x $\geq$ 0) $\land$ (pos.x < cs.columnas) $\land$ 
 	       (pos.y $\geq$ 0) $\land$ (pos.y < cs.filas) '\ote{1}'
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ posValida?(pos,cs)}
+'\ofi{O(1)} Justificacion: Solo compara los valores x e y de la posicion con los valores 
+ alto y ancho del campus'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{esIngreso}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+'\alg{iEsIngreso}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+{$\textbf{Pre}$ $\equiv$ true}
 
 	res $\leftarrow$ esIngresoSuperior(cs, pos) $\lor$ esIngresoInferior(cs, pos) '\ote{1}'
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ esIngreso?(pos,cs)}
+'\ofi{O(1)} Justificacion: Hace una operacion OR sobre el resultado de las llamadas a las  
+ funciones esIngresoSuperior e esIngresoInferior que son O(1)'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{esIngresoSuperior}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+'\alg{iEsIngresoSuperior}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+{$\textbf{Pre}$ $\equiv$ true}
 	
-	res $\leftarrow$ pos.y = 0 '\ote{1}'
+	res $\leftarrow$ pos.y == 0 '\ote{1}'
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ esIngresoSuperior?(pos,cs)}
+'\ofi{O(1)} Justificacion: Solo compara el valor y de la posicion con 0'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{esIngresoInferior}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
-	
-	res $\leftarrow$ pos.y = cs.filas - 1 '\ote{1}'
+'\alg{iEsIngresoInferior}{\In{cs}{campus}, \In{pos}{posicion}}{bool}'
+{$\textbf{Pre}$ $\equiv$ true}
 
-'\ofi{O(1)}'
+	res $\leftarrow$ pos.y == cs.filas - 1 '\ote{1}'
+
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ esIngresoInferior?(pos,cs)}
+'\ofi{O(1)} Justificacion: Solo compara el valor y de la posicion con el valor de 
+ filas -1 del campus'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{vecinos}{\In{cs}{campus}, \In{pos}{posicion}}{conj(posicion)}'
+'\alg{iVecinos}{\In{cs}{campus}, \In{pos}{posicion}}{conj(posicion)}'
+{$\textbf{Pre}$ $\equiv$ posValida?(c,pos)}
 
 	res $\leftarrow$ Vacio() 								'\ote{1}'
 
@@ -261,19 +286,24 @@
 	if(posValida(cs, tupla(pos.x, pos.y - 1)))				'\ote{1}'
 		AgregarRapido(res, tupla(pos.x, pos.y - 1))			'\ote{1}'
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ vecinos(pos,cs)}
+'\ofi{O(1)} Justificacion: Llama cuatro veces a la funcion posValida y en el peor caso 
+ realiza cuantro AgregarRapido a una lista'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{distancia}{\In{cs}{campus}, \In{pos_1}{posicion}, \In{pos_2}{posicion}}{nat}'
-	
+'\alg{iDistancia}{\In{cs}{campus}, \In{pos_1}{posicion}, \In{pos_2}{posicion}}{nat}'
+{$\textbf{Pre}$ $\equiv$ true}
+
 	res $\leftarrow$ |$pos_1.x$ - $pos_2.x$| + |$pos_1.y$ - $pos_2.y$|	'\ote{1}'
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ distancia(p1,p2,cs)}
+'\ofi{O(1)} Justificacion: Realiza dos restas y modulos y una suma de enteros'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{moverDir}{\In{cs}{campus}, \In{pos}{posicion}, \In{dir}{direccion}}{posicion}'
+'\alg{iMoverDir}{\In{cs}{campus}, \In{pos}{posicion}, \In{dir}{direccion}}{posicion}'
+{$\textbf{Pre}$ $\equiv$ posValida?(pos,cs)}
 
 	if(dir = izq)											'\ote{1}'
 		res $\leftarrow$ tupla(pos.x - 1, pos.y)			'\ote{1}'
@@ -284,11 +314,13 @@
 	if(dir = abajo)											'\ote{1}'
 		res $\leftarrow$ tupla(pos.x, pos.y + 1)			'\ote{1}'
 
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ proxPosicion(pos,dir,cs)}
+'\ofi{O(1)} Justificacion: Realiza cuatro comparaciones y una asignacion'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{ingresosMasCercanos}{\In{cs}{campus}, \In{pos}{posicion}}{conj(posicion)}'
+'\alg{iIngresosMasCercanos}{\In{cs}{campus}, \In{pos}{posicion}}{conj(posicion)}'
+{$\textbf{Pre}$ $\equiv$ posValida?(pos,cs)}
 
 	res $\leftarrow$ Vacio()										'\ote{1}'
 
@@ -302,6 +334,6 @@
 		else
 			AgregarRapido(res, tupla(pos.x, 0))						'\ote{1}'
 
-
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ ingresosMasCercanos(pos,cs)}
+'\ofi{O(1)} Justificacion: En el peor caso realiza dos comparaciones y un solo AgregarRapido'
 \end{lstlisting}
