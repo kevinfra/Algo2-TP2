@@ -270,7 +270,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \begin{lstlisting}[mathescape]
 
-'\alg{iDefinido?}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{bool}'
+'\alg{iDefinido?}{\In{d}{estr)}, \In{c}{string}}{bool}'
 {$\textbf{Pre}$ $\equiv$ true}
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
@@ -294,8 +294,8 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \begin{lstlisting}[mathescape]
 
+'\alg{iDefinir}{\Inout{d}{estr}, \In{c}{string}, \In{s}{$\alpha$}}{}'
 {$\textbf{Pre}$ $\equiv$ d $=_{obs}$ d$_0$}
-'\alg{iDefinir}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}, \In{s}{$\alpha$}}{}'
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
@@ -332,7 +332,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \begin{lstlisting}[mathescape]
 
-'\alg{iObtener}{\In{d}{diccString($\alpha$)}, \In{c}{string}}{$\alpha$}'
+'\alg{iObtener}{\In{d}{estr}, \In{c}{string}}{$\alpha$}'
 {$\textbf{Pre}$ $\equiv$ def?(c,d)}
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
@@ -352,7 +352,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \begin{lstlisting}[mathescape]
 
-'\alg{iEliminar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}'
+'\alg{iEliminar}{\Inout{d}{estr}, \In{c}{string}}{}'
 {$\textbf{Pre}$ $\equiv$ d $=_{obs}$ d$_0$ $\land$ def?(d,c)}
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
