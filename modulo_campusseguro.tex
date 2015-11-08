@@ -616,8 +616,8 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
-	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$ AND
-	AND AlMenosUnAgente(vecinos(pos, $cs$.campus) then '\ote{1}'
+	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$) AND
+	AND AlMenosUnAgente(vecinos(pos, $cs$.campus)) then '\ote{1}'
 		conj(As): conjAgParaSanc $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
 		SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
 	end if '\ote{1}'
@@ -799,48 +799,57 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 ~
 
 
-\InterfazFuncion{SancionarAgentes}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{SancionarAgentes}{\In{c}{conj(As)}, \Inout{cs}{campusseguro}}{ }
+[cs $=_{obs}$ cs$_o$]
+{cs $={obs}$ SancionarAgentes(c,cs)}
 
 \begin{lstlisting}[mathescape]
 '\alg{SancionarAgentes}{\In{c}{conj(As)}, \Inout{cs}{estr}}{}'
 	itConj(As): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 
-	while HaySiguiente(itC) do '\ote{1}'
-		*Siguiente(itC).datos.cantSanccantSanc $\leftarrow$
-			$\leftarrow$ *Siguiente(itC).datos.cantSanc$+1$ '\ote{1}'
-		itLista(kSanc): itLis $\leftarrow$ *Siguiente(itC).datos.itMismasSanc'\ote{1}'
+	if Cardinal(c) $>$ 0 then '\ote{1}'
+		cs.mismasSancModificado $\leftarrow$ true '\ote{1}'
+	end if
 
-		if HaySiguiente(*Siguiente(itC).datos.itMismasSanc) then '\ote{1}'
-			Avanzar(*Siguiente(itC).datos.itMismasSanc)
-			if Siguiente(*Siguiente(itC).datos.itMismasSanc).sanc =
-			*Siguiente(itC).datos.cantSanc then '\ote{1}'
-			else
-				AgregarComoAnterior(*Siguiente(itC).datos.itMismasSanc,
-					tupla(*Siguiente(itC).datos.cantSanc, Vacio())) '\ote{1}'
-				Retroceder(*Siguiente(itC).datos.itMismasSanc) '\ote{1}'
+	while HaySiguiente(itC) do '\ote{1}'
+		Siguiente(Siguiente(itC).datos).cantSanc $\leftarrow$
+			$\leftarrow$ Siguiente(Siguiente(itC).datos).cantSanc$+1$ '\ote{1}'
+
+		if Siguiente(cs.masVigilante.datos).cantSanc $<$
+			$<$ Siguiente(Siguiente(itC).datos).cantSanc then '\ote{1}'
+
+			cs.masVigilante $\leftarrow$ Siguiente(itC) '\ote{1}'
+		end if
+
+		itLista(kSanc): itLis $\leftarrow$ Siguiente(Siguiente(itC).datos).itMismasSanc'\ote{1}'
+
+		if HaySiguiente(Siguiente(Siguiente(itC).datos).itMismasSanc) then '\ote{1}'
+			Avanzar(Siguiente(Siguiente(itC).datos).itMismasSanc)
+
+			if Siguiente(Siguiente(Siguiente(itC).datos).itMismasSanc).sanc $\neq$
+			$\neq$ Siguiente(Siguiente(itC).datos).cantSanc then '\ote{1}'
+				AgregarComoAnterior(Siguiente(Siguiente(itC).datos).itMismasSanc,
+					tupla(Siguiente(Siguiente(itC).datos).cantSanc, Vacio())) '\ote{1}'
+				Retroceder(Siguiente(Siguiente(itC).datos).itMismasSanc) '\ote{1}'
 			end if
 
 		else
-			AgregarComoSiguiente(*Siguiente(itC).datos.itMismasSanc,
-				tupla(*Siguiente(itC).datos.cantSanc, Vacio()) '\ote{1}'
-			Avanzar(*Siguiente(itC).datos.itMismasSanc) '\ote{1}'
+			AgregarComoSiguiente(Siguiente(Siguiente(itC).datos).itMismasSanc,
+				tupla(Siguiente(Siguiente(itC).datos).cantSanc, Vacio()) '\ote{1}'
+			Avanzar(Siguiente(Siguiente(itC).datos).itMismasSanc) '\ote{1}'
 		end if
 
-		EliminarSiguiente(*Siguiente(itC).datos.itConjMismasSanc) '\ote{1}'
-		*Siguiente(itC).datos.itConjMismasSanc $\leftarrow$
-			$\leftarrow$ AgregarAdelante(*Siguiente(itC).datos.itMismasSanc.agentes,
-				*Siguiente(itC).agente) '\ote{1}'
-	end while '\ote{1}'
+		EliminarSiguiente(Siguiente(Siguiente(itC).datos).itConjMismasSanc) '\ote{1}'
+		Siguiente(Siguiente(itC).datos).itConjMismasSanc $\leftarrow$
+			$\leftarrow$ AgregarAdelante(Siguiente(Siguiente(
+				Siguiente(itC).datos).itMismasSanc).agentes,
+					Siguiente(itC).agente) '\ote{1}'
+	end while '\ote{$\#c$}'
 
-'\ofi{O(1)}'
+'\ofi{O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Itera una vez sobre el conjunto de agentes que toma como parametro sumandoles un uno en las sanciones de cada uno y reacomodandolos en la lista listaMismasSanc. Como todas las operaciones del ciclo tienen complejidad $O(1)$ la complejidad total es las veces que lo hace por cada elemento del conjunto. Por lo tanto, la complejidad es $O(\#c)$.
 
 ~
 
@@ -864,7 +873,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		AlMenosUnAgente(vecinos(Siguiente(itDiccS), $cs$.campus)) then '\ote{1}'
 			AgregarRapido(res,
 			tupla($cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
-			+ Siguiente(itC).y],
+			+ Siguiente(itC).x],
 				Siguiente(itC)) '\ote{1}'
 
 			conj(As): conjAgPremiar $\leftarrow$
@@ -883,12 +892,9 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 ~
 
 
-\InterfazFuncion{AgParaPremSanc}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{AgParaPremSanc}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{conj(As)}
+[true]
+{res $=_{obs}$ AgParaPremSanc(c,cs)}
 
 \begin{lstlisting}[mathescape]
 '\alg{AgParaPremSanc}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(As)}'
@@ -896,18 +902,19 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 	res $\leftarrow$ Vacio() '\ote{1}'
 
 	while HaySiguiente(itC) do '\ote{1}'
-		if $cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x].datos $\neq$
-			$\neq$ NULL then '\ote{1}'
+		if HaySiguiente($cs$.posicionesAgente[Siguiente(itC).y * 
+			* Columnas($cs$.campus) + Siguiente(itC).x].datos) then '\ote{1}'
 			AgregarRapido(res,
-				$cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x]) '\ote{1}'
+				$cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + 
+				+ Siguiente(itC).x]) '\ote{1}'
 		end if '\ote{1}'
-		Avanzar(itC) \ote{1}'
-	end while '\ote{4}'
+		Avanzar(itC) '\ote{1}'
+	end while '\ote{$\#c$}'
 
-'\ofi{O(1) + O(1) + O(4) = O(1)}'
+'\ofi{O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Se itera sobre el conjunto de posiciones que se pasa como parametro una vez buscando las posiciones que tienen agente y se los va agregando, si los hay. Como se itera una vez y el resto toma $O(1)$ la complejidad de la función es $O(\#c)$.
 
 ~
 
@@ -1001,77 +1008,72 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 ~
 
 
-\InterfazFuncion{todasOcupadas?}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{todasOcupadas?}{\In{c}{conj(posición)}, \In{cs}{campusseguro} }{bool}
+[true]
+{res $=_{obs}$ ($\exists$ p: posicion) Pertenece?(p,c) $\land$ (($\exists$ a: nat) def?(a, agentes(cs)) $\land_L$ Obtener(a, agentes(cs)).posición $=$ p) $\lor$ (($\exists$ h: string) def?(h, hippies(cs)) $\land_L$ Obtener(h, hippies(cs)) $=$ p) $\lor$ (($\exists$ e: string) def?(e, estudiantes(cs)) $\land_L$ Obtener(e, estudiantes(cs)) $=$ p) $\lor$ Ocupada?(campus(cs),p)}
 
 \begin{lstlisting}[mathescape]
 '\alg{todasOcupadas?}{\In{c}{conj(posicion)}, \In{cs}{estr}}{bool}'
 	res $\leftarrow$ false '\ote{1}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 
-	while HaySiguiente(itC) do '\ote{1}'
+	while HaySiguiente(itC) AND $\neg$ res do '\ote{1}'
 		if $cs$.posicionesHippies[Siguiente(itC)*Columnas($cs$.campus) +
 		+ Siguiente(itC).y] $\neq$ " " then '\ote{1}'
 			res $\leftarrow$ true '\ote{1}'
+		end if
 
 		if $cs$.posicionesEstudiantes[Siguiente(itC)*Columnas($cs$.campus) +
 		+ Siguiente(itC).y] $\neq$ " " then '\ote{1}'
 			res $\leftarrow$ true '\ote{1}'
-
+		end if
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{1}'
+	end while $\textit{\textbf{(c1)}}$ '\ote{$\#c$}'
 
 	itC $\leftarrow$ CrearIt(c) '\ote{1}'
-	while HaySiguiente(itC) do '\ote{1}'
-		if $cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x].datos $\neq$
-		$\neq$ NULL then '\ote{1}'
+	while HaySiguiente(itC) AND $\neg$res do '\ote{1}'
+		if HaySiguiente($cs$.posicionesAgente[Siguiente(itC).y *
+			* Columnas($cs$.campus) + x].datos) then '\ote{1}'
 			res $\leftarrow$ true '\ote{1}'
 		end if '\ote{1}'
-	end while '\ote{4}'
+	end while $\textit{\textbf{(c2)}}$ '\ote{$\#c$}'
 
 	itC $\leftarrow$ CrearIt(c) '\ote{1}'
-	while HaySiguiente(itC) do '\ote{1}'
+	while HaySiguiente(itC) AND $\neg$res do '\ote{1}'
 		if Ocupada?($cs$.campus, Siguiente(itC)) '\ote{1}'
 			res $\leftarrow$ true
 		end if '\ote{1}'
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{4}'
+	end while $\textit{\textbf{(c3)}}$ '\ote{$\#c$}'
 
-'\ofi{O(1) \text{. Como el conjunto c tiene como maximo longitud 4, la complejidad sería } O(1)}'
+'\ofi{O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Justificación de Complejidad:} $\textit{\textbf{(c1)}}$ $\textit{\textbf{(c2)}}$ $\textit{\textbf{(c3)}}$ En cada ciclo itera sobre la cantidad de elementos del conjunto fijandose si hay un elemento en cada una de las posiciones que tiene el conjunto. Por ende la complejidad es $O(\#c)$.
 
 ~
 
 
-\InterfazFuncion{AlMenosUnAgente}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{AlMenosUnAgente}{\In{c}{conj(posición)}, \In{cs}{campusseguro} }{bool}
+[true]
+{res $=_{obs}$ ($\exists$ p: posición) Pertenece?(p,c) $\land$ (($\exists$ a: nat) def?(a, agentes(cs)) $\land_L$ Obtener(a, agentes(cs)).posición = p)}
 
 \begin{lstlisting}[mathescape]
 '\alg{AlMenosUnAgente}{\In{c}{conj(posicion)}, \In{cs}{estr} }{bool}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	res $\leftarrow$ false '\ote{1}'
 
-	while HaySiguiente(itC) do '\ote{1}'
-		if $cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + x].datos $\neq$
-		$\neq$ NULL then '\ote{1}'
+	while HaySiguiente(itC) AND $\neg$res do '\ote{1}'
+		if HaySiguiente($cs$.posicionesAgente[Siguiente(itC).y *
+			* Columnas($cs$.campus) + x].datos)	then '\ote{1}'
 			res $\leftarrow$ true '\ote{1}'
 		end if '\ote{1}'
-	end while '\ote{4}'
+	end while  '\ote{$\#c$}'
 
-'\ofi{O(4) = O(1) \text{. Como el conjunto c tiene maximo 4 posiciones, solo hace el ciclo 4 veces maximo.}}'
+'\ofi{O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Justificación de Complejidad:} Revisa en cada posición del conjunto que se pasa por parametro si alguna tiene un agente. Como lo itera hasta que encuentra una posición en que haya agente puede que no haya o sea el ultimo elemento y da como peor caso que lo tenga que iterar todo. Por lo tanto, la complejidad es $O(\#c)$.
 
 ~
 
