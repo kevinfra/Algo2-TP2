@@ -53,15 +53,6 @@
 
 ~
 
-\InterfazFuncion{OrdenadoPorClave}{\In{d}{DiccNat($\alpha$)}}{vector(tupla(nat,puntero($\alpha$)))}
-[true]
-{$\forall$ n : nat (def?(n,d) $\Leftarrow$ esta?((n, obtener(n,d)), res)) $\land$ estaOrdenado(res)}
-[$O(1)$]
-[Devuelve el vector ordenado de manera creciente según el natural de la clave]
-[La informacion a la que apunta la segunda parte de la tupla es una referencia al significado correspondiente de la primera parte de la tupla]
-
-~
-
 \subsubsection{Operaciones básicas del iterador}
 
 Este iterador permite recorrer la tabla de hash sobre la que est\'{a} implementado el diccionario para obtener cada clave con su respectivo significado sin modificar ning\'{u}n dato del diccionario.
