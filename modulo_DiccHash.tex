@@ -137,7 +137,6 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	\begin{Tupla}[estr]
 		\tupItem{tabla}{vector(lista(tupla(clave : nat, significado : $\alpha$)))}
 		\tupItem{\\ listaIterable}{lista(puntero(tupla(clave : nat, significado : $\alpha$)))}
-		\tupItem{\\ vectorOrdenClaves}{vector(tupla(clave : nat, significado : puntero($\alpha$)))}
 	\end{Tupla}
 \end{Estructura}
 
@@ -146,7 +145,6 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	\item La suma del largo de todas las listas enlazadas que salen del vector, tiene que ser igual al largo del vector.
 	\item Toda tupla de la tabla es apuntado por un elemento de listaIterable.
 	\item El largo de listaIterable es igual al largo del vector.
-	\item El vectorOrdenClaves tiene todas las claves de la tabla, el largo es igual al largo de la lista y los punteros van al significado de la clave correspondiente en la tabla
 \end{enumerate}
 
 \subsubsection{Invariante de Representación}
@@ -164,10 +162,6 @@ operación que modifique d sin utilizar las funciones del iterador.]
 		\\ $\Rightarrow$ ($\exists$ p : puntero($\alpha$)($\&$t $=$ p $\land$ esta?(p, e.listaIterable)))))
 	$\\ \land \\$
 	long(e.tabla) $=_{obs}$ long(e.listaIterable)
-	$\\ \land \\$
-	long(e.vectorOrdenClaves) $=$ long(e.tabla) $\land$ ($\forall$ l : lista(tupla(nat, $\alpha$)))(esta?(l, e.tabla)
-		\\ $\Rightarrow$ ($\forall$ t : tupla(nat, $\alpha$)) (esta?(t, l) \\ $\Rightarrow$ ($\forall$ n : nat) (n $=$ t.clave)) \\$\Rightarrow_L$
-		($\exists$ p : puntero($\alpha$)) ($\&$t.significado $=$ p) $\land$ esta?((t.clave, p), e.vectorOrdenClaves))
 }\mbox{}
 
 \tadOperacion{largosDeListas}{secu(secu(tupla(nat,$\alpha$)))}{nat}{}

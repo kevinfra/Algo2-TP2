@@ -170,6 +170,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\begin{Tupla}[estr]
 		\tupItem{campus}{campus}%
 		\tupItem{\\ personalAS}{diccNat(agente,datosAgente)}%
+		\tupItem{\\ agentesOrdenados}{vector(As)}
 		\tupItem{\\ posicionesAgente}{vector(As)}%
 		\tupItem{\\ masVigilante}{As}%
 		\tupItem{\\ listaMismasSanc}{lista(kSanc)}%
@@ -268,8 +269,10 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	\item Las posiciones en posicionesEstudiantes que no tienen un estudiante poseen el caracter de espacio " ".
 	%done nro26
 	\item La posiciones de todos los estudiantes en posicionesEstudiantes se mapea con la posicion que tienen en el diccString estudiantes y viceversa
-	
-
+	%done nro27
+	\item agentesOrdenados tiene todas las claves de la tabla, el largo es igual a la cantidad de claves de personalAS y los iteradores van al significado de la clave correspondiente en la tabla
+	%no28
+	\item agentesOrdenados está ordenado por placa
 \end{enumerate}
 
 \pagebreak
@@ -378,8 +381,18 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	$\land$
 	\\%nro26
 	($\forall$ est: string)(def?(est, $e$.estudiantes) $\Leftrightarrow_L$ ($\exists!$ i: nat)(i < longitud($e$.posicionesEstudiantes) $\land_L$ $e$.posicionesEstudiantes[i] = Obtener(est, $e$.estudiantes) $\land$ (i / columnas($e$.campus) = Obtener(est, $e$.estudiantes).x) $\land$ (i mod columnas($e$.campus) = Obtener(est, $e$.estudiantes).y)))
+	\\ 
+	$\land$
+	\\%nro27
+	long(e.agentesOrdenados) $=$ cantClaves(e.personalAS) $\land$ ($\forall$ placa : agente)(definido?(placa, e.personalAS)
+	\\$\Rightarrow_L$ ($\exists$ a : As)(placa $=_{obs}$ a.agente $\land$ obtener(placa, e.personalAS) $=_{obs}$ a.datos)
+	\\ 
+	$\land$
+	\\%nro28
+	ordenadoPorPlaca?(e.agentesOrdenados)
 	\\
 	\\
+
 \tadOperacion{$\#$Obstaculos}{campus}{nat}{}
 \tadOperacion{$\#$ObstaculosAux}{nat,nat,campus}{nat}{}
 \tadOperacion{$\#$SancionesDistintas}{diccNat(agente, datosAgente)}{nat}{}
@@ -388,6 +401,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 \tadOperacion{ordenada?}{secu(kSanc)}{bool}{}
 \tadOperacion{agentesKSanc}{diccNat(agente, datosAgente), conj(agente), nat}{conj(agente)}{}
 \tadOperacion{mismosNodos}{secu(kSanc)/lista, secu(itLista(kSanc))/vec}{bool}{long(lista) = long(vec)}
+\tadOperacion{ordenadoPorPlaca?}{secu(As)}{bool}{}
 
 ~
 
@@ -461,6 +475,19 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	}
 	FI
 }
+\tadAxioma{ordenadoPorPlaca?(vec)}{
+	\IF vacia?(vec) THEN true
+	ELSE{
+		\IF vacia?(fin(vec)) THEN true
+		ELSE{
+			\IF agente(prim(vec)) < agente(prim(fin(vec))) THEN ordenadoPorPlaca?(fin(vec))
+			ELSE false
+			FI
+		}
+		FI
+	}
+	FI
+}
 
 \subsubsection{Función de Abstracción}
 \Abs[estr]{campusSeguro}[e]{cs}{
@@ -513,6 +540,19 @@ $\land$
 		AgregarAtras(res.posicionesEstudiantes, " ") '\ote{k, idem anterior}'
 		i $\leftarrow$ i$+1$ '\ote{1}'
 	end while $\textit{\textbf{(c4)}}$ '\ote{(f*c)*2k}'
+
+	itDiccNat(agente, datosAgente) it $\leftarrow$ CrearIt(d) 					'\ote{1}'
+	res.ordenadoPorPlaca $\leftarrow$ Vacia()									'\ote{1}'
+	while HaySiguiente?(it) do 													'\ote{1}'
+		i $\leftarrow$ 0														'\ote{1}'
+		bool ordenado $\leftarrow$ true											'\ote{1}'
+		while i < Longitud(res.ordenadoPorPlaca) $\land$ ordenado do			'\ote{1}'
+			if res.ordenadoPorPlaca[i].agente > Siguiente(it).agente then		'\ote{1}'
+				ordenado $\leftarrow$ false 									'\ote{1}'
+			end if
+		end while																'\ote{}'
+		Agregar(res.ordenadoPorPlaca, i, tupla(Siguiente(it).agente, it)) 		'\ote{}'
+	end while																	'\ote{}'
 
 '\ofi{O(N_a) + O(N_a) + O((f*c)^3 + N_a) + O((f*c)*\sum_{k=0}^{f*c - 1}(k)) = max\{2O(N_a) , O((f*c)^3 + N_a)\} + O((f*c)*(f*c-1)*(f*c)/2) = O((f*c)^3 + N_a) + O((f*c)*(f*c-1)*(f*c)/2) \leq O((f*c)^3 + N_a) + O((f*c)^3) = O((f*c)^3 + N_a)}'
 \end{lstlisting}
