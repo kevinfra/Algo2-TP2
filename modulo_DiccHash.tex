@@ -209,46 +209,32 @@ operación que modifique d sin utilizar las funciones del iterador.]
 			nat : k $\leftarrow$ v[i].clave mod longitud(v) '\ote{1}'
 			AgregarAtras(res.tabla[k], v[i]) '\ote{copy($\alpha$)}'
 			nat : q $\leftarrow$ longitud(res.tabla[k]) '\ote{longitud(res.tabla[k])}'
-			AgregarAtras(res.listaIterable, puntero(res.tabla[k][q-1])) '\ote{1}'
+			AgregarAtras(res.listaIterable, puntero(res.tabla[k][q-1])) '\ote{q}'
 			i++ '\ote{1}'
-		end while '\ote{n * copy($\alpha$) }'
-
-	//	i $\leftarrow$ 0 '\ote{1}'
-	//	while i < longitud(res.vectorOrdenClaves) do '\ote{1}'
-	//		nat : j $\leftarrow$ i '\ote{1}'
-	//		while j > 0 $\land$ res.vectorOrdenClaves[j] <
-	//									res.vectorOrdenClaves[j-1]) do '\ote{1}'
-	//			tupla(nat, puntero($\alpha$)) : temp $\leftarrow$ res.vectorOrdenClaves[j] '\ote{1}'
-	//			res.vectorOrdenClaves[j] $\leftarrow$ res.vectorOrdenClaves[j-1] '\ote{1}'
-	//			res.vectorOrdenClaves[j-1] $\leftarrow$ temp '\ote{1}'
-	//			j-- '\ote{1}'
-	//		end while '\ote{i}'
-	//		i++ '\ote{1}'
-	//	end while '\ote{$\sum_{i=0}^{longitud(res.vectorOrdenClaves)}$ i}'
-
+		end while '\ote{longitud(v) * (copy($\alpha$) + q)}'
 {$\textbf{Post}$ $\equiv$ (($\forall$ $t$ : tupla(nat, $\alpha$)) esta?($t$, v)) $\Rightarrow$ ((definido?(t.clave, res))
  $\land_L$ obtener(t.clave,res) $=_{obs}$ t.significado) $\land$ cantClaves(res) $=_{obs}$ longitud(v)}
-'\ofi{O(n * copy(\alpha)))}'
-$\textbf{Justificacion:}$ n veces, o sea el numero del largo del vector,
-	va a realizar la operacion de copia del elemento $\alpha$
-	ya que tiene que copiar la informacion que hay en cada posicion del vector.
+'\ofi{O(longitud(v) * (copy(\alpha) + q))} donde q es la cantidad de elementos que pueden encontrarse en una misma posicion de la tabla'
+$\textbf{Justificacion:}$ las veces que se va a realizar la operacion de copia
+	del elemento $\alpha$ es equivalente al largo del vector, ya que va a hacer
+	una vez cada una. El valor de $q$ va a ser 1 en caso promedio gracias a la funcion
+	de Hash, pero en el peor caso va a ser igual a la longitud del vector de entrada.
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iredefinir}{\Inout{d}{DiccNat($\alpha$)}, \In{n}{nat}, \In{a}{$\alpha$}}{}'
+'\alg{iredefinir}{\Inout{d}{estr}, \In{n}{nat}, \In{a}{$\alpha$}}{}'
 {$\textbf{Pre}$ $\equiv$ definido?(n,d)}
 	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
-	nat : i $\leftarrow$ 0 '\ote{1}'
-	while i < longitud(d.tabla[k]) '\ote{1}'
-		IF d.tabla[k][i].clave = n THEN '\ote{i}'
-			d.tabla[k][i].significado $\leftarrow$ a '\ote{i}'
-			i $\leftarrow$ longitud(d.tabla[k]) '\ote{1}'
-		ELSE
-			i++ '\ote{1}'
+	itLista($\alpha$) : it $\leftarrow$ crearIt(d.tabla[k]) '\ote{1}'
+	while haySiguiente?(it) do '\ote{1}'
+		IF siguiente(it).clave = n THEN '\ote{1}'
+			it.significado $\leftarrow$ a '\ote{1}'
 		FI
-	end while '\ote{longitud(d.tabla[k])$^2$}'
+	end while '\ote{longitud(d.tabla[k])}'
 {$\textbf{Post}$ $\equiv$ obtener(n,d) $=_{obs}$ a}
 '\ofi{O(i)} siendo i = 1 en caso promedio y i = $\#$claves(d) en peor caso'
+// Preguntar como renombrar longitud(d.tabla[k]) a i, para que la complejidad quede
+// prolija
 $\textbf{Justificacion:}$ En el peor caso, van a estar todos los elementos
 	en la misma posicion de la tabla y el elemento que queremos redefinir
 	va a estar en la ultima posicion. Ademas, cada acceso a una posicion de
@@ -259,17 +245,14 @@ $\textbf{Justificacion:}$ En el peor caso, van a estar todos los elementos
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{iobtener}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{puntero($\alpha$)}'
+'\alg{iobtener}{\In{n}{nat}, \In{d}{estr}}{puntero($\alpha$)}'
 {$\textbf{Post}$ $\equiv$ true}
-	nat : i $\leftarrow$ 0 '\ote{1}'
 	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
+	itLista($\alpha$) : it $\leftarrow$ crearIt(d.tabla[k]) '\ote{1}'
 	res $\leftarrow$ NULL '\ote{1}'
-	while i < longitud(d.tabla[k]) do '\ote{1}'
-		IF d.tabla[k][i].clave = n THEN '\ote{i}'
-			res $\leftarrow$ *d.tabla[k][i].significado '\ote{i}'
-			i $\leftarrow$ longitud(d.tabla[k]) '\ote{1}'
-		ELSE
-			i++ '\ote{1}'
+	while haySiguiente?(it) do '\ote{1}'
+		IF Siguiente(it).clave = n THEN '\ote{1}'
+			res $\leftarrow$ it.significado '\ote{1}'
 		FI
 	end for '\ote{i}'
 {$\textbf{Post}$ $\equiv$ res $=_{obs}$ obtener(n,d)}
@@ -278,17 +261,15 @@ $\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{idefinido?}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{bool}'
+'\alg{idefinido?}{\In{n}{nat}, \In{d}{estr}}{bool}'
 {$\textbf{Pre}$ $\equiv$ true}
 	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
-	nat : i $\leftarrow$ 0 '\ote{1}'
+	itLista($\alpha$) : it $\leftarrow$ crearIt(d.tabla[k]) '\ote{1}'
 	res $\leftarrow$ false '\ote{1}'
-	while i < longitud(d[k]) do '\ote{1}'
-		IF d.tabla[k][i].clave $=$ n THEN '\ote{i}'
+	while haySiguiente?(it) do '\ote{1}'
+		IF Siguiente(it).clave $=$ n THEN '\ote{i}'
 			res $\leftarrow$ true '\ote{1}'
-			i $\leftarrow$ longitud(d.tabla[k]) '\ote{1}'
 		FI
-		i++ '\ote{1}'
 	end while '\ote{i}'
 {$\textbf{Post}$ $\equiv$ res $=_{obs}$ def?(n,d)}
 '\ofi{O(i)} siendo i = 1 en caso promedio y i = $\#$claves(d) en peor caso'
@@ -296,7 +277,7 @@ $\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{icantClaves}{\In{d}{DiccNat($\alpha$)}}{nat}'
+'\alg{icantClaves}{\In{d}{estr}}{nat}'
 {$\textbf{Pre}$ $\equiv$ true}
 	res $\leftarrow$ longitud(d.tabla) '\ote{1}'
 {$\textbf{Post}$ $\equiv$ res $=_{obs}$ $\#$claves(d)}
@@ -304,14 +285,6 @@ $\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
 $\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep,
 	sabemos que el largo del vector representa la cantidad de claves del dicc.
 \end{lstlisting}
-
-%\begin{lstlisting}[mathescape]
-%'\alg{OrdenadoPorClave}{\In{d}{DiccNat($\alpha$)}}{vector(tupla(nat, $\alpha$))}'
-%
-%	res $\leftarrow$ d.vectorOrdenClaves '\ote{1}'
-%
-%'\ofi{O(1)}'
-%\end{lstlisting}
 
 \begin{lstlisting}[mathescape]
 '\alg{iCrearIt}{\In{d}{DiccNat($\alpha$)}}{itDiccNat($\alpha$)}'
