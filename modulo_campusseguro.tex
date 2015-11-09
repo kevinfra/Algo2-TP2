@@ -11,7 +11,7 @@
 \InterfazFuncion{comenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente,datosAgente)}}{campusSeguro}
 [($\forall a$ : agente) (def?($a$,$d$) $\Rightarrow_L$ (posVálida(obtener($a$,$d$)) $\land$ $\neg$ocupada?(obtener($a$,$d$,$c$))) $\land$ ($\forall a, a2$ : agente) ((def?($a$,$d$) $\land$ def?($a2$,$d$) $\land a \neq a2$) $\Rightarrow_L$ obtener($a$,$d$) $\neq$ obtener($a2$,$d$))]
 {res $=_{obs}$ comenzarRastrillaje(c,d)}
-[$O(f*c)^2 + N_a)$]
+[$O(f*c)^2 + N_a^2)$]
 [Crea un nuevo campusSeguro tomando un campus y un diccionario con agentes.]
 [Se genera aliasing campus y en el diccionario que se pasan por parametro.]
 
@@ -550,17 +550,18 @@ $\land$
 			if res.ordenadoPorPlaca[i].agente > Siguiente(it).agente then		'\ote{1}'
 				ordenado $\leftarrow$ false 									'\ote{1}'
 			end if
-		end while																'\ote{}'
-		Agregar(res.ordenadoPorPlaca, i, tupla(Siguiente(it).agente, it)) 		'\ote{}'
-	end while																	'\ote{}'
+		end while																'\ote{$N_a$}'
+		Agregar(res.ordenadoPorPlaca, i, tupla(Siguiente(it).agente, it)) 		'\ote{$N_a$}'
+	end while $\textit{\textbf{(c5)}}$											'\ote{$N_a^2$}'
 
-'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) + O(\sum_{k=0}^{f*c - 1}(2k)) = max\{2O(N_a) , O((f*c)^2 + N_a)\} + O(2*(f*c-1)*(f*c)/2) = O((f*c)^2 + N_a) + O(2*(f*c-1)*(f*c)/2) < O((f*c)^2 + N_a) + O((f*c)^2) = O((f*c)^2 + N_a)}'
+'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) + O(\sum_{k=0}^{f*c - 1}(2k)) + O(N_a^2) = max\{2O(N_a) , O((f*c)^2 + N_a)\} + O(2*(f*c-1)*(f*c)/2) + O(N_a^2) = O((f*c)^2 + N_a) + O(2*(f*c-1)*(f*c)/2) + O(N_a^2) < O((f*c)^2 + N_a) + O((f*c)^2) + O(N_a^2) = O((f*c)^2 + N_a^2)}'
 \end{lstlisting}
 
 \textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} Complejidad de generarListaMismasSanc es $O(N_a)$. \\
 \textit{\textbf{(c2)}} Complejidad de vectorizarPos es $O(f*c)^2 + N_a)$. \\
 \textit{\textbf{(c3)}} Complejidad de menorPlaca es $O(N_a)$. \\
-\textit{\textbf{(c4)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(2k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O(\sum_{k=0}^{f*c - 1}(2k)) = O(2*(f*c-1)*(f*c)/2) < O((f*c)^2)$.
+\textit{\textbf{(c4)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(2k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O(\sum_{k=0}^{f*c - 1}(2k)) = O(2*(f*c-1)*(f*c)/2) < O((f*c)^2)$.\\
+\textit{\textbf{(c5)}} Recorro todas las claves del diccionario, lo cual cuesta $O(N_a)$, y para cada una recorro el vector, que es lineal en la cantidad de elementos del vector, la cual va de 0 hasta la cantidad de agentes, y tambien se agrega en el vector hasta la posicion recorrida, esto cuesta $O(N_a)$. Finalmente, la complejidad es $O(N_a^2)$.
 
 ~
 
@@ -596,7 +597,7 @@ $\land$
 
 \textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O(\sum_{k=0}^{f*c - 1}(k)) = O((f*c-1)*(f*c)/2) \leq O((f*c)^2)$. \\
 \textit{\textbf{(c2)}} En cada iteración del iterador del diccionario de agentes me crea una copia del iterador (que tarda $O(1)$) y va agregando en el vector de posiciones en la posicion que corresponde al agente que apunta el iterador, con la copia del iterador en esa posición. Esto lo hace por todos los agentes por eso la complejidad de este ciclo es $O(N_a)$. \\
-Como estos dos ciclos son los que predominan en complejidad (el resto de las funciones es $O(1)$) entonces la complejidad queda como $O((f*c)^3 + N_a)$.
+Como estos dos ciclos son los que predominan en complejidad (el resto de las funciones es $O(1)$) entonces la complejidad queda como $O((f*c)^2 + N_a)$.
 
 
 ~
