@@ -12,7 +12,7 @@
 [true]
 {(($\forall$ $t$ : tupla(nat, $\alpha$)) esta?($t$, v)) $\Rightarrow$ ((definido?(t.clave, res))
 	$\land_L$ obtener(t.clave,res) $=_{obs}$ t.significado) $\land$ cantClaves(res) $=_{obs}$ longitud(v)}
-[$O(n^2 + copy(\alpha) * n)$ donde n es el largo del vector]
+[$O(copy(\alpha) * n)$ donde n es el largo del vector]
 [Agrega las tuplas de clave-significado pasadas por parametro al diccionario $d$]
 [Los elementos pasados por parámetros se copian al diccionario]
 
@@ -21,7 +21,7 @@
 \InterfazFuncion{redefinir}{\Inout{d}{DiccNat($\alpha$), \In{n}{nat}, \In{a}{$\alpha$}}}{}
 [definido?(n,d)]
 {obtener(n,d) $=_{obs}$ a}
-[$O(i)$ donde i es 1 en el caso promedio y longitud(d) en el peor caso.]
+[$O(1)$ en caso promedio, $O(n)$ en peor caso]
 []
 
 ~
@@ -37,7 +37,7 @@
 
 \InterfazFuncion{definido?}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{bool}
 [true]
-{res $=_{obs}$ def?(a,d)}
+{res $=_{obs}$ def?(n,d)}
 [$O(1)$ en caso promedio, $O(n)$ en peor caso]
 [Dice si está definida una clave en el diccionario]
 []
@@ -98,7 +98,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \InterfazFuncion{SiguienteSignificado}{\In{it}{itDiccNat($\alpha$)}}{$\alpha$}
 [haySiguiente?(it)]
-{alias(res $=_{obs}$ haySiguiente?($it$).significado)}
+{alias(res $=_{obs}$ Siguiente($it$).significado)}
 [$\Theta(1)$]
 [devuelve el significado del elemento siguiente del iterador]
 [res es modificable si y sólo si it es modficable.]
@@ -107,7 +107,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \InterfazFuncion{Avanzar}{\Inout{it}{itDiccNat($\alpha$)}}{}
 [it $=$ it$_0$ $\land$ haySiguiente?(it)]
-{it $=_{obs}$ avanzar(it$_0$)}
+{it $=_{obs}$ Avanzar(it$_0$)}
 [$\Theta(1)$]
 [avanza a la posicion siguiente del iterador.]
 []
@@ -141,7 +141,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 \end{Estructura}
 
 \begin{enumerate}
-	\item No existe dos veces el mismo nat en dos posiciones distintas del vector.
+	\item No existe dos veces el mismo nat $n$ en dos posiciones distintas del vector y ese nat va a estar en la posicion $n$ mod longitud(tabla)
 	\item La suma del largo de todas las listas enlazadas que salen del vector, tiene que ser igual al largo del vector.
 	\item Toda tupla de la tabla es apuntado por un elemento de listaIterable.
 	\item El largo de listaIterable es igual al largo del vector.
@@ -153,7 +153,10 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 \Rep[estr][e]{
 	\\
-	($\forall$ $l$ : lista(tupla(nat, $\alpha$))) (( $\exists$ $k$ : nat ) ((e.tabla[k] = l) $\Rightarrow$ ($\not \exists$ $q$ : nat) (k $\neq$ q $\land$ e.tabla[q] = l)) $\land$ ($\forall$ $t1$, $t2$ : tupla(nat, $\alpha$)) (esta?($t1$,l) $\land$ esta?($t2$,l) $\Rightarrow$ ($\not \exists$ n,m : nat) ($t1$.clave = n $\land$ $t2$.clave = m $\land_L$ n = m) ))
+	($\forall$ $l$ : lista(tupla(nat, $\alpha$))) (( $\exists$ $k$ : nat ) ((e.tabla[k] = l)
+	  \\ $\Rightarrow$ ($\not \exists$ $q$ : nat) (k $\neq$ q $\land$ e.tabla[q] = l)) $\land$ ($\forall$ $t1$, $t2$ : tupla(nat, $\alpha$)) (esta?($t1$,l) $\land$ esta?($t2$,l)
+		\\ $\Rightarrow$ ($\forall$ n,m : nat) ($t1$.clave = n $\land$ $t2$.clave = m
+		\\ $\Rightarrow$ n $\neq$ m $\land$ (n mod longitud(e.tabla) = k $\land$ m mod longitud(e.tabla) = k) ) ))
 	$\\ \land \\$
 	largosDeListas(e.tabla) $=$ longitud(e.tabla)
 	$\\ \land \\$
@@ -195,8 +198,8 @@ operación que modifique d sin utilizar las funciones del iterador.]
 \lstset{style=alg}
 
 \begin{lstlisting}[mathescape]
-'\alg{crearDiccionario}{\In{v}{vector(tupla(clave : nat, significado :  $\alpha$))}}{estr}'
-
+'\alg{icrearDiccionario}{\In{v}{vector(tupla(clave : nat, significado :  $\alpha$))}}{estr}'
+{$\textbf{Pre}$ $\equiv$ true}
 		nat : i $\leftarrow$ 0 '\ote{1}'
 		while i < longitud(v) do '\ote{1}'
 			AgregarAtras(res.tabla, vacia()) '\ote{1}'
@@ -205,123 +208,152 @@ operación que modifique d sin utilizar las funciones del iterador.]
 		while i < longitud(v) do '\ote{1}'
 			nat : k $\leftarrow$ v[i].clave mod longitud(v) '\ote{1}'
 			AgregarAtras(res.tabla[k], v[i]) '\ote{copy($\alpha$)}'
-			nat : q $\leftarrow$ longitud(res.tabla[k]) '\ote{i}'
+			nat : q $\leftarrow$ longitud(res.tabla[k]) '\ote{longitud(res.tabla[k])}'
 			AgregarAtras(res.listaIterable, puntero(res.tabla[k][q-1])) '\ote{1}'
 			i++ '\ote{1}'
 		end while '\ote{n * copy($\alpha$) }'
 
-		i $\leftarrow$ 0 '\ote{1}'
-		while i < longitud(res.vectorOrdenClaves) do '\ote{1}'
-			nat : j $\leftarrow$ i '\ote{1}'
-			while j > 0 $\land$ res.vectorOrdenClaves[j] <
-										res.vectorOrdenClaves[j-1]) do '\ote{1}'
-				tupla(nat, puntero($\alpha$)) : temp $\leftarrow$ res.vectorOrdenClaves[j] '\ote{1}'
-				res.vectorOrdenClaves[j] $\leftarrow$ res.vectorOrdenClaves[j-1] '\ote{1}'
-				res.vectorOrdenClaves[j-1] $\leftarrow$ temp '\ote{1}'
-				j-- '\ote{1}'
-			end while '\ote{i}'
-			i++ '\ote{1}'
-		end while '\ote{$\sum_{i=0}^{longitud(res.vectorOrdenClaves)}$ i}'
+	//	i $\leftarrow$ 0 '\ote{1}'
+	//	while i < longitud(res.vectorOrdenClaves) do '\ote{1}'
+	//		nat : j $\leftarrow$ i '\ote{1}'
+	//		while j > 0 $\land$ res.vectorOrdenClaves[j] <
+	//									res.vectorOrdenClaves[j-1]) do '\ote{1}'
+	//			tupla(nat, puntero($\alpha$)) : temp $\leftarrow$ res.vectorOrdenClaves[j] '\ote{1}'
+	//			res.vectorOrdenClaves[j] $\leftarrow$ res.vectorOrdenClaves[j-1] '\ote{1}'
+	//			res.vectorOrdenClaves[j-1] $\leftarrow$ temp '\ote{1}'
+	//			j-- '\ote{1}'
+	//		end while '\ote{i}'
+	//		i++ '\ote{1}'
+	//	end while '\ote{$\sum_{i=0}^{longitud(res.vectorOrdenClaves)}$ i}'
 
-
-'\ofi{O(n^2 + n * copy(\alpha)))}'
+{$\textbf{Post}$ $\equiv$ (($\forall$ $t$ : tupla(nat, $\alpha$)) esta?($t$, v)) $\Rightarrow$ ((definido?(t.clave, res))
+ $\land_L$ obtener(t.clave,res) $=_{obs}$ t.significado) $\land$ cantClaves(res) $=_{obs}$ longitud(v)}
+'\ofi{O(n * copy(\alpha)))}'
+$\textbf{Justificacion:}$ n veces, o sea el numero del largo del vector,
+	va a realizar la operacion de copia del elemento $\alpha$
+	ya que tiene que copiar la informacion que hay en cada posicion del vector.
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{redefinir}{\Inout{d}{DiccNat($\alpha$)}, \In{n}{nat}, \In{a}{$\alpha$}}{}'
-
+'\alg{iredefinir}{\Inout{d}{DiccNat($\alpha$)}, \In{n}{nat}, \In{a}{$\alpha$}}{}'
+{$\textbf{Pre}$ $\equiv$ definido?(n,d)}
 	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
 	nat : i $\leftarrow$ 0 '\ote{1}'
-	while i < longitud(d[k]) '\ote{1}'
-		IF d.tabla[k][i].clave $=_{obs}$ n THEN '\ote{1}'
+	while i < longitud(d.tabla[k]) '\ote{1}'
+		IF d.tabla[k][i].clave = n THEN '\ote{i}'
 			d.tabla[k][i].significado $\leftarrow$ a '\ote{i}'
-			i $\leftarrow$ longitud(d[k]) '\ote{1}'
+			i $\leftarrow$ longitud(d.tabla[k]) '\ote{1}'
 		ELSE
 			i++ '\ote{1}'
 		FI
-	end while '\ote{i}'
-
-'\ofi{O(i)}'
+	end while '\ote{longitud(d.tabla[k])$^2$}'
+{$\textbf{Post}$ $\equiv$ obtener(n,d) $=_{obs}$ a}
+'\ofi{O(i)} siendo i = 1 en caso promedio y i = $\#$claves(d) en peor caso'
+$\textbf{Justificacion:}$ En el peor caso, van a estar todos los elementos
+	en la misma posicion de la tabla y el elemento que queremos redefinir
+	va a estar en la ultima posicion. Ademas, cada acceso a una posicion de
+	una lista, es O(i) siendo i la posicion y vamos a recorrer todos los elementos
+	de la tabla (o sea de la lista) hasta encontrar el que queremos. Entonces,
+	en el peor caso, i va a ser igual al numero de claves del diccionario,
+	pero en caso promedio, i va a ser 1 gracias a la funcion de hash.
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{obtener}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{puntero($\alpha$)}'
+'\alg{iobtener}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{puntero($\alpha$)}'
+{$\textbf{Post}$ $\equiv$ true}
 	nat : i $\leftarrow$ 0 '\ote{1}'
 	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
 	res $\leftarrow$ NULL '\ote{1}'
-	while 1 < longitud(d[k]) do '\ote{1}'
-		IF d.tabla[k][i].clave $=_{obs}$ n THEN '\ote{i}'
+	while i < longitud(d.tabla[k]) do '\ote{1}'
+		IF d.tabla[k][i].clave = n THEN '\ote{i}'
 			res $\leftarrow$ *d.tabla[k][i].significado '\ote{i}'
-			i $\leftarrow$ longitud(d[k]) '\ote{1}'
+			i $\leftarrow$ longitud(d.tabla[k]) '\ote{1}'
 		ELSE
 			i++ '\ote{1}'
 		FI
 	end for '\ote{i}'
-
-'\ofi{O(i)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ obtener(n,d)}
+'\ofi{O(i)} siendo i = 1 en caso promedio y i = $\#$claves(d) en peor caso'
+$\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{definido?}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{bool}'
-
+'\alg{idefinido?}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{bool}'
+{$\textbf{Pre}$ $\equiv$ true}
 	nat : k $\leftarrow$ n mod longitud(d) '\ote{1}'
 	nat : i $\leftarrow$ 0 '\ote{1}'
 	res $\leftarrow$ false '\ote{1}'
 	while i < longitud(d[k]) do '\ote{1}'
-		IF d.tabla[k][i].clave $=_{obs}$ n THEN '\ote{i}'
+		IF d.tabla[k][i].clave $=$ n THEN '\ote{i}'
 			res $\leftarrow$ true '\ote{1}'
 			i $\leftarrow$ longitud(d.tabla[k]) '\ote{1}'
 		FI
 		i++ '\ote{1}'
 	end while '\ote{i}'
-
-'\ofi{O(i)}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ def?(n,d)}
+'\ofi{O(i)} siendo i = 1 en caso promedio y i = $\#$claves(d) en peor caso'
+$\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{cantClaves}{\In{d}{DiccNat($\alpha$)}}{nat}'
-
-	res $\leftarrow$ longitud(d) '\ote{1}'
-
+'\alg{icantClaves}{\In{d}{DiccNat($\alpha$)}}{nat}'
+{$\textbf{Pre}$ $\equiv$ true}
+	res $\leftarrow$ longitud(d.tabla) '\ote{1}'
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ $\#$claves(d)}
 '\ofi{O(1)}'
+$\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep,
+	sabemos que el largo del vector representa la cantidad de claves del dicc.
 \end{lstlisting}
 
+%\begin{lstlisting}[mathescape]
+%'\alg{OrdenadoPorClave}{\In{d}{DiccNat($\alpha$)}}{vector(tupla(nat, $\alpha$))}'
+%
+%	res $\leftarrow$ d.vectorOrdenClaves '\ote{1}'
+%
+%'\ofi{O(1)}'
+%\end{lstlisting}
+
 \begin{lstlisting}[mathescape]
-'\alg{OrdenadoPorClave}{\In{d}{DiccNat($\alpha$)}}{vector(tupla(nat, $\alpha$))}'
-
-	res $\leftarrow$ d.vectorOrdenClaves '\ote{1}'
-
-'\ofi{O(1)}'
-\end{lstlisting}
-
-\begin{lstlisting}[mathescape]
-'\alg{CrearIt}{\In{d}{DiccNat($\alpha$)}}{itDiccNat($\alpha$)}'
-
+'\alg{iCrearIt}{\In{d}{DiccNat($\alpha$)}}{itDiccNat($\alpha$)}'
+{$\textbf{Pre}$ $\equiv$ true}
 	res $\leftarrow$ crearIt(d.listaIterable) '\ote{1}'
-
-'\ofi{O(1)}'
+{$\textbf{Post}$ $\equiv$ alias(esPermutacion(SecuSuby(res), d)) $\land$ vacia?(Anteriores(res))}
+'\ofi{\Theta (1)}'
+{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, crear un itLista($\alpha$) es $\Theta (1)$.
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{HaySiguiente}{\In{it}{itDiccNat($\alpha$)}}{bool}'
-
+'\alg{iHaySiguiente}{\In{it}{itDiccNat($\alpha$)}}{bool}'
+{$\textbf{Pre}$ $\equiv$ true}
 	res $\leftarrow$ HaySiguiente(it)
-
-'\ofi{O(1)}'
+{$\textbf{Pre}$ $\equiv$ res $=_{obs}$ haySiguiente?(it)}
+'\ofi{\Theta (1)}'
+{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, HaySiguiente(it) es $\Theta (1)$.
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{Siguiente}{\In{it}{itDiccNat($\alpha$)}}{tupla(nat,$\alpha$)}'
-
+'\alg{iSiguiente}{\In{it}{itDiccNat($\alpha$)}}{tupla(nat,$\alpha$)}'
+{$\textbf{Pre}$ $\equiv$ HaySiguiente?(it)}
 	res $\leftarrow$ Siguiente(it)
-
-'\ofi{O(1)}'
+{$\textbf{Pre}$ $\equiv$ alias(res $=_{obs}$ Siguiente?(it))}
+'\ofi{\Theta (1)}'
+{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Siguiente(it) es $\Theta (1)$.
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
-'\alg{Avanzar}{\Inout{it}{itDiccNat($\alpha$)}}{}'
+'\alg{iSiguienteSignificado}{\In{it}{itDiccNat($\alpha$)}}{$\alpha$}'
+{$\textbf{Pre}$ $\equiv$ HaySiguiente?(it)}
+	res $\leftarrow$ Siguiente(it)
+{$\textbf{Pre}$ $\equiv$ alias(res $=_{obs}$ Siguiente(it).significado)}
+'\ofi{\Theta (1)}'
+{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Siguiente(it) es $\Theta (1)$.
+\end{lstlisting}
 
+\begin{lstlisting}[mathescape]
+'\alg{iAvanzar}{\Inout{it}{itDiccNat($\alpha$)}}{}'
+{$\textbf{Pre}$ $\equiv$ it $=_{obs}$ it$_0$ $\land$ res $=_{obs}$ haySiguiente?(it)}
 	res $\leftarrow$ Avanzar(it)
-
-'\ofi{O(1)}'
+{$\textbf{Pre}$ $\equiv$ it $=_{obs}$ Avanzar?(it$_0$)}
+'\ofi{\Theta (1)}'
+{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Avanzar(it) es $\Theta (1)$.
 \end{lstlisting}

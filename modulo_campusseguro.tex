@@ -11,7 +11,7 @@
 \InterfazFuncion{comenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente,datosAgente)}}{campusSeguro}
 [($\forall a$ : agente) (def?($a$,$d$) $\Rightarrow_L$ (posVálida(obtener($a$,$d$)) $\land$ $\neg$ocupada?(obtener($a$,$d$,$c$))) $\land$ ($\forall a, a2$ : agente) ((def?($a$,$d$) $\land$ def?($a2$,$d$) $\land a \neq a2$) $\Rightarrow_L$ obtener($a$,$d$) $\neq$ obtener($a2$,$d$))]
 {res $=_{obs}$ comenzarRastrillaje(c,d)}
-[$O(f*c)^3 + N_a)$]
+[$O(f*c)^2 + N_a)$]
 [Crea un nuevo campusSeguro tomando un campus y un diccionario con agentes.]
 [Se genera aliasing campus y en el diccionario que se pasan por parametro.]
 
@@ -526,7 +526,7 @@ $\land$
 	res.campus $\leftarrow$ c $\textit{\textbf{(genera aliasing)}}$ '\ote{1}'
 	res.listaMismasSanc $\leftarrow$ generarListaMismasSanc(d) $\textit{\textbf{(c1)}}$ '\ote{$N_a$}'
 	res.personalAS $\leftarrow$ d $\textit{\textbf{(genera aliasing)}}$ '\ote{1}'
-	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) $\textit{\textbf{(c2)}}$ '\ote{(f$*$c)$^3$ + $N_a$}'
+	res.posicionesAgente $\leftarrow$ vectorizarPos(d,filas(c),columnas(c)) $\textit{\textbf{(c2)}}$ '\ote{(f$*$c)$^2$ + $N_a$}'
 	res.masVigilante $\leftarrow$ menorPlaca(d) $\textit{\textbf{(c3)}}$ '\ote{$N_a$}'
 	res.mismasSancModificado $\leftarrow$ true '\ote{1}'
 	res.hippies $\leftarrow$ Vacio() '\ote{1}'
@@ -539,7 +539,7 @@ $\land$
 		AgregarAtras(res.posicionesHippies, " ") '\ote{k, siendo k la cantidad de elementos del vector}'
 		AgregarAtras(res.posicionesEstudiantes, " ") '\ote{k, idem anterior}'
 		i $\leftarrow$ i$+1$ '\ote{1}'
-	end while $\textit{\textbf{(c4)}}$ '\ote{(f*c)*2k}'
+	end while $\textit{\textbf{(c4)}}$ '\ote{$\sum_{k=0}^{f*c - 1}(2k)$}'
 
 	itDiccNat(agente, datosAgente) it $\leftarrow$ CrearIt(d) 					'\ote{1}'
 	res.ordenadoPorPlaca $\leftarrow$ Vacia()									'\ote{1}'
@@ -554,13 +554,13 @@ $\land$
 		Agregar(res.ordenadoPorPlaca, i, tupla(Siguiente(it).agente, it)) 		'\ote{}'
 	end while																	'\ote{}'
 
-'\ofi{O(N_a) + O(N_a) + O((f*c)^3 + N_a) + O((f*c)*\sum_{k=0}^{f*c - 1}(k)) = max\{2O(N_a) , O((f*c)^3 + N_a)\} + O((f*c)*(f*c-1)*(f*c)/2) = O((f*c)^3 + N_a) + O((f*c)*(f*c-1)*(f*c)/2) \leq O((f*c)^3 + N_a) + O((f*c)^3) = O((f*c)^3 + N_a)}'
+'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) + O(\sum_{k=0}^{f*c - 1}(2k)) = max\{2O(N_a) , O((f*c)^2 + N_a)\} + O(2*(f*c-1)*(f*c)/2) = O((f*c)^2 + N_a) + O(2*(f*c-1)*(f*c)/2) < O((f*c)^2 + N_a) + O((f*c)^2) = O((f*c)^2 + N_a)}'
 \end{lstlisting}
 
 \textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} Complejidad de generarListaMismasSanc es $O(N_a)$. \\
-\textit{\textbf{(c2)}} Complejidad de vectorizarPos es $O(f*c)^3 + N_a)$. \\
+\textit{\textbf{(c2)}} Complejidad de vectorizarPos es $O(f*c)^2 + N_a)$. \\
 \textit{\textbf{(c3)}} Complejidad de menorPlaca es $O(N_a)$. \\
-\textit{\textbf{(c4)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(2k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O((f*c)*\sum_{k=0}^{f*c - 1}(2k)) = O(2*(f*c)*(f*c-1)*(f*c)/2) \leq O(2*(f*c)^3)$.
+\textit{\textbf{(c4)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(2k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O(\sum_{k=0}^{f*c - 1}(2k)) = O(2*(f*c-1)*(f*c)/2) < O((f*c)^2)$.
 
 ~
 
@@ -582,7 +582,7 @@ $\land$
 	while i $<$ f$*$c do '\ote{1}'
 		AgregarAtras(res, tupla(0,itVacio)) '\ote{k, siendo k la cantidad de elementos en el vector.}'
 		i $\leftarrow$ i$+1$ '\ote{1}'
-	end while $\textit{\textbf{(c1)}}$ '\ote{ ((f$*$c) $*$ k) }'
+	end while $\textit{\textbf{(c1)}}$ '\ote{$\sum_{k=0}^{f*c - 1}(k))$}'
 
 	while HaySiguiente(it) do '\ote{1}'
 		itDiccNat(agente, datosAgente): itPos $\leftarrow$ it $\textbf{por copia}$ '\ote{1}'
@@ -591,10 +591,10 @@ $\land$
 			$\leftarrow$ tupla(Siguiente(it).clave, itPos) '\ote{1}'
 	end while $\textit{\textbf{(c2)}}$ '\ote{$N_a$}'
 
-'\ofi{O((f*c)*\sum_{k=0}^{f*c - 1}(k) + N_a) = O((f*c)*(f*c-1)*(f*c)/2 + N_a) \leq O((f*c)^3 + N_a)}'
+'\ofi{O(\sum_{k=0}^{f*c - 1}(k)) + N_a) = O((f*c-1)*(f*c)/2) + N_a) < O((f*c)^2 + N_a)}'
 \end{lstlisting}
 
-\textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O((f*c)*\sum_{k=0}^{f*c - 1}(k)) = O((f*c)*(f*c-1)*(f*c)/2) \leq O((f*c)^3)$. \\
+\textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O(\sum_{k=0}^{f*c - 1}(k)) = O((f*c-1)*(f*c)/2) \leq O((f*c)^2)$. \\
 \textit{\textbf{(c2)}} En cada iteración del iterador del diccionario de agentes me crea una copia del iterador (que tarda $O(1)$) y va agregando en el vector de posiciones en la posicion que corresponde al agente que apunta el iterador, con la copia del iterador en esa posición. Esto lo hace por todos los agentes por eso la complejidad de este ciclo es $O(N_a)$. \\
 Como estos dos ciclos son los que predominan en complejidad (el resto de las funciones es $O(1)$) entonces la complejidad queda como $O((f*c)^3 + N_a)$.
 
@@ -657,25 +657,26 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
 	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$) AND
-	AND AlMenosUnAgente(vecinos(pos, $cs$.campus)) then '\ote{1}'
-		conj(As): conjAgParaSanc $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
-		SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
-	end if '\ote{1}'
+	AND AlMenosUnAgente(vecinos(pos, $cs$.campus)) then $\textit{\textbf{(c1)}}$ '\ote{$2*4$}'
+		conj(As): conjAgParaSanc $\leftarrow$ 
+			$\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c2)}}$ '\ote{4}'
+		SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
+	end if '\ote{$3*4$}'
 
-	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_m|$}'
+	if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$ $\textit{\textbf{(c4)}}$ then '\ote{$4*|n_m|$}'
 		Definir($cs$.estudiantes, e, pos) '\ote{$|n_m|$}'
 		$cs$.posicionesEstudiantes[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
 	else
 		Definir($cs$.hippies, e, pos) '\ote{$|n_m|$}'
 		$cs$.posicionesHippies[pos.y * Columnas($cs$.campus) + pos.x] $\leftarrow$ e '\ote{1}'
-	end if '\ote{$|n_m| + |n_m|$}'
+	end if '\ote{$5*|n_m|$}'
+
 
 	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
-		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
-
+		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c5)}}$ '\ote{4}'
+	
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
-
 		while HaySiguiente(itHEst) do '\ote{1}'
 			Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
 				Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
@@ -690,11 +691,14 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
 
 			Avanzar(itHEst) '\ote{1}'
-		end while '\ote{$2|n_m|$}'
+		end while $\textit{\textbf{(f1)}}$ '\ote{$4 * 2|n_m|$}'
 	end if '\ote{$4 * 2|n_m|$}'
 
+
+	//Las capturas se actualizan en HippiesRodeadosAs
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
-		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c6)}}$ '\ote{4}'
+	
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
@@ -703,11 +707,13 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
 		+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4|n_m|$}'
-	end if '\ote{$4|n_m|$}'
+		end while $\textit{\textbf{(f2)}}$ '\ote{$4*|n_m|$}'
+	end if '\ote{$4*|n_m|$}'
+
 
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
-		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c7)}}$ '\ote{4}'
+	
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
 		while HaySiguiente(itEstH) do '\ote{1}'
@@ -723,39 +729,53 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
 
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4*2|n_m|$}'
+		end while $\textit{\textbf{(f3)}}$ '\ote{$4*2|n_m|$}'
 	end if '\ote{$4*2|n_m|$}'
 
+
 	conj(posicion): conjEstRodAs $\leftarrow$
-		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c8)}}$ '\ote{4}'
+	
 	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
 		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
 
 		while HaySiguiente(itEstAs) do '\ote{1}'
 			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
-			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
+			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then $\textit{\textbf{(c9)}}$  '\ote{$2*4$}'
 				conj(As): conjAgParaSanc $\leftarrow$
-					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
-				SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), 
+							$cs$) $\textit{\textbf{(c10)}}$ '\ote{4}'
+				SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c11)}}$ '\ote{4}'
 			end if '\ote{1}'
-		end while '\ote{4}'
+		end while $\textit{\textbf{(f4)}}$ '\ote{$4*4*4$}'
 
-	end if '\ote{4}'
+	end if '\ote{$4*4*4$}'
 
-'\ofi{O(2|n_m|) + O(4*2|n_m|) + O(4|n_m|) + O(4*2|n_m|) = O(22|n_m|) = O(|n_m|)}'
+'\ofi{O(3*4) + O(5*|n_m|) + O(4) + O(4*2|n_m|) + O(4*|n_m|) + O(4*2|n_m|) + O(4*4*4) = O(80) + O(25|n_m|) = O(1) + O(|n_m|) = O(|n_m|)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} \textit{\textbf{(c1)}} Las funciones todasOcupadas? y AlMenosUnAgente tienen como complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro. Como el conjunto que les estoy pasando solo tiene cuatro elementos (porque la función vecinos devuelve un conjunto de cuatro posiciones adyacentes) entonces la complejidad final de esa guarda es $O(2*4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c2)}} AgParaPremSanc idem que el anterior punto, la complejidad es $O(\#c)$ pero le estoy pasando un conjunto de 4 elementos la complejidad es $O(4)$ que es lo mismo que $O(1)$. \\
+$\textit{\textbf{(c3)}}$ SancionarAgentes idem que el anterior, su complejidad es $O(\#c)$ pero como le paso un conjunto que como maximo tiene 4 elementos la complejidad es $O(4)$, o sea $O(1)$. \\
+\textit{\textbf{(c4)}} CantHippiesVecinos tiene como complejidad $O(\#c + |n_m|)$ siendo $c$ el conjunto que se le pasa como parametro pero como le estoy pasando un conjunto que maximo tiene 4 elementos la complejidad termina siendo $O(4*|n_m|)$ que es lo mismo que $O(|n_m|)$. \\
+\textit{\textbf{(c5)}} HippiesRodeadosEstudiantes tiene como complejidad $O(\#c)$ siendo $c$ el conjunto que se le pasa como parametro pero como le estoy pasando un conjunto que maximo tiene 4 elementos la complejidad termina siendo $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c6)}} HippiesRodeadosAs idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c7)}} EstudiantesRodeadosHippies idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c8)}} EstudiantesRodeadosAs idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c9)}} idem que el primer punto, todasOcupadas? y AlMenosUnAgente tienen complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro, pero como este conjunto tiene como maximo 4 elementos (porque vecinos devuelve un conjunto con maximo 4 elementos), las complejidades de ambas funciones es $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c10)}} AgParaPremSanc idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c11)}} SancionarAgentes idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(f1)}} El ciclo itera sobre el conjunto conjHippiesRodEst que tiene como máximo 4 elementos y dentro de él se define un estudiante ($O(|n_m|)$) y se elimina un hippie ($O(|n_m|)$), por lo tanto la complejidad del mismo es $O(4*2|n_m|)$ que es lo mismo que $O(|n_m|)$. \\
+\textit{\textbf{(f2)}} Idem que el punto anterior, el conjunto conjHippiesRodAs tiene 4 elementos e itera sobre ellos, en este caso la complejidad queda $O(4*|n_m|)$ que es lo mismo que  $O(|n_m|)$. \\
+\textit{\textbf{(f3)}} Idem que el punto anterior, el conjunto conjEstRodHip tiene 4 elementos e itera sobre ellos, en este caso la complejidad queda $O(4*2|n_m|)$ que es lo mismo que  $O(|n_m|)$. \\
+\textit{\textbf{(f4)}} Idem que el anterior pero como las operaciones están acotadas a cuatro elementos la complejidad queda como $O(4*4*4)$ que es lo mismo que $O(1)$.
 
 ~
 
 
-\InterfazFuncion{EstudiantesRodeadosAs}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{EstudiantesRodeadosAs}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{conj(posición)}
+[true]
+{res $=_{obs}$ EstudiantesRodeadosAs(c,cs)}
 
 \begin{lstlisting}[mathescape]
 '\alg{EstudiantesRodeadosAs}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(posicion)}'
@@ -764,26 +784,25 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 
 	while HaySiguiente(itC) do '\ote{1}'
 		if TodasOcupadas?(vecinos(Siguiente(itC), $cs$), $cs$) AND
-		AND AlMenosUnAgente(vecinos(Siguiente(itC), $cs$), $cs$) then '\ote{1}'
+		AND AlMenosUnAgente(vecinos(Siguiente(itC), $cs$), $cs$) then $\textit{\textbf{(c1)}}$ '\ote{$2*4$}'
 		AgregarRapido(res, Siguiente(itC)) '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{4}'
+	end while '\ote{$(2*4)*\#c$}'
 
-'\ofi{O(4) = O(1)}'
+'\ofi{O((2*4)*\#c) = O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} \textit{\textbf{(c1)}} Las funciones todasOcupadas? y AlMenosUnAgente tienen como complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro. Como el conjunto que les estoy pasando solo tiene cuatro elementos (porque la función vecinos devuelve un conjunto de cuatro posiciones adyacentes) entonces la complejidad final de esa guarda es $O(2*4)$ que es lo mismo que $O(1)$. \\
+La función va iterando por el conjunto de posiciones que se le pasa como parametro buscando los estudiantes rodeados por agentes. Como en el ciclo las complejidades son constantes la complejidad final da $O((2*4+8)*\#c)$ que es lo mismo que $O(\#c)$.
+
 
 ~
 
 
-\InterfazFuncion{EstudiantesRodeadosHippies}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{EstudiantesRodeadosHippies}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{conj(nombre, posición)}
+[true]
+{res $=_{obs}$ EstudiantesRodeadosHippies(c,cs)}
 
 \begin{lstlisting}[mathescape]
 '\alg{EstudiantesRodeadosHippies}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(nombre, posicion)}'
@@ -794,27 +813,26 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		if $cs$.posicionesEstudiantes[Siguiente(itC).y*Colummnas($cs$.campus) +
 		+ Siguiente(itC).x] $\neq$ " " AND
 		AND TodasOcupadas?(vecinos(Siguiente(itC), $cs$.campus), $cs$) AND
-		AND HippiesAtrapando(vecinos(Siguiente(itC), $cs$.campus), $cs$) then '\ote{1}'
+		AND HippiesAtrapando(vecinos(Siguiente(itC), $cs$.campus), $cs$) then $\textit{\textbf{(c1)}}$ '\ote{$2*4$}'
 		AgregarRapido(res,
 			tupla($cs$.posicionesEstudiantes[Siguiente(itC).y*Columnas($cs$.campus) +
 			+ Siguiente(itC).x], Siguiente(itC)) '\ote{1}'
 
-	end while '\ote{4}'
+	end while '\ote{$(2*4)*\#c$}'
 
-'\ofi{O(1)}'
+'\ofi{O((2*4*\#c)) = O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} \textit{\textbf{(c1)}} Las funciones todasOcupadas? y HippiesAtrapando tienen como complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro. Como el conjunto que les estoy pasando solo tiene cuatro elementos (porque la función vecinos devuelve un conjunto de cuatro posiciones adyacentes) entonces la complejidad final de esa guarda es $O(2*4)$ que es lo mismo que $O(1)$. \\
+La función va iterando por el conjunto de posiciones que se le pasa como parametro buscando los estudiates rodeados por hippies. Como en el ciclo las complejidades son constantes la complejidad final da $O((2*4+8)*\#c)$ que es lo mismo que $O(\#c)$.
+
 
 ~
 
 
-\InterfazFuncion{HippiesAtrapando}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{HippiesAtrapando}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{bool}
+[true]
+{res $=_{obs}$ HippiesAtrapando(c,cs)}
 
 \begin{lstlisting}[mathescape]
 '\alg{HippiesAtrapando}{\In{c}{conj(posicion)}, \In{cs}{estr}}{bool}'
@@ -827,14 +845,14 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			i $\leftarrow$ i$+1$ '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{4}'
+	end while '\ote{$\#c$}'
 
 	res $\leftarrow$ i $\geq 2$ '\ote{1}'
 
-'\ofi{O(1)}'
+'\ofi{O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} La función itera sobre el conjunto de posiciones buscando si hay hippies en cada una de ellas. Como las operaciones son triviales, la complejidad final es la cantidad de elementos que tiene el conjunto pasado por parametro, o sea $O(\#c)$.
 
 ~
 
@@ -855,13 +873,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		Siguiente(Siguiente(itC).datos).cantSanc $\leftarrow$
 			$\leftarrow$ Siguiente(Siguiente(itC).datos).cantSanc$+1$ '\ote{1}'
 
-		if Siguiente(cs.masVigilante.datos).cantSanc $<$
-			$<$ Siguiente(Siguiente(itC).datos).cantSanc then '\ote{1}'
-
-			cs.masVigilante $\leftarrow$ Siguiente(itC) '\ote{1}'
-		end if
-
-		itLista(kSanc): itLis $\leftarrow$ Siguiente(Siguiente(itC).datos).itMismasSanc'\ote{1}'
+			itLista(kSanc): itLis $\leftarrow$ Siguiente(Siguiente(itC).datos).itMismasSanc'\ote{1}'
 
 		if HaySiguiente(Siguiente(Siguiente(itC).datos).itMismasSanc) then '\ote{1}'
 			Avanzar(Siguiente(Siguiente(itC).datos).itMismasSanc)
@@ -894,15 +906,12 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 ~
 
 
-\InterfazFuncion{HippiesRodeadosAs}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{HippiesRodeadosAs}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{conj(nombre, posición}
+[true]
+{res $=_{obs}$ HippiesRodeadosAs(c,cs)}
 
 \begin{lstlisting}[mathescape]
-'\alg{HippiesRodeadosAs}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(nombre, posicion)}'
+'\alg{HippiesRodeadosAs}{\In{c}{conj(posición)}, \In{cs}{estr}}{conj(nombre, posición)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	res $\leftarrow$ Vacio() '\ote{1}'
 
@@ -910,24 +919,27 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		if $cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
 		+ Siguiente(itC).y] $\neq$ " "  AND
 		todasOcupadas?(vecinos(Siguiente(itDiccS), $cs$.campus)) AND
-		AlMenosUnAgente(vecinos(Siguiente(itDiccS), $cs$.campus)) then '\ote{1}'
+		AlMenosUnAgente(vecinos(Siguiente(itDiccS), $cs$.campus)) then $\textit{\textbf{(c1)}}$ '\ote{$2 * 4$}'
 			AgregarRapido(res,
 			tupla($cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
-			+ Siguiente(itC).x],
+			+ Siguiente(itC).x].agente,
 				Siguiente(itC)) '\ote{1}'
 
 			conj(As): conjAgPremiar $\leftarrow$
-			$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itDiccS), $cs$), $cs$) '\ote{1}'
-			PremiarAgentes(conjAgPremiar, $cs$) '\ote{1}'
+			$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itDiccS), $cs$), $cs$) $\textit{\textbf{(c2)}}$'\ote{4}'
+			PremiarAgentes(conjAgPremiar, $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
 
 		end if '\ote{1}'
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{4}'
+	end while '\ote{$(2*4 + 8) * \#c$}'
 
-'\ofi{O(4) = O(1) \text{. La cantidad maxima del conjunto de posicion es 4.}}'
+'\ofi{O((2*4 + 8) * \#c) = O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} \textit{\textbf{(c1)}} Las funciones todasOcupadas? y AlMenosUnAgente tienen como complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro. Como el conjunto que les estoy pasando solo tiene cuatro elementos (porque la función vecinos devuelve un conjunto de cuatro posiciones adyacentes) entonces la complejidad final de esa guarda es $O(2*4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c2)}} AgParaPremSanc idem que lo anterior. \\
+\textit{\textbf{(c3)}} PremiarAgentes tieme como complejidad $O(\#c)$ siendo $c$ el conjunto que se le pasa como parametro. El conjunto que le estoy pasando como parametro tiene como maximo cuatro elementos porque sale delconjunto que devuelve AgParaPremSanc que toma otro conjunto de cuatro elementos. Por ende, la complejidad en peor caso es de $O(4)$ que es lo mismo que $O(1)$. \\
+La función va iterando por el conjunto de posiciones que se le pasa como parametro buscando los hippies rodeados por agentes. Como en el ciclo las complejidades son constantes la complejidad final da $O((2*4+8)*\#c)$ que es lo mismo que $O(\#c)$.
 
 ~
 
@@ -959,36 +971,37 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 ~
 
 
-\InterfazFuncion{PremiarAgentes}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{PremiarAgentes}{\In{c}{conj(As)}, \Inout{cs}{campusseguro} }{}
+[cs $=_{obs}$ cs$_o$]
+{cs $=_{obs}$ PremiarAgentes(c,cs$_o$)}
 
 \begin{lstlisting}[mathescape]
 '\alg{PremiarAgentes}{\In{c}{conj(As)}, \Inout{cs}{estr}}{}'
 	itConj(As): itC $\leftarrow$ CrearIt(As) '\ote{1}'
 
 	while HaySiguiente(itC) do '\ote{1}'
-		*Siguiente(itC).datos.cantAtrapados $\leftarrow$
-			$\leftarrow$ *Siguiente(itC).datos.cantAtrapados$+1$ '\ote{1}'
-	end while '\ote{4}'
+		Siguiente(Siguiente(itC).datos).cantAtrapados $\leftarrow$
+			$\leftarrow$ Siguiente(Siguiente(itC).datos).cantAtrapados$+1$ '\ote{1}'
+		
+		if Siguiente(cs.masVigilante.datos).cantAtrapados $<$
+			$<$ Siguiente(itC).cantAtrapados then '\ote{1}'
+			cs.masVigilante $\leftarrow$ Siguiente(itC) '\ote{1}'
+		end if
+		
+		Avanzar(itC) '\ote{1}'
+	end while '\ote{$\#c$}'
 
-'\ofi{O(4) = O(1) \text{. La cantidad maxima de agentes va a ser 4.}}'
+'\ofi{O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} La función itera sobre el conjunto de As que se le pasa por parametro y modifica todos los As sumandoles un uno en la cantidad de atrapados. Por ende, la complejidad de la función es la cantidad de agentes que tiene el conjunto, o sea $O(\#c)$.
 
 ~
 
 
-\InterfazFuncion{CantHippiesVecinos}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{CantHippiesVecinos}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{nat}
+[true]
+{res $=_{obs}$ CantHippiesVecinos(c,cs)}
 
 \begin{lstlisting}[mathescape]
 '\alg{CantHippiesVecinos}{\In{c}{conj(posicion)}, \In{cs}{estr}}{nat}'
@@ -1002,28 +1015,26 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			if Siguiente(itDic) = Siguiente(itC) '\ote{1}'
 				res $\leftarrow$ res$+1$ '\ote{1}'
 			end if '\ote{1}'
+			Avanzar(itDic) '\ote{1}'
 		end while '\ote{$|n_m|$}'
 
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{$|n_m|$}'
+	end while '\ote{$\#c * |n_m|$}'
 
-'\ofi{O(|n_m|) \text{. Como vecinos como maximo tiene longitud 4, la complejidad sería } O(4*|n_m|) = O(|n_m|)}}'
+'\ofi{O(\#c * |n_m|)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Itera sobre el conjunto de posiciones que se pasa por parametro y se fija por cada una de ellas si esta en el diccString. Por lo tanto la complejidad es la cantidad de elementos del conjunto por la longitud de la palabra mas larga, $O(\#c * |n_m|)$.
 
 ~
 
 
-\InterfazFuncion{HippiesRodeadosEstudiantes}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{HippiesRodeadosEstudiantes}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{conj(nombre, posición)}
+[true]
+{res $={obs}$ HippiesRodeadosEstudiantes(c,cs)}
 
 \begin{lstlisting}[mathescape]
-'\alg{HippiesRodeadosEstudiantes}{\In{c}{conj(posicion}, \In{cs}{estr}}{conj(nombre, posicion)}'
+'\alg{HippiesRodeadosEstudiantes}{\In{c}{conj(posición)}, \In{cs}{estr}}{conj(nombre, posición)}'
 	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
 	res $\leftarrow$ Vacio() '\ote{1}'
 
@@ -1031,19 +1042,19 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		if $cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
 		+ Siguiente(itC).x] $\neq$ " "  AND
 		todasOcupadas?(vecinos(Siguiente(itC), $cs$.campus)) AND
-		TodosEstudiantes(vecinos(Siguiente(itC), $cs$.campus)) then '\ote{1}'
+		TodosEstudiantes(vecinos(Siguiente(itC), $cs$.campus)) then $\textit{\textbf{(c1)}}$ '\ote{4*2}'
 			AgregarRapido(res,
-				tupla(, $cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
-		+ Siguiente(itC).x]
-				Siguiente(itC)) '\ote{1}'
+				tupla($cs$.posicionesHippies[Siguiente(itC).y*Columnas($cs$.campus) +
+		+ Siguiente(itC).x], Siguiente(itC)) '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{4}'
+	end while '\ote{$4 * 2 * \#c$}'
 
-'\ofi{O(4) = O(1) \text{. Como el conjunto c tiene como maximo longitud 4, la complejidad sería } O(1)}'
+'\ofi{O(4 * 2 * \#c) = O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} \textit{\textbf{(c1)}} Las funciones todasOcupadas? y TodosEstudiantes tienen como complejidad $O(\#c)$ siendo $c$ el conjunto que le paso como parametro pero como les estoy pasando un conjunto de exactamente 4 elementos (vecinos me devuelve el conjunto que tiene las cuatro posiciones contiguas a la que le estoy pasando) la complejidad termina siendo $O(4)$ por cada función. \\
+En la función va iterando cada posición del conjunto que se le pasa como parametro y va buscando si hay hippies atrapados. Como por cada ciclo se llama a todasOcupadas? y TodosEstudiantes la complejidad termina siendo $O(4 * 2 * \#c)$ que es lo mismo que $O(\#c)$.
 
 ~
 
@@ -1118,51 +1129,53 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 ~
 
 
-\InterfazFuncion{TodosEstudiantes}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{TodosEstudiantes}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{bool}
+[true]
+{res $=_{obs}$ ($\forall$ p: posición) Pertenece?(p,c) $\Rightarrow$ ($\exists!$ e: string) def?(e, estudiantes(cs)) $\land_L$ Obtener(e, estudiantes(cs)) $=$ p}
 
 \begin{lstlisting}[mathescape]
 '\alg{TodosEstudiantes}{\In{c}{conj(posicion)}, \In{cs}{estr} }{bool}'
-	itConj(posicion): itC $\leftarrow$ CrearIt(c)
-	res $\leftarrow$ true
+	itConj(posicion): itC $\leftarrow$ CrearIt(c) '\ote{1}'
+	res $\leftarrow$ true '\ote{1}'
 
-	while HaySiguiente(itC) AND res = true do '\ote{1}'
+	while HaySiguiente(itC) AND res do '\ote{1}'
 		if $cs$.posicionesEstudiantes[Siguiente(itC).y*Columnas($cs$.campus) +
 		+ Siguiente(itC).x] $=$ " " then '\ote{1}'
-			res $\leftarrow$ false
+			res $\leftarrow$ false '\ote{1}'
 		end if '\ote{1}'
 
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{1}'
+	end while '\ote{$\#c$}'
 
-'\ofi{O(1) \text{. Como el conjunto c tiene como maximo longitud 4, la complejidad sería } O(1)}'
+'\ofi{O(\#c)}'
 \end{lstlisting}
+
+\textbf{Justificación de Complejidad:} Itera una vez el conjunto buscando si las posiciones que hay en él pertenecen a un estudiante. Como las operaciones del interior del ciclo son triviales la complejidad esta dada por la cantidad de posiciones que tiene el conjunto que se esta iterando. Por lo tanto, la complejidad es $O(\#c)$.
+
+~
 
 \begin{lstlisting}[mathescape]
 '\alg{iIngresarHippie}{\In{h}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} }{}'
 	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$) AND
-	AND AlMenosUnAgente(vecinos(pos, $cs$.campus) then '\ote{1}'
-		conj(As): conjAgParaPrem $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
-		PremiarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
+	AND AlMenosUnAgente(vecinos(pos, $cs$.campus)) then $\textit{\textbf{(c1)}}$ '\ote{$2*4$}'
+		conj(As): conjAgParaPrem $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), 
+			$cs$) $\textit{\textbf{(c2)}}$ '\ote{4}'
+		PremiarAgentes(conjAgParaPrem, $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
 	else if todasOcuapadas?(vecinos(pos, $cs$.campus), $cs$) AND
-	AND TodosEstudiantes(vecinos(pos, $cs$.campus), $cs$) then '\ote{1}'
+	AND TodosEstudiantes(vecinos(pos, $cs$.campus), $cs$) then $\textit{\textbf{(c4)}}$ '\ote{$2*4$}'
 		Definir($cs$.estudiantes, h, pos) '\ote{$|n_m|$}'
 		$cs$.posicionesEstudiantes[pos.y*Columnas($cs$.campus) + pos.x] $\leftarrow$ h
 	else
 		Definir($cs$.hippies, h, pos) '\ote{$|n_m|$}'
 		$cs$.posicionesHippies[pos.y*Columnas($cs$.campus) + pos.x] $\leftarrow$ h
-	end if '\ote{$|n_m|$}'
+	end if '\ote{$2*4 + |n_m|$}'
+
 
 	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
-		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$ )$\textit{\textbf{(c5)}}$ '\ote{4}'
 
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
-
 		while HaySiguiente(itHEst) do '\ote{1}'
 			Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
 				Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
@@ -1177,11 +1190,14 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
 
 			Avanzar(itHEst) '\ote{1}'
-		end while '\ote{$4*2|n_m|$}'
+		end while $\textit{\textbf{(f1)}}$ '\ote{$4*2|n_m|$}'
 	end if '\ote{$4*2|n_m|$}'
 
+
+	//Las capturas se actualizan en HippiesRodeadosAs
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
-		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c6)}}$ '\ote{4}'
+	
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
@@ -1190,11 +1206,13 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
 		+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4|n_m|$}'
+		end while $\textit{\textbf{(f2)}}$ '\ote{$4|n_m|$}'
 	end if '\ote{$4|n_m|$}'
 
+
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
-		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c7)}}$ '\ote{4}'
+
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
 		while HaySiguiente(itEstH) do '\ote{1}'
@@ -1210,29 +1228,46 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
 
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4*2|n_m|$}'
+		end while $\textit{\textbf{(f3)}}$ '\ote{$4*2|n_m|$}'
 	end if '\ote{$4*2|n_m|$}'
 
+
 	conj(posicion): conjEstRodAs $\leftarrow$
-		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c8)}}$ '\ote{4}'
+
 	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
 		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
 
 		while HaySiguiente(itEstAs) do '\ote{1}'
 			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
-			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
+			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then $\textit{\textbf{(c9)}}$ '\ote{$2*4$}'
 				conj(As): conjAgParaSanc $\leftarrow$
-					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
-				SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), 
+						$cs$) $\textit{\textbf{(c10)}}$ '\ote{4}'
+				SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c11)}}$ '\ote{4}'
 			end if '\ote{1}'
-		end while '\ote{4}'
+		end while $\textit{\textbf{(f4)}}$ '\ote{$4*4*4$}'
 
-	end if '\ote{4}'
+	end if '\ote{$4*4*4$}'
 
-'\ofi{O(|n_m|)}'
+'\ofi{O(2*4 + |n_m|) + O(4*2*|n_m|) + O(4*|n_m|) + O(4*2|n_m|) + O(4*4*4) = O(8) + O(21|n_m|) = O(1) + O(|n_m|) = O(|n_m|)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Justificación de Complejidad:} \textit{\textbf{(c1)}} Las funciones todasOcupadas? y AlMenosUnAgente tienen como complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro. Como el conjunto que les estoy pasando solo tiene cuatro elementos (porque la función vecinos devuelve un conjunto de cuatro posiciones adyacentes) entonces la complejidad final de esa guarda es $O(2*4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c2)}} AgParaPremSanc idem que el anterior punto, la complejidad es $O(\#c)$ pero le estoy pasando un conjunto de maximo 4  elementos la complejidad es $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c3)}} PremiarAgentes idem que el anterior punto, la complejidad es $O(\#c)$ pero le estoy pasando un conjunto de maximo 4 elementos la complejidad es $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c4)}} todasOcupadas? y TodosEstudiantes es lo mismo que el primer item, tienen ambas complejidad $O(\#c)$ pero se les pasa de parametro un conjunto de 4 elementos por ende su complejidad termina siendo $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c5)}} HippiesRodeadosEstudiantes tiene como complejidad $O(\#c)$ siendo $c$ el conjunto que se le pasa como parametro pero como le estoy pasando un conjunto que maximo tiene 4 elementos la complejidad termina siendo $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c6)}} HippiesRodeadosAs idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c7)}} EstudiantesRodeadosHippies idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c8)}} EstudiantesRodeadosAs idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c9)}} idem que el primer punto, todasOcupadas? y AlMenosUnAgente tienen complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro, pero como este conjunto tiene como maximo 4 elementos (porque vecinos devuelve un conjunto con maximo 4 elementos), las complejidades de ambas funciones es $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c10)}} AgParaPremSanc idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c11)}} SancionarAgentes idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(f1)}} El ciclo itera sobre el conjunto conjHippiesRodEst que tiene como máximo 4 elementos y dentro de él se define un estudiante ($O(|n_m|)$) y se elimina un hippie ($O(|n_m|)$), por lo tanto la complejidad del mismo es $O(4*2|n_m|)$ que es lo mismo que $O(|n_m|)$. \\
+\textit{\textbf{(f2)}} Idem que el punto anterior, el conjunto conjHippiesRodAs tiene 4 elementos e itera sobre ellos, en este caso la complejidad queda $O(4*|n_m|)$ que es lo mismo que  $O(|n_m|)$. \\
+\textit{\textbf{(f3)}} Idem que el punto anterior, el conjunto conjEstRodHip tiene 4 elementos e itera sobre ellos, en este caso la complejidad queda $O(4*2|n_m|)$ que es lo mismo que  $O(|n_m|)$. \\
+\textit{\textbf{(f4)}} Idem que el anterior pero como las operaciones están acotadas a cuatro elementos la complejidad queda como $O(4*4*4)$ que es lo mismo que $O(1)$.
 
 ~
 
@@ -1252,8 +1287,8 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
  		pos.y $\leftarrow$ pos.y - 1 '\ote{1}'
  	end if
 
- 	if(not (pos.y = 1 OR pos.y = cd.campus.filas)) then '\ote{1}'
-		if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then '\ote{$|n_m|$}'
+ 	if(not (pos.y = 0 OR pos.y = cd.campus.filas$+1$)) then '\ote{1}'
+		if CantHippiesVecinos(vecinos(pos, $cs$.campus), $cs$)$< 2$  then $\textit{\textbf{(c1)}}$ '\ote{$4*|n_m|$}'
 			Definir($cs$.estudiantes, e, pos) '\ote{$|n_m|$}'
 			$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus)
 				+ actualPos.x] $\leftarrow$ "" '\ote{1}'
@@ -1264,110 +1299,14 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus)
 				+ actualPos.x] $\leftarrow$ "" '\ote{1}'
 			Borrar(cs.estudiantes,e) '\ote{$|n_m|$}'
-		end if '\ote{$|n_m| + |n_m|$}'
+		end if '\ote{$4*|n_m| + 2*|n_m|$}'
 
-		conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
-			$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
-
-		if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
-			itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
-
-			while HaySiguiente(itHEst) do '\ote{1}'
-				Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
-					Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
-				Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_m|$}'
-
-				$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus)
-				+ Siguiente(itHEst).posicion.x]
-				$\leftarrow$ $cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus)
-				+ Siguiente(itHest).posicion.x] '\ote{1}'
-
-				$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus)
-				+ Siguiente(itHest).posicion.x] $\leftarrow$ "" '\ote{1}'
-
-				Avanzar(itHEst) '\ote{1}'
-			end while '\ote{$2|n_m|$}'
-		end if '\ote{$4 * 2|n_m|$}'
-
-		conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
-			$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
-		if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
-			itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
-			while HaySiguiente(itHAs) do '\ote{1}'
-				Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_m|$}'
-
-				$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
-			+ Siguiente(itHAs).x] $\leftarrow$ "" '\ote{1}'
-				Avanzar(itHAs) '\ote{1}'
-			end while '\ote{$4|n_m|$}'
-		end if '\ote{$4|n_m|$}'
-
-		conj(nombre, posicion): conjEstRodHip $\leftarrow$
-			$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
-		if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
-			itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
-			while HaySiguiente(itEstH) do '\ote{1}'
-				Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_m|$}'
-
-				$cs$.posicionesEstudiantes[Siguiente(itEstH).y*Columnas($cs$.campus) +
-			+ Siguiente(itEstH).x] $\leftarrow$ "" '\ote{1}'
-
-				Definir($cs$.hippies, Siguiente(itEstH).nombre,
-					Siguiente(itEstH).posicion) '\ote{$|n_m|$}'
-
-				$cs$.posicionesHippies[Siguiente(itEstH).y*Columnas($cs$.campus) +
-			+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
-
-				Avanzar(itHAs) '\ote{1}'
-			end while '\ote{$4*2|n_m|$}'
-		end if '\ote{$4*2|n_m|$}'
-
-		conj(posicion): conjEstRodAs $\leftarrow$
-			$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
-		if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
-			itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
-
-			while HaySiguiente(itEstAs) do '\ote{1}'
-				if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
-				AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
-					conj(As): conjAgParaSanc $\leftarrow$
-						AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
-					SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
-				end if '\ote{1}'
-			end while '\ote{4}'
-
-		end if '\ote{4}'
-	else
-		Borrar(cs.estudiantes,e) '\ote{$|n_m|$}'
-		$cs$.posicionesEstudiantes[actualPos.y * Columnas($cs$.campus) + actualPos.x]
-			$\leftarrow$ "" '\ote{1}'
-	end if
-
-'\ofi{O(|n_m|)}'
-\end{lstlisting}
-
-\textbf{Complejidad:} Analizar complejidad.
-
-~
-
-
-\begin{lstlisting}[mathescape]
-'\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{estr} }{}'
-
-	posicion : actualPos $\leftarrow$ obtener(h, cs.hippies) '\ote{$|n_m|$}'
-	posicion : pos $\leftarrow$ porxPos(actualPos, cs.estudiantes, cs) '\ote{$N_e$}'
-	if actualPos $\neq_{obs}$ pos then '\ote{1}'
-		definir(cs.hippies, h, pos) '\ote{$|n_m|$}'
-		cs.posicionesHippies[actualPos.y * columnas(cs.campus)
-								+ actualPos.x] $\leftarrow$ "" '\ote{1}'
-		cs.posicionesHippies[pos.y * columnas(cs.campus) + pos.x] $\leftarrow$ h '\ote{1}'
 
 	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
-		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
-
+		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c2)}}$ '\ote{4}'
+	
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
-
 		while HaySiguiente(itHEst) do '\ote{1}'
 			Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
 				Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
@@ -1382,11 +1321,14 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
 
 			Avanzar(itHEst) '\ote{1}'
-		end while '\ote{$2|n_m|$}'
+		end while $\textit{\textbf{(f1)}}$ '\ote{$4 * 2|n_m|$}'
 	end if '\ote{$4 * 2|n_m|$}'
 
+
+	//Las capturas se actualizan en HippiesRodeadosAs
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
-		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
+	
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
@@ -1395,11 +1337,13 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
 		+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4|n_m|$}'
-	end if '\ote{$4|n_m|$}'
+		end while $\textit{\textbf{(f2)}}$ '\ote{$4*|n_m|$}'
+	end if '\ote{$4*|n_m|$}'
+
 
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
-		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c4)}}$ '\ote{4}'
+	
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
 		while HaySiguiente(itEstH) do '\ote{1}'
@@ -1415,33 +1359,155 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
 
 			Avanzar(itHAs) '\ote{1}'
-		end while '\ote{$4*2|n_m|$}'
+		end while $\textit{\textbf{(f3)}}$ '\ote{$4*2|n_m|$}'
 	end if '\ote{$4*2|n_m|$}'
 
+
 	conj(posicion): conjEstRodAs $\leftarrow$
-		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) '\ote{1}'
+		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c5)}}$ '\ote{4}'
+	
 	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
 		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
 
 		while HaySiguiente(itEstAs) do '\ote{1}'
 			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
-			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then '\ote{1}'
+			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then $\textit{\textbf{(c6)}}$  '\ote{$2*4$}'
 				conj(As): conjAgParaSanc $\leftarrow$
-					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$) '\ote{1}'
-				SancionarAgentes(conjAgParaSanc, $cs$) '\ote{1}'
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), 
+							$cs$) $\textit{\textbf{(c7)}}$ '\ote{4}'
+				SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c8)}}$ '\ote{4}'
 			end if '\ote{1}'
-		end while '\ote{4}'
+		end while $\textit{\textbf{(f4)}}$ '\ote{$4*4*4$}'
 
-	end if '\ote{4}'
-	end if
+	end if '\ote{$4*4*4$}'
 
-'\ofi{O(N_e + |n_m|)}'
+'\ofi{O(|n_m|)  + O(4*|n_m| + 2*|n_m|) + O(4*2|n_m|) + O(4*|n_m|) + O(4*2|n_m|) + O(4*4*4) = O(27|n_m|) + O(64) = O(|n_m|) + O(1) = O(|n_m|)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Justificación de Complejidad:} \textit{\textbf{(c1)}} CantHippiesVecinos tiene como complejidad $O(\#c * |n_m|)$ siendo $c$ el conjunto que se le pasa como parametro. Como el conjunto que le paso como parametro tiene como maximo 4 posicines (porque la funcion vecinos devuelve un conjunto de las 4 posiciones adyacentes a la que le paso por parametro) la complejidad que da es $O(4*|n_m|)$ que es lo mismo que $O(|n_m|)$. \\
+\textit{\textbf{(c2)}} HippiesRodeadosEstudiantes tiene como complejidad $O(\#c)$ siendo $c$ el conjunto que se le pasa como parametro pero como le estoy pasando un conjunto que maximo tiene 4 elementos (porque la función vecinos devuelve un conjunto de las 4 posiciones adyacentes a la que le paso por parametro) la complejidad termina siendo $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c3)}} HippiesRodeadosAs idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c4)}} EstudiantesRodeadosHippies idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c5)}} EstudiantesRodeadosAs idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c6)}} idem que el primer punto, todasOcupadas? y AlMenosUnAgente tienen complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro, pero como este conjunto tiene como maximo 4 elementos (porque vecinos devuelve un conjunto con maximo 4 elementos), las complejidades de ambas funciones es $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c7)}} AgParaPremSanc idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c8)}} SancionarAgentes idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(f1)}} El ciclo itera sobre el conjunto conjHippiesRodEst que tiene como máximo 4 elementos y dentro de él se define un estudiante ($O(|n_m|)$) y se elimina un hippie ($O(|n_m|)$), por lo tanto la complejidad del mismo es $O(4*2|n_m|)$ que es lo mismo que $O(|n_m|)$. \\
+\textit{\textbf{(f2)}} Idem que el punto anterior, el conjunto conjHippiesRodAs tiene 4 elementos e itera sobre ellos, en este caso la complejidad queda $O(4*|n_m|)$ que es lo mismo que  $O(|n_m|)$. \\
+\textit{\textbf{(f3)}} Idem que el punto anterior, el conjunto conjEstRodHip tiene 4 elementos e itera sobre ellos, en este caso la complejidad queda $O(4*2|n_m|)$ que es lo mismo que  $O(|n_m|)$. \\
+\textit{\textbf{(f4)}} Idem que el anterior pero como las operaciones están acotadas a cuatro elementos la complejidad queda como $O(4*4*4)$ que es lo mismo que $O(1)$.
+
 
 ~
 
+\begin{lstlisting}[mathescape]
+'\alg{iMoverHippie}{\In{h}{nombre}, \Inout{cs}{estr} }{}'
+
+	posicion : actualPos $\leftarrow$ obtener(h, cs.hippies) '\ote{$|n_m|$}'
+	posicion : pos $\leftarrow$ ProxPos(actualPos, cs.estudiantes, cs) $\textit{\textbf{(c1)}}$ '\ote{$N_e$}'
+	if actualPos $\neq$ pos then '\ote{1}'
+		Definir(cs.hippies, h, pos) '\ote{$|n_m|$}'
+		cs.posicionesHippies[actualPos.y * columnas(cs.campus)
+								+ actualPos.x] $\leftarrow$ " " '\ote{1}'
+		cs.posicionesHippies[pos.y * columnas(cs.campus) + pos.x] $\leftarrow$ h '\ote{1}'
+	end if '\ote{$|n_m|$}'
+
+	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
+		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c2)}}$ '\ote{4}'
+	
+	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
+		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
+		while HaySiguiente(itHEst) do '\ote{1}'
+			Definir($cs$.estudiantes, Siguiente(itHEst).nombre,
+				Siguiente(itHEst).posicion) '\ote{$|n_m|$}'
+			Eliminar($cs$.hippies, Siguiente(itHEst).nombre) '\ote{$|n_m|$}'
+
+			$cs$.posicionesEstudiantes[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+			+ Siguiente(itHEst).posicion.x] $\leftarrow$
+			$\leftarrow$ $cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+			+ Siguiente(itHest).posicion.x] '\ote{1}'
+
+			$cs$.posicionesHippies[Siguiente(itHEst).posicion.y*Columnas($cs$.campus) +
+			+ Siguiente(itHest).posicion.x] $\leftarrow$ " " '\ote{1}'
+
+			Avanzar(itHEst) '\ote{1}'
+		end while $\textit{\textbf{(f1)}}$ '\ote{$4 * 2|n_m|$}'
+	end if '\ote{$4 * 2|n_m|$}'
+
+
+	//Las capturas se actualizan en HippiesRodeadosAs
+	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
+		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
+	
+	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
+		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
+		while HaySiguiente(itHAs) do '\ote{1}'
+			Eliminar($cs$.hippies, Siguiente(itHAs).nombre) '\ote{$|n_m|$}'
+
+			$cs$.posicionesHippies[Siguiente(itHAs).y*Columnas($cs$.campus) +
+		+ Siguiente(itHAs).x] $\leftarrow$ " " '\ote{1}'
+			Avanzar(itHAs) '\ote{1}'
+		end while $\textit{\textbf{(f2)}}$ '\ote{$4*|n_m|$}'
+	end if '\ote{$4*|n_m|$}'
+
+
+	conj(nombre, posicion): conjEstRodHip $\leftarrow$
+		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c4)}}$ '\ote{4}'
+	
+	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
+		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
+		while HaySiguiente(itEstH) do '\ote{1}'
+			Eliminar($cs$.estudiantes, Siguiente(itEstH).nombre) '\ote{$|n_m|$}'
+
+			$cs$.posicionesEstudiantes[Siguiente(itEstH).y*Columnas($cs$.campus) +
+		+ Siguiente(itEstH).x] $\leftarrow$ " " '\ote{1}'
+
+			Definir($cs$.hippies, Siguiente(itEstH).nombre,
+				Siguiente(itEstH).posicion) '\ote{$|n_m|$}'
+
+			$cs$.posicionesHippies[Siguiente(itEstH).y*Columnas($cs$.campus) +
+		+ Siguiente(itEstH).x] $\leftarrow$ Siguiente(itEstH).nombre '\ote{1}'
+
+			Avanzar(itHAs) '\ote{1}'
+		end while $\textit{\textbf{(f3)}}$ '\ote{$4*2|n_m|$}'
+	end if '\ote{$4*2|n_m|$}'
+
+
+	conj(posicion): conjEstRodAs $\leftarrow$
+		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c5)}}$ '\ote{4}'
+	
+	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
+		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
+
+		while HaySiguiente(itEstAs) do '\ote{1}'
+			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
+			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then $\textit{\textbf{(c6)}}$  '\ote{$2*4$}'
+				conj(As): conjAgParaSanc $\leftarrow$
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), 
+							$cs$) $\textit{\textbf{(c7)}}$ '\ote{4}'
+				SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c8)}}$ '\ote{4}'
+			end if '\ote{1}'
+		end while $\textit{\textbf{(f4)}}$ '\ote{$4*4*4$}'
+
+	end if '\ote{$4*4*4$}'
+
+'\ofi{O(|n_m|) + O(N_e) + O(|n_m|) + O(4*2|n_m|) + O(4|n_m|) + O(4*2|n_m|) + O(4*4*4) = O(22|n_m|) + O(N_e) + O(64) = O(|n_m|) + O(N_e) + O(1) = O(|n_m|) + O(N_e)}'
+\end{lstlisting}
+
+\textbf{Justificación de Complejidad:} \textit{\textbf{(c1)}} ProxPos tiene como complejidad $O(\#Claves(d))$ siendo $d$ el diccionario que se le pasa como parametro. Como el diccionario que le paso como parametro en este caso es el diccionario de los estudiantes la complejidad es la cantidad de estudiantes que hay, o sea, $O(N_e)$. \\
+\textit{\textbf{(c2)}} HippiesRodeadosEstudiantes tiene como complejidad $O(\#c)$ siendo $c$ el conjunto que se le pasa como parametro pero como le estoy pasando un conjunto que maximo tiene 4 elementos (porque la función vecinos devuelve un conjunto de las 4 posiciones adyacentes a la que le paso por parametro) la complejidad termina siendo $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c3)}} HippiesRodeadosAs idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c4)}} EstudiantesRodeadosHippies idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c5)}} EstudiantesRodeadosAs idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c6)}} idem que el segundo punto, todasOcupadas? y AlMenosUnAgente tienen complejidad $O(\#c)$ siendo $c$ el conjunto que se les pasa como parametro, pero como este conjunto tiene como maximo 4 elementos (porque vecinos devuelve un conjunto con maximo 4 elementos), las complejidades de ambas funciones es $O(4)$ que es lo mismo que $O(1)$. \\
+\textit{\textbf{(c7)}} AgParaPremSanc idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(c8)}} SancionarAgentes idem que el punto anterior, termina teniendo complejidad $O(1)$. \\
+\textit{\textbf{(f1)}} El ciclo itera sobre el conjunto conjHippiesRodEst que tiene como máximo 4 elementos y dentro de él se define un estudiante ($O(|n_m|)$) y se elimina un hippie ($O(|n_m|)$), por lo tanto la complejidad del mismo es $O(4*2|n_m|)$ que es lo mismo que $O(|n_m|)$. \\
+\textit{\textbf{(f2)}} Idem que el punto anterior, el conjunto conjHippiesRodAs tiene 4 elementos e itera sobre ellos, en este caso la complejidad queda $O(4*|n_m|)$ que es lo mismo que  $O(|n_m|)$. \\
+\textit{\textbf{(f3)}} Idem que el punto anterior, el conjunto conjEstRodHip tiene 4 elementos e itera sobre ellos, en este caso la complejidad queda $O(4*2|n_m|)$ que es lo mismo que  $O(|n_m|)$. \\
+\textit{\textbf{(f4)}} Idem que el anterior pero como las operaciones están acotadas a cuatro elementos la complejidad queda como $O(4*4*4)$ que es lo mismo que $O(1)$.
+
+~
 
 \InterfazFuncion{ProxPos}{\In{}{} }{ }
 []
@@ -1453,12 +1519,11 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 \begin{lstlisting}[mathescape]
 '\alg{ProxPos}{\In{pos}{posicion}, \In{d}{dicString(nombre,posicion)}, \In{cs}{estr}}{posicion}'
 
-	itDicString(nombre,posicion): itDic $\leftarrow$ CrearIt(d) '\ote{1}'
-	int: distCorta $\leftarrow$ DistanciaMasCorta(pos, d) '\ote{$\#$Claves(d)}'
+	int: distCorta $\leftarrow$ DistanciaMasCorta(pos, d) $\textit{\textbf{(c1)}}$ '\ote{$\#$Claves(d)}'
 
-	conj(posicion): conjDondeIr $\leftarrow$ DondeIr(pos, distCorta, d) '\ote{$\#$Claves(d)}'
+	conj(posicion): conjDondeIr $\leftarrow$ DondeIr(pos, distCorta, d) $\textit{\textbf{(c2)}}$ '\ote{$\#$Claves(d)}'
 	conj(posicion): conjLugaresPosibles $\leftarrow$
-		$\leftarrow$ LugaresPosibles(pos,conjDondeIr, cs) '\ote{Cardinal(c)}'
+		$\leftarrow$ LugaresPosibles(pos,conjDondeIr, cs) $\textit{\textbf{(c3)}}$ '\ote{$\#$Claves(d)}'
 
 	if Cardinal(conjLugaresPosibles)$=0$ then '\ote{1}'
 		res $\leftarrow$ pos '\ote{1}'
@@ -1467,13 +1532,14 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		res $\leftarrow$ Siguiente(itC) '\ote{1}'
 	end if '\ote{1}'
 
-'\ofi{O(\#Claves(d)) + Cardinal(c) = O(\#Claves(d)) \text{. El Cardinal(c) depende de las claves del diccionario.}}'
+'\ofi{O(\#Claves(d)) + O(\#Claves(d)) + O(\#Claves(d)) = O(\#Claves(d))}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} \textit{\textbf{(c1)}} La función DistanciaMasCorta tiene como complejidad $O(\#Claves(d))$ porque itera sobre ellas buscando la distancia mas corta a la posición que tambien tiene como parametro. \\
+\textit{\textbf{(c2)}} DondeIr tiene como complejidad $O(\#Claves(d))$ porque itera sobre las claves del diccionario que se le pasa por parametro. \\
+\textit{\textbf{(c3)}} LugaresPosibles tiene como complejidad en realidad $O(\#c)$ siendo $c$ el conjunto que se le pasa como parametro, pero como la cantidad de elementos del conjunto que devuelve no puede ser mayor que la cantidad de claves del diccionario se lo puede acotar estas. Por lo tanto, la complejidad es $O(\#Claves(d))$.
 
 ~
-
 
 \InterfazFuncion{LugaresPosibles}{\In{}{} }{ }
 []
@@ -1511,24 +1577,25 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 		end if '\ote{1}'
 
 		Avanzar(itC) '\ote{1}'
-	end while '\ote{Cardinal(c)}'
+	end while $\textit{\textbf{(c1)}}$ '\ote{$\#c$}'
 
 	itConj(posicion) itPosibles $\leftarrow$ CrearIt(res) '\ote{1}'
 
 	while HaySiguiente(itPosibles) do '\ote{1}'
-		if HayAlgoEnPos(Siguiente(itPosibles), $cs$) then '\ote{1}'
+		if HayAlgoEnPos(Siguiente(itPosibles), $cs$) then $\textit{\textbf{(c2)}}$ '\ote{1}'
 			EliminarSiguiente(itPosibles) '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(itPosibles) '\ote{1}'
-	end while '\ote{Cardinal(c)}'
+	end while $\textit{\textbf{(c3)}}$ '\ote{$\#c$}'
 
-'\ofi{Cardinal(c)}'
+'\ofi{O(\#c) + O(\#c) = O(\#c)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} $\textit{\textbf{(c1)}}$ El ciclo itera sobre la cantidad de elementos que tiene el conjunto que se pasa por parametro. Como las operaciones que hay dentro de él tienen complejidad $O(1)$ la complejidad del ciclo termina siendo la cantidad de veces que itera que es $O(\#c)$. \\
+$\textit{\textbf{(c2)}}$ La función HayAlgoEnPos se fija si hay algo en la posición que le pasamos como parametro y cuesta $O(1)$ por las estructuras que tenemos. \\
+$\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo $O(\#c)$.
 
 ~
-
 
 \InterfazFuncion{HayAlgoEnPos}{\In{}{} }{ }
 []
@@ -1541,7 +1608,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 '\alg{HayAlgoEnPos}{\In{pos}{posicion}, \In{cs}{estr}}{bool}'
 	res $\leftarrow$ false '\ote{1}'
 
-	if $cs$.posicionesAgente[pos.y*Columnas($cs$.campus) + pos.x].datos $\neq$ NULL then '\ote{1}'
+	if HaySiguiente($cs$.posicionesAgente[pos.y*Columnas($cs$.campus) + pos.x].datos) then '\ote{1}'
 		res $\leftarrow$ true '\ote{1}'
 	end if '\ote{1}'
 
@@ -1560,10 +1627,9 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Trivial, se fija si hay algo en la posición y como usamos vectores, ver en una posición de un vector cuesta $O(1)$.
 
 ~
-
 
 \InterfazFuncion{DondeIr}{\In{}{} }{ }
 []
@@ -1579,16 +1645,17 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 	itDiccString(nombre,posicion): itDicc $\leftarrow$ CrearIt(d) '\ote{1}'
 
 	while HaySiguiente(itDicc) do '\ote{1}'
-		if dist = Distancia(pos,Siguiente(itDicc)) then '\ote{1}'
+		if dist = Distancia(pos,Siguiente(itDicc)) then $\textit{\textbf{(c1)}}$ '\ote{1}'
 			AgregarRapido(res, Siguiente(itDicc)) '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(itDicc) '\ote{1}'
-	end while '\ote{$\#$Claves(d)}'
+	end while $\textit{\textbf{(c2)}}$ '\ote{$\#$Claves(d)}'
 
-'\ofi{O(\# Claves(d))}'
+'\ofi{O(\#Claves(d))}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} \textit{\textbf{(c1)}} La función Distancia devuelve la distancia que hay entre las dos posiciones que paso como parametro, lo hace en $O(1)$. \\
+\textit{\textbf{(c2)}} Como las operaciones dentro del ciclo tienen complejidad $O(1)$ la complejidad del mismo termina siendo la cantidad de claves que tiene el diccionario por el cual estoy iterando que es $O(\#Claves(d))$.
 
 ~
 
@@ -1604,23 +1671,23 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 '\alg{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}'
 
 	itDiccString(nombre,posicion): itDicc $\leftarrow$ CrearIt(d) '\ote{1}'
-	res $\leftarrow$ Distancia(pos, Siguiente(itDicc)) '\ote{1}'
+	res $\leftarrow$ Distancia(pos, Siguiente(itDicc)) $\textit{\textbf{(c1)}}$ '\ote{1}'
 	Avanzar(itDicc) '\ote{1}'
 
 	while HaySiguiente(itDicc) do '\ote{1}'
 		if res $>$ Distancia(pos, Siguiente(itDicc)) '\ote{1}'
 			res $\leftarrow$ Distancia(pos, Siguiente(itDicc)) '\ote{1}'
 		end if '\ote{1}'
-		Avanzar(itDicc)
-	end while '\ote{$\#$Claves(d)}'
+		Avanzar(itDicc) '\ote{1}'
+	end while $\textit{\textbf{(c2)}}$ '\ote{$\#$Claves(d)}'
 
 '\ofi{O(\#Claves(d))}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:}  \textit{\textbf{(c1)}} La función Distancia devuelve la distancia que hay entre las dos posiciones que paso como parametro, lo hace en $O(1)$. \\
+\textit{\textbf{(c2)}} Como las operaciones dentro del ciclo tienen complejidad $O(1)$ la complejidad del mismo termina siendo la cantidad de claves que tiene el diccionario por el cual estoy iterando que es $O(\#Claves(d))$.
 
 ~
-
 
 \InterfazFuncion{Distancia}{\In{}{} }{ }
 []
@@ -1636,6 +1703,8 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 
 '\ofi{O(1)}'
 \end{lstlisting}
+
+~
 
 \begin{lstlisting}[mathescape]
 '\alg{iMoverAgente}{\In{a}{agente}, \Inout{cs}{estr} }{}'
