@@ -36,8 +36,8 @@
 ~
 
 \InterfazFuncion{moverEstudiante}{\In{e}{nombre}, \In{dir}{dirección}, \Inout{cs}{campusSeguro}}{}
-[$cs =_{obs} cs_o \land e \in$ estudiantes($cs$) $\land$ (seRetira($e$,$dir$,$cs$) $\lor$ \\
-(posValida(proxPosicion(posEstudianteYHippie($e$,$cs$),$dir$,campus($cs$)), campus($cs$)) $\land$ $\neg$estaOcupada?(proxPosicion(posEstudianteYHippie($e$,$cs$),$dir$,campus($cs$)),$cs$)]
+[$cs =_{obs} cs_o \land e \in$ estudiantes($cs$) $\land$ (seRetira($e$,$dir$,$cs$)) $\lor$ \\
+(posValida(proxPosicion(posEstudianteYHippie($e$,$cs$),$dir$,campus($cs$)), campus($cs$)) $\land$ $\neg$estaOcupada?(proxPosicion(posEstudianteYHippie($e$,$cs$),$dir$,campus($cs$)),$cs$))]
 {$cs =_{obs}$ moverEstudiante($e$,$dir$,$cs_o$)}
 [$O(|n_m|)$]
 [Mueve un estudiante dentro del campus o lo hace salir y se actualizan los atrapados, sanciones (si es que las hay) y hippies atrapados (si es que los hay).]
@@ -47,7 +47,7 @@
 
 \InterfazFuncion{moverHippie}{\In{h}{nombre}, \Inout{cs}{campusSeguro}}{}
 [$cs =_{obs} cs_o \land h \in$ hippies($cs$) $\land$ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)), $cs$)]
-{$cs =_{obs}$ moverHippie($h$,$d$,$cs_o$}
+{$cs =_{obs}$ moverHippie($h$,$d$,$cs_o$)}
 [$O(|n_m|) + O(N_e)$]
 [Mueve un hippie dentro del campus y se actualizan los atrapados, sanciones(si es que las hay) y hippies atrapados (si es que los hay).]
 []
@@ -73,7 +73,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 ~
 
-\InterfazFuncion{estudiantes}{\In{cs}{campusSeguro}}{itConj(tupla(nombre, posicion))}
+\InterfazFuncion{estudiantes}{\In{cs}{campusSeguro}}{itConj(nombre)}
 [true]
 {$res =_{obs}$ estudiantes($cs$)}
 [$O(1)$]
@@ -82,7 +82,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 ~
 
-\InterfazFuncion{hippies}{\In{cs}{campusSeguro}}{itConj(tupla(nombre, posicion))}
+\InterfazFuncion{hippies}{\In{cs}{campusSeguro}}{itConj(nombre)}
 [true]
 {$res =_{obs}$ hippies($cs$)}
 [$O(1)$]
@@ -91,7 +91,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 ~
 
-\InterfazFuncion{agentes}{\In{cs}{campusSeguro}}{itConj(tupla(agente,datosAgente))}
+\InterfazFuncion{agentes}{\In{cs}{campusSeguro}}{itConj(agente)}
 [true]
 {$res =_{obs}$ agentes($cs$)}
 [$O(1)$]
@@ -1833,7 +1833,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 
 \begin{lstlisting}[mathescape]
-'\alg{iEstudiantes}{\In{cs}{estr} }{itConj(tupla(nombre,posición))}'
+'\alg{iEstudiantes}{\In{cs}{estr} }{itConj(nombre)}'
 	$res$ $\leftarrow$ CrearItClaves($cs$.estudiantes)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
@@ -1844,7 +1844,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 
 \begin{lstlisting}[mathescape]
-'\alg{iHippies}{\In{cs}{estr} }{itConj(tupla(nombre,posición))}'
+'\alg{iHippies}{\In{cs}{estr} }{itConj(nombre)}'
 	$res$ $\leftarrow$ CrearItClaves($cs$.hippies)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
@@ -1855,7 +1855,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 
 \begin{lstlisting}[mathescape]
-'\alg{iAgentes}{\In{cs}{estr} }{itConj(tupla(agente,datosAgente))}'
+'\alg{iAgentes}{\In{cs}{estr} }{itConj(agente)}'
 	$res$ $\leftarrow$ CrearItClaves($cs$.personalAS)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
