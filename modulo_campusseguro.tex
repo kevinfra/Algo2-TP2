@@ -2032,33 +2032,29 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{busqBinPorPlaca}{\In{}{} }{ }
-[]
-{}
+\InterfazFuncion{busqBinPorPlaca}{\In{a}{agente}, \In{v}{vector(As)}}{itDiccNat(agente, datosAgente)}
+[($\exists$ elem : As)(esta?(elem, v) $\land$ agente(elem) = a) $\land$ ordenadoPorPlaca?(v)]
+{res es igual al $datos$ del elemento de $v$ que tiene a $a$ como $agente$}
 []
 []
 []
 
 \begin{lstlisting}[mathescape]
-'\alg{busqBinPorPlaca}{\In{a}{agente}, \In{v}{vector(tupla(clave : agente, it : itDiccNat(agente, datosAgente))}}{itDiccNat(agente, datosAgente)}'
+'\alg{busqBinPorPlaca}{\In{a}{agente}, \In{v}{vector(As)}}{itDiccNat(agente, datosAgente)}'
 	nat: inf $\leftarrow$ $0$ '\ote{1}'
 	nat: sup $\leftarrow$ Longitud(v) '\ote{1}'
 	nat: med $\leftarrow$ $\frac{inf+sup}{2}$ '\ote{1}'
 
 	while inf $\neq$ sup$-1$ do '\ote{1}'
 		med $\leftarrow$ $\frac{inf+sup}{2}$ '\ote{1}'
-		if v[med].clave $\leq$ a then '\ote{1}'
+		if v[med].agente $\leq$ a then '\ote{1}'
 			inf $\leftarrow$ med '\ote{1}'
 		else
 			sup $\leftarrow$ med '\ote{1}'
 		end if
 	end while '\ote{$log(N_a)$}'
 
-	$res$ $\leftarrow$ v[inf].it
+	$res$ $\leftarrow$ v[inf].datos
 
 '\ofi{O(logN_a)}'
 \end{lstlisting}
-
-
-\textbf{Complejidad:} Analizar complejidad.
-
