@@ -567,7 +567,7 @@ $\land$
 
 \InterfazFuncion{vectorizarPos}{\In{d}{diccNat(agente, datosAgente)}, \In{f}{nat}, \In{c}{nat}}{vector(As)}
 [true]
-{res $=_{obs}$ vectorizarPos(d,f,c)}
+{res va a ser el vector donde cada posicion va a matchear con una posicion del campus. Además, en cada posicion, va a haber un agente (si lo hay en el campus).}
 
 
 \begin{lstlisting}[mathescape]
@@ -604,7 +604,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 
 \InterfazFuncion{menorPlaca}{\In{d}{diccNat(agente,datosAgente)}}{As}
 [true]
-{res $=_{obs}$ menorPlaca(d)}
+{res $=_{obs}$ agenteDeMenorPlaca(d)}
 
 \begin{lstlisting}[mathescape]
 '\alg{menorPlaca}{\In{d}{diccNat(agente, datosAgente)}}{As}'
@@ -1002,7 +1002,7 @@ La función va iterando por el conjunto de posiciones que se le pasa como parame
 
 \InterfazFuncion{CantHippiesVecinos}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{nat}
 [true]
-{res $=_{obs}$ CantHippiesVecinos(c,cs)}
+{res es igual a la cantidad de hippies que hay ocupando las posiciones pasadas por parametro}
 
 \begin{lstlisting}[mathescape]
 '\alg{CantHippiesVecinos}{\In{c}{conj(posicion)}, \In{cs}{estr}}{nat}'
