@@ -11,7 +11,7 @@
 \InterfazFuncion{comenzarRastrillaje}{\In{c}{campus}, \In{d}{diccNat(agente,datosAgente)}}{campusSeguro}
 [($\forall a$ : agente) (def?($a$,$d$) $\Rightarrow_L$ (posVálida(obtener($a$,$d$)) $\land$ $\neg$ocupada?(obtener($a$,$d$,$c$))) $\land$ ($\forall a, a2$ : agente) ((def?($a$,$d$) $\land$ def?($a2$,$d$) $\land a \neq a2$) $\Rightarrow_L$ obtener($a$,$d$) $\neq$ obtener($a2$,$d$))]
 {res $=_{obs}$ comenzarRastrillaje(c,d)}
-[$O(f*c)^2 + N_a)$]
+[$O(f*c)^2 + N_a^2)$]
 [Crea un nuevo campusSeguro tomando un campus y un diccionario con agentes.]
 [Se genera aliasing campus y en el diccionario que se pasan por parametro.]
 
@@ -550,17 +550,18 @@ $\land$
 			if res.ordenadoPorPlaca[i].agente > Siguiente(it).agente then		'\ote{1}'
 				ordenado $\leftarrow$ false 									'\ote{1}'
 			end if
-		end while																'\ote{}'
-		Agregar(res.ordenadoPorPlaca, i, tupla(Siguiente(it).agente, it)) 		'\ote{}'
-	end while																	'\ote{}'
+		end while																'\ote{$N_a$}'
+		Agregar(res.ordenadoPorPlaca, i, tupla(Siguiente(it).agente, it)) 		'\ote{$N_a$}'
+	end while $\textit{\textbf{(c5)}}$											'\ote{$N_a^2$}'
 
-'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) + O(\sum_{k=0}^{f*c - 1}(2k)) = max\{2O(N_a) , O((f*c)^2 + N_a)\} + O(2*(f*c-1)*(f*c)/2) = O((f*c)^2 + N_a) + O(2*(f*c-1)*(f*c)/2) < O((f*c)^2 + N_a) + O((f*c)^2) = O((f*c)^2 + N_a)}'
+'\ofi{O(N_a) + O(N_a) + O((f*c)^2 + N_a) + O(\sum_{k=0}^{f*c - 1}(2k)) + O(N_a^2) = max\{2O(N_a) , O((f*c)^2 + N_a)\} + O(2*(f*c-1)*(f*c)/2) + O(N_a^2) = O((f*c)^2 + N_a) + O(2*(f*c-1)*(f*c)/2) + O(N_a^2) < O((f*c)^2 + N_a) + O((f*c)^2) + O(N_a^2) = O((f*c)^2 + N_a^2)}'
 \end{lstlisting}
 
 \textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} Complejidad de generarListaMismasSanc es $O(N_a)$. \\
 \textit{\textbf{(c2)}} Complejidad de vectorizarPos es $O(f*c)^2 + N_a)$. \\
 \textit{\textbf{(c3)}} Complejidad de menorPlaca es $O(N_a)$. \\
-\textit{\textbf{(c4)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(2k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O(\sum_{k=0}^{f*c - 1}(2k)) = O(2*(f*c-1)*(f*c)/2) < O((f*c)^2)$.
+\textit{\textbf{(c4)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(2k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O(\sum_{k=0}^{f*c - 1}(2k)) = O(2*(f*c-1)*(f*c)/2) < O((f*c)^2)$.\\
+\textit{\textbf{(c5)}} Recorro todas las claves del diccionario, lo cual cuesta $O(N_a)$, y para cada una recorro el vector, que es lineal en la cantidad de elementos del vector, la cual va de 0 hasta la cantidad de agentes, y tambien se agrega en el vector hasta la posicion recorrida, esto cuesta $O(N_a)$. Finalmente, la complejidad es $O(N_a^2)$.
 
 ~
 
@@ -596,7 +597,7 @@ $\land$
 
 \textbf{Justificación Complejidad:} \textit{\textbf{(c1)}} AgregarAtras del vector cuesta $\Theta$($f$(long($v$) + copy(elemento)) entonces, por cada iteración hay un elemento más en el vector, esto genera que sea $\sum_{k=0}^{n}(k)$lo que tarda en agregarse un elemento, siendo $0\leq n \leq f*c-1$. Por lo tanto, por todas las iteraciones tarda $O(\sum_{k=0}^{f*c - 1}(k)) = O((f*c-1)*(f*c)/2) \leq O((f*c)^2)$. \\
 \textit{\textbf{(c2)}} En cada iteración del iterador del diccionario de agentes me crea una copia del iterador (que tarda $O(1)$) y va agregando en el vector de posiciones en la posicion que corresponde al agente que apunta el iterador, con la copia del iterador en esa posición. Esto lo hace por todos los agentes por eso la complejidad de este ciclo es $O(N_a)$. \\
-Como estos dos ciclos son los que predominan en complejidad (el resto de las funciones es $O(1)$) entonces la complejidad queda como $O((f*c)^3 + N_a)$.
+Como estos dos ciclos son los que predominan en complejidad (el resto de las funciones es $O(1)$) entonces la complejidad queda como $O((f*c)^2 + N_a)$.
 
 
 ~
@@ -1660,12 +1661,11 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{DistanciaMasCorta}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}
+[\#Claves(d))>0]
+{Para toda posicion definida en d, res es menor o igual que la distancia entre pos y la posicion.}
+
+
 
 \begin{lstlisting}[mathescape]
 '\alg{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}'
@@ -1689,12 +1689,10 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 ~
 
-\InterfazFuncion{Distancia}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{Distancia}{\In{pos1,pos2}{posicion}}{nat}
+[true]
+{res $\igobs$ $|pos2.x - pos1.x| + |pos2.y - pos1.x|$}
+
 
 \begin{lstlisting}[mathescape]
 '\alg{Distancia}{\In{pos1,pos2}{posicion}}{nat}'
@@ -1708,30 +1706,29 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 \begin{lstlisting}[mathescape]
 '\alg{iMoverAgente}{\In{a}{agente}, \Inout{cs}{estr} }{}'
-	vector(tupla(agente, puntero(datosAgente)))
-		placas $\leftarrow$ ordenadoPorClave(cs.personalAS)						'\ote{1}'
-	puntero(datosAgente) as $\leftarrow$ busqBinPorPlaca(placas, a)				'\ote{$log(N_a)$}'
+	itDiccNat(agente, datosAgente) it
+		$\leftarrow$ busqBinPorPlaca(cs.ordenadoPorPlaca, a)'\ote{$log(N_a)$}'
 
 	// Actualizo la posicion del agente
-	posicion nuevaPos $\leftarrow$ ProxPos((*as).posicion, cs.hippies, cs)		'\ote{$N_h$}'
-	posicionesAgentes[(*as).posicion.y * columnas(cs.campus) + (*as).posicion.x].datos
-		$\leftarrow$ NULL														'\ote{1}'
+	posicion nuevaPos $\leftarrow$ ProxPos(Siguiente(it).posicion, cs.hippies, cs)		'\ote{$N_h$}'
+	posicionesAgentes[Siguiente(it).posicion.y * columnas(cs.campus)
+		+ Siguiente(it).posicion.x].datos $\leftarrow$ CrearIt(Vacio())					'\ote{1}'
 	posicionesAgentes[nuevaPos.y * columnas(cs.campus) + nuevaPos.x]
-		$\leftarrow$ tupla(a, as)												'\ote{1}'
-	(*as).posicion $\leftarrow$ nuevaPos										'\ote{1}'
+		$\leftarrow$ tupla(a, it)												'\ote{1}'
+	Siguiente(it).posicion $\leftarrow$ nuevaPos										'\ote{1}'
 
 	// Me fijo a quienes atrapa
 	posicion posArr $\leftarrow$ moverDir(cs.campus, nuevaPos, arriba)			'\ote{1}'
-	actualizarAgente(cs, posArr, a, as) 										'\ote{$|n_m|$}'
+	actualizarAgente(cs, posArr, a, it) 										'\ote{$|n_m|$}'
 
 	posicion posAba $\leftarrow$ moverDir(cs.campus, nuevaPos, abajo)			'\ote{1}'
-	actualizarAgente(cs, posAba, a, as) 										'\ote{$|n_m|$}'
+	actualizarAgente(cs, posAba, a, it) 										'\ote{$|n_m|$}'
 
 	posicion posDer $\leftarrow$ moverDir(cs.campus, nuevaPos, der)				'\ote{1}'
-	actualizarAgente(cs, posDer, a, as) 										'\ote{$|n_m|$}'
+	actualizarAgente(cs, posDer, a, it) 										'\ote{$|n_m|$}'
 
 	posicion posIzq $\leftarrow$ moverDir(cs.campus, nuevaPos, izq)				'\ote{1}'
-	actualizarAgente(cs, posIzq, a, as) 										'\ote{$|n_m|$}'
+	actualizarAgente(cs, posIzq, a, it) 										'\ote{$|n_m|$}'
 
 
 '\ofi{O(log(N_a) + |n_m| + N_h)}'
@@ -1742,23 +1739,21 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{actualizarAgente}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{it}{itDiccNat(agente, datosAgente)}}{}
+[pos debe ser una posicion contigua y sin obstáculos]
+{Se fija en pos si hay alguien, si hay un hippie y fue atrapado, lo borra e incrementa la cantidad de atrapados del agente, si hay un estudiante y fue atrapado, incrementa la cantidad de sanciones}
 
 \begin{lstlisting}[mathescape]
-'\alg{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{puntero(datosAgente)}{as}}{}'
+'\alg{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{it}{itDiccNat(agente, datosAgente)}}{}'
 	if(posValida?(cs.campus, pos) then 										'\ote{1}'
 
 	   	if(posicionesHippies[pos.y * columnas(cs.campus) + pos.x] $\not$= "") then
 	   		if(atrapado?(cs, pos)) then										'\ote{1}'
 	   			// Le sumo uno a sus capturas, actualizo masVigilante y mato al hippie
-	   			(*as).cantAtrapados++;											'\ote{1}'
-	   			if((*as).cantAtrapados > (*cs.masVigilante.datos).cantAtrapados) then
-	   				cs.masVigilante $\leftarrow$ tupla(a, as)					'\ote{1}'
+	   			Siguiente(it).cantAtrapados++;								'\ote{1}'
+	   			if(Siguiente(it).cantAtrapados >
+	   			   (*cs.masVigilante.datos).cantAtrapados) then
+	   				cs.masVigilante $\leftarrow$ tupla(a, it)					'\ote{1}'
 	   			end if
 	   			borrar(cs.hippies, posicionesHippies[pos.y *
 	   			       columnas(cs.campus) + pos.x])							'\ote{$|n_m|$}'
@@ -1772,13 +1767,13 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 	   			// Actualizo las sanciones y las estructuras relacionadas
 	   			cs.mismasSancModificado $\leftarrow$ true						'\ote{1}'
 
-	   			itConj(agente) iterConj $\leftarrow$ (*as).itConjMismasSanc 	'\ote{1}'
+	   			itConj(agente) iterConj $\leftarrow$ Siguiente(it).itConjMismasSanc 	'\ote{1}'
 	   			EliminarSiguiente(iterConj)										'\ote{1}'
 
-	   			itLista(kSanc) iterLista $\leftarrow$ (*as).itMismasSanc 		'\ote{1}'
+	   			itLista(kSanc) iterLista $\leftarrow$ Siguiente(it).itMismasSanc 		'\ote{1}'
 	   			// Me guardo un iterador para borrar el nodo de la lista
 	   			// si es que queda sin agentes
-	   			itLista(kSanc) iterListaAnterior $\leftarrow$ (*as).itMismasSanc '\ote{1}'
+	   			itLista(kSanc) iterListaAnterior $\leftarrow$ Siguiente(it).itMismasSanc '\ote{1}'
 	   			if(HaySiguiente?(iterLista) then 								'\ote{1}'
 	   			   	// Me fijo si el siguiente es la siguiente sancion
 	   			   	nat : sanciones $\leftarrow$ Siguiente(iterLista).sanc 		'\ote{1}'
@@ -1786,27 +1781,27 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 	   			   	if(Siguiente(iterLista).sanc = sanciones + 1) then 			'\ote{1}'
 	   			   		// Lo agrego al conjunto
-	   			   		(*as).itConjMismasSanc $\leftarrow$
+	   			   		Siguiente(it).itConjMismasSanc $\leftarrow$
 	   			   			AgregarRapido(a, Siguiente(iterLista).agentes)		'\ote{1}'
 	   			   	else
 	   			   		// Creo un nuevo nodo en el medio
 	   			   		conj(agente) conj $\leftarrow$ Vacio()					'\ote{1}'
-	   			   		(*as).itConjMismasSanc $\leftarrow$
+	   			   		Siguiente(it).itConjMismasSanc $\leftarrow$
 	   			   			AgregarRapido(a, conj)								'\ote{1}'
 	   			   		kSanc nodo $\leftarrow$ tupla(sanciones + 1, conj)		'\ote{1}'
 	   			   		AgregarComoAnterior(iterLista, nodo)					'\ote{1}'
 	   			   		Retroceder(iterLista)									'\ote{1}'
-	   			   		(*as).itMismasSanc $leftarrow$ iterLista				'\ote{1}'
+	   			   		Siguiente(it).itMismasSanc $leftarrow$ iterLista				'\ote{1}'
 	   			   	end if
 	   			else
 	   				// Creo un nuevo nodo
 	   				conj(agente) conj $\leftarrow$ Vacio()					'\ote{1}'
-	   				(*as).itConjMismasSanc $\leftarrow$
+	   				Siguiente(it).itConjMismasSanc $\leftarrow$
    			   			AgregarRapido(a, conj)								'\ote{1}'
    			   		kSanc nodo $\leftarrow$ tupla(sanciones + 1, conj)		'\ote{1}'
    			   		AgregarComoSiguiente(iterLista, nodo)					'\ote{1}'
    			   		Avanzar(iterLista)										'\ote{1}'
-	   			   	(*as).itMismasSanc $leftarrow$ iterLista				'\ote{1}'
+	   			   	Siguiente(it).itMismasSanc $leftarrow$ iterLista				'\ote{1}'
 	   			end if
 
 	   			if(!HaySiguiente?(iterConj) then							'\ote{1}'
@@ -1814,7 +1809,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 	   				EliminarSiguiente(iterListaAnterior)					'\ote{1}'
 	   			end if
 
-	   			(*as).cantSanc++;											'\ote{1}'
+	   			Siguiente(it).cantSanc++;											'\ote{1}'
 	   		end if
 	   	end if
 	end if
@@ -1832,7 +1827,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Devuelve una referencia a campus en tiempo constante.
 
 ~
 
@@ -1843,7 +1838,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} O(1)
+\textbf{Complejidad:} Crea un iterador de estudiantes y lo devuelve en tiempo constante.
 
 ~
 
@@ -1854,7 +1849,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} O(1)
+\textbf{Complejidad:} Crea un iterador de hippies y lo devuelve en tiempo constante.
 
 ~
 
@@ -1865,7 +1860,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Crea un iterador de agentes y lo devuelve en tiempo constante.
 
 ~
 
@@ -1880,7 +1875,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(|n_m|) + O(4*2|n_m|) = O(|n_m|)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} En el peor de los casos llama a la funcion definido del diccString que itera sobre los caracteres de la palabra y despues hace una llamada al obtener
 
 ~
 
@@ -2037,32 +2032,31 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{busqBinPorPlaca}{\In{}{} }{ }
-[]
-{}
+\InterfazFuncion{busqBinPorPlaca}{\In{a}{agente}, \In{v}{vector(As)}}{itDiccNat(agente, datosAgente)}
+[($\exists$ elem : As)(esta?(elem, v) $\land$ agente(elem) = a) $\land$ ordenadoPorPlaca?(v)]
+{res es igual al $datos$ del elemento de $v$ que tiene a $a$ como $agente$}
 []
 []
 []
 
 \begin{lstlisting}[mathescape]
-'\alg{busqBinPorPlaca}{\In{a}{agente}, \In{v}{vector(tupla(clave : agente, p : puntero(datosAgente))}}{puntero(datosAgente)}'
+'\alg{busqBinPorPlaca}{\In{a}{agente}, \In{v}{vector(As)}}{itDiccNat(agente, datosAgente)}'
 	nat: inf $\leftarrow$ $0$ '\ote{1}'
 	nat: sup $\leftarrow$ Longitud(v) '\ote{1}'
 	nat: med $\leftarrow$ $\frac{inf+sup}{2}$ '\ote{1}'
 
 	while inf $\neq$ sup$-1$ do '\ote{1}'
 		med $\leftarrow$ $\frac{inf+sup}{2}$ '\ote{1}'
-		if v[med].clave $\leq$ a then '\ote{1}'
+		if v[med].agente $\leq$ a then '\ote{1}'
 			inf $\leftarrow$ med '\ote{1}'
 		else
 			sup $\leftarrow$ med '\ote{1}'
 		end if
 	end while '\ote{$log(N_a)$}'
 
-	$res$ $\leftarrow$ v[inf].p
+	$res$ $\leftarrow$ v[inf].datos
 
 '\ofi{O(logN_a)}'
 \end{lstlisting}
-
 
 \textbf{Complejidad:} Analizar complejidad.
