@@ -833,7 +833,7 @@ La función va iterando por el conjunto de posiciones que se le pasa como parame
 
 \InterfazFuncion{HippiesAtrapando}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{bool}
 [true]
-{res $=_{obs}$ HippiesAtrapando(c,cs)}
+{res va a ser true si y solo si la cantidad de hippies que hay en el campus, que ademas ocupan las posiciones por parámetro es mayor a dos}
 
 \begin{lstlisting}[mathescape]
 '\alg{HippiesAtrapando}{\In{c}{conj(posicion)}, \In{cs}{estr}}{bool}'
@@ -907,9 +907,9 @@ La función va iterando por el conjunto de posiciones que se le pasa como parame
 ~
 
 
-\InterfazFuncion{HippiesRodeadosAs}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{conj(nombre, posición}
-[true]
-{res $=_{obs}$ HippiesRodeadosAs(c,cs)}
+\InterfazFuncion{HippiesRodeadosAs}{\In{c}{conj(posición)}, \Inout{cs}{campusseguro}}{conj(nombre, posición}
+[($\forall$ p $\in$ c) posValida?(p)]
+{res es el conjunto de hippies que estan rodeados por agentes y estan en alguna de las posiciones pasadas por parametro. Ademas, actualiza los agentes de compus seguro premiandolos cuando sea pertinente.}
 
 \begin{lstlisting}[mathescape]
 '\alg{HippiesRodeadosAs}{\In{c}{conj(posición)}, \In{cs}{estr}}{conj(nombre, posición)}'
@@ -1661,14 +1661,14 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}
+\InterfazFuncion{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{nat}
 [\#Claves(d))>0]
 {Para toda posicion definida en d, res es menor o igual que la distancia entre pos y la posicion.}
 
 
 
 \begin{lstlisting}[mathescape]
-'\alg{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}'
+'\alg{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{nat}'
 
 	itDiccString(nombre,posicion): itDicc $\leftarrow$ CrearIt(d) '\ote{1}'
 	res $\leftarrow$ Distancia(pos, Siguiente(itDicc)) $\textit{\textbf{(c1)}}$ '\ote{1}'
@@ -1908,8 +1908,8 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 
 \begin{lstlisting}[mathescape]
-'\alg{iConMismasSanciones}{\In{a}{agente}, \In{cs}{estr} }{lista(agente)}'
-	$res$ $\leftarrow$ Obtener($a$, $cs$.personalAS).itMismasSanc.conjAgente '\ote{1 caso promedio}'
+'\alg{iConMismasSanciones}{\In{a}{agente}, \In{cs}{estr} }{conj(agente)}'
+	$res$ $\leftarrow$ Siguiente(Obtener($a$, $cs$.personalAS).itMismasSanc).agentes '\ote{1 caso promedio}'
 '\ofi{O(1) \text{ caso promedio}}'
 \end{lstlisting}
 
@@ -1917,16 +1917,16 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 
 \begin{lstlisting}[mathescape]
-'\alg{iConKSanciones}{\In{k}{nat}, \In{cs}{estr} }{lista(agente)}'
+'\alg{iConKSanciones}{\In{k}{nat}, \In{cs}{estr} }{conj(agente)}'
 	if $cs$.mismasSancModificado == true then '\ote{1}'
 		hacerArregloMismasSanc($cs$) '\ote{$N_a$}'
 		$cs$.mismasSancModificado $\leftarrow$ false
 	end if
 
 	nat: i $\leftarrow$ 0
-	bool: esta $\leftarrow$ busqBinAgente($k$, i, $cs$.vectorMismasSanc) '\ote{$logN_a$}'
+	bool: esta $\leftarrow$ busqBinAgente($k$, i, $cs$.arregloMismasSanc) '\ote{$logN_a$}'
 	if esta = true then '\ote{1}'
-		res $\leftarrow$ *$cs$.vectorMismasSanc[i].agentes '\ote{1}'
+		res $\leftarrow$ *$cs$.arregloMismasSanc[i].agentes '\ote{1}'
 	else
 		res $\leftarrow$ Vacia() '\ote{1}'
 	end if
@@ -1958,7 +1958,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 	$cs$.arregloMismasSanc $\leftarrow$ arregloNuevo '\ote{1}'
 
-'\ofi{O(N_a) + O(N_a) = O(N_a) \text{ Como máximo va a ser la cantidad de agentes la lista listaMismasSanc} }'
+'\ofi{O(N_a) + O(N_a) = O(N_a) \text{ Como máximo va a ser la cantidad de agentes la lista listaMismasSanc ya que no se pueden tener mas conjuntos con mismas sanciones que cantidad de agentes.} }'
 \end{lstlisting}
 
 ~
@@ -1986,11 +1986,11 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 	if v[n] $=$ k then
 		i $\leftarrow$ n
 		$res$ $\leftarrow$ true
-	else
+	else if v[m] $=$ k then
 		$res$ $\leftarrow$ false
 	end if
 
-'\ofi{O(logN_a)}'
+'\ofi{O(logN_a)} Ya que en cada iteracion se queda con la mitad del arreglo, tal como esta pensada la busqueda binaria.'
 \end{lstlisting}
 
 ~
@@ -2020,7 +2020,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 	while inf $\neq$ sup$-1$ do '\ote{1}'
 		med $\leftarrow$ $\frac{inf+sup}{2}$ '\ote{1}'
 		if v[med].agente $\leq$ a then '\ote{1}'
-			inf $\leftarrow$ med '\ote{1}'
+			inf $\leftarrow$ med $+$ 1 '\ote{1}'
 		else
 			sup $\leftarrow$ med '\ote{1}'
 		end if
@@ -2028,5 +2028,5 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 	$res$ $\leftarrow$ v[inf].datos
 
-'\ofi{O(logN_a)}'
+'\ofi{O(logN_a)} idem busqueda binaria anterior.'
 \end{lstlisting}
