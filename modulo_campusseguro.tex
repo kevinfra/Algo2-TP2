@@ -858,9 +858,9 @@ La función va iterando por el conjunto de posiciones que se le pasa como parame
 ~
 
 
-\InterfazFuncion{SancionarAgentes}{\In{c}{conj(As)}, \Inout{cs}{campusseguro}}{ }
-[cs $=_{obs}$ cs$_o$]
-{cs $={obs}$ SancionarAgentes(c,cs)}
+\InterfazFuncion{SancionarAgentes}{\In{c}{conj(As)}, \Inout{cs}{campusseguro}}{}
+[true]
+{Modifica los As pasados por parametro sumándoles uno al número de sanciones respectivo y actualiza las lista listaMismasSanc del campusSeguro}
 
 \begin{lstlisting}[mathescape]
 '\alg{SancionarAgentes}{\In{c}{conj(As)}, \Inout{cs}{estr}}{}'
