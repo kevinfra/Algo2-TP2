@@ -1741,7 +1741,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 \InterfazFuncion{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{it}{itDiccNat(agente, datosAgente)}}{}
 [pos debe ser una posicion contigua y sin obstáculos]
-{}
+{Se fija en pos si hay alguien, si hay un hippie y fue atrapado, lo borra e incrementa la cantidad de atrapados del agente, si hay un estudiante y fue atrapado, incrementa la cantidad de sanciones}
 
 \begin{lstlisting}[mathescape]
 '\alg{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{it}{itDiccNat(agente, datosAgente)}}{}'
