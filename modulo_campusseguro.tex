@@ -409,13 +409,13 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	$\#$ObstaculosAux(filas($c$)$-1$, columnas($c$)$-1$, $c$)
 }
 \tadAxioma{$\#$ObstaculosAux(f,col,c)}{
-	\IF ($f=0 \land col=0$) THEN	$\beta$(ocupada?(<$f$,$col$>, $c$)
+	\IF ($f=0 \land col=0$) THEN	$\beta$(ocupada?(<$f$,$col$>, $c$))
 	ELSE{
-		\IF ($f \neq 0 \land col = 0$) THEN $\#$ObstaculosAux($f-1$, columnas($c$)$-1$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$)
+		\IF ($f \neq 0 \land col = 0$) THEN $\#$ObstaculosAux($f-1$, columnas($c$)$-1$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$))
 		ELSE{
-			\IF ($f = 0 \land col \neq 0$) THEN $\#$ObstaculosAux(filas($c$),$col-1$,$c$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$)
+			\IF ($f = 0 \land col \neq 0$) THEN $\#$ObstaculosAux(filas($c$),$col-1$,$c$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$))
 			ELSE{
-				$\#$ObstaculosAux($f-1$, $col-1$, $c$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$)
+				$\#$ObstaculosAux($f-1$, $col-1$, $c$) $+$ $\beta$(ocupada?(<$f$,$col$>, $c$))
 			}
 			FI
 		}
@@ -1937,12 +1937,10 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{hacerArregloMismasSanc}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{hacerArregloMismasSanc}{\Inout{cs}{estr}}{}
+[true]
+{El arreglo arregloMismasSanc de cs tiene en sus posiciones punteros a ksanc}
+
 
 \begin{lstlisting}[mathescape]
 '\alg{hacerArregloMismasSanc}{\Inout{cs}{estr}}{}'
@@ -1966,12 +1964,9 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{busqBinAgente}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{busqBinAgente}{\In{k}{nat}, \Inout{i}{nat}, \In{v}{arreglo(puntero(kSanc))}}{bool}
+[Longitud(v)>0]
+{res $=_{obs}$ esta?(k, v) $\land$ i va a ser la posicion en V en la que se encuentra k. Si k no esta, i se queda igual que como entro por parametro}
 
 \begin{lstlisting}[mathescape]
 '\alg{busqBinAgente}{\In{k}{nat}, \Inout{i}{nat}, \In{v}{arreglo(puntero(kSanc))}}{bool}'
