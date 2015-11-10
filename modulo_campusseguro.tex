@@ -1661,12 +1661,11 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{DistanciaMasCorta}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}
+[\#Claves(d))>0]
+{Para toda posicion definida en d, res es menor o igual que la distancia entre pos y la posicion.}
+
+
 
 \begin{lstlisting}[mathescape]
 '\alg{DistanciaMasCorta}{\In{pos}{posicion}, \In{d}{dicString(nombre, posicion)}}{int}'
@@ -1690,12 +1689,10 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 ~
 
-\InterfazFuncion{Distancia}{\In{}{} }{ }
-[]
-{}
-[]
-[]
-[]
+\InterfazFuncion{Distancia}{\In{pos1,pos2}{posicion}}{nat}
+[true]
+{res $\igobs$ $|pos2.x - pos1.x| + |pos2.y - pos1.x|$}
+
 
 \begin{lstlisting}[mathescape]
 '\alg{Distancia}{\In{pos1,pos2}{posicion}}{nat}'
@@ -1742,12 +1739,9 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 ~
 
 
-\InterfazFuncion{actualizarAgente}{\In{}{} }{ }
-[]
+\InterfazFuncion{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{it}{itDiccNat(agente, datosAgente)}}{}
+[pos debe ser una posicion contigua y sin obstáculos]
 {}
-[]
-[]
-[]
 
 \begin{lstlisting}[mathescape]
 '\alg{actualizarAgente}{\Inout{cs}{estr}, \In{posicion}{pos}, \In{a}{agente}, \In{it}{itDiccNat(agente, datosAgente)}}{}'
@@ -1833,7 +1827,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Devuelve una referencia a campus en tiempo constante.
 
 ~
 
@@ -1844,7 +1838,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Crea un iterador de estudiantes y lo devuelve en tiempo constante.
 
 ~
 
@@ -1855,7 +1849,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Crea un iterador de hippies y lo devuelve en tiempo constante.
 
 ~
 
@@ -1866,7 +1860,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} Crea un iterador de agentes y lo devuelve en tiempo constante.
 
 ~
 
@@ -1881,7 +1875,7 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 '\ofi{O(|n_m|) + O(4*2|n_m|) = O(|n_m|)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} En el peor de los casos llama a la funcion definido del diccString que itera sobre los caracteres de la palabra y despues hace una llamada al obtener
 
 ~
 
