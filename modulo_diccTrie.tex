@@ -1,6 +1,6 @@
 \section{Módulo Diccionario String($\alpha$)}
 
-Se representa mediante un árbol n-ario con invariante de trie. Las claves son strings y permite acceder a un significado en un tiempo en el peor caso igual a la longitud de la palabra (string) más larga y definir un significado en el mismo tiempo más el tiempo 
+Se representa mediante un árbol n-ario con invariante de trie. Las claves son strings y permite acceder a un significado en un tiempo en el peor caso igual a la longitud de la palabra (string) más larga y definir un significado en el mismo tiempo más el tiempo
 de copy(s) ya que los significados se almacenan por copia.
 
 \subsection{Interfaz}
@@ -72,6 +72,14 @@ de copy(s) ya que los significados se almacenan por copia.
 
 ~
 
+\InterfazFuncion{CrearItClavesSig}{\In{d}{diccString($\alpha$)}}{itConj($\alpha$)}
+[true]
+{alias(esPermutacion?(SecuSuby(res), c)) $\land$ vacia?(Anteriores(res))}
+[$O(1)$]
+[Crea un Iterador de Conjunto en base a la interfaz del iterador de Conjunto Lineal]
+[]
+
+~
 \subsubsection{Operaciones básicas del iterador}
 
 Este iterador permite recorrer el trie sobre el que est\'{a} implementado el diccionario para obtener cada clave los significados. Las claves de los elementos iterados no
@@ -180,7 +188,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 	\item Cada uno de los elementos de la lista tiene que ser un puntero a un Nodo del trie.
 	\item Nodo es una tupla que contiene un arreglo de 27 posiciones con un puntero a otro Nodo en cada posicion
 	,un elemento info que es el alfa que contiene esa clave del arbol, un elemento infoValida y un elemento iterador que es un puntero a un nodo de la lista enlazada.
-	\item El iterador a la lista enlazada de cada nodo tiene que apuntar al elemento de la lista que apunta al 
+	\item El iterador a la lista enlazada de cada nodo tiene que apuntar al elemento de la lista que apunta al
 	mismo Nodo.
 	\item Cada uno de los nodos de la lista apunta a un nodo del arbol cuyo infoEnLista apunta al mismo nodo de la lista.
 
@@ -255,9 +263,9 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 '\alg{iCrearDiccionario}{}{estr}'
 {$\textbf{Pre}$ $\equiv$ true}
-	
+
     arreglo(puntero(Nodo)): res.raiz $\leftarrow$ CrearArreglo(27) '\ote{1}'
-	nat: i $\leftarrow$ 0 '\ote{1}' 
+	nat: i $\leftarrow$ 0 '\ote{1}'
     while i < long(res.raiz) do '\ote{1}'
     	res.raiz[i] $\leftarrow$ NULL '\ote{1}'
     end while '\ote{1}'
@@ -287,7 +295,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 		res $\leftarrow$ false '\ote{1}'
 	end if
 
-{$\textbf{Post}$ $\equiv$ res $=_{obs}$ def?(d,c)}	
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ def?(d,c)}
 '\ofi{O(|n_m|)} Justificación: Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego itera sobre los caracteres restantes hasta el final del String c, por lo que hace |$n_m$| operaciones. Finalmente pregunta si el significado encontrado es válido o no'
 
 \end{lstlisting}
@@ -313,8 +321,8 @@ operación que modifique d sin utilizar las funciones del iterador.]
 			Nodo: nuevoHijo '\ote{1}'
 			arreglo(puntero(Nodo)): nuevoHijo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
 			nuevoHijo.infoValida $\leftarrow$ false '\ote{1}'
-			arr.arbolTrie[letra] $\leftarrow$ puntero(nuevoHijo) '\ote{1}'	
-		end if			
+			arr.arbolTrie[letra] $\leftarrow$ puntero(nuevoHijo) '\ote{1}'
+		end if
 		arr $\leftarrow$ (*arr).arreglo[letra] '\ote{1}' '\ote{1}'
 	end while '\ote{$|n_m|$}'
     (*arr).info $\leftarrow$ s '\ote{copy(s)}'
@@ -325,7 +333,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
     	siguiente(it) $\leftarrow$ puntero(*arr) '\ote{1}'
     end if
 
-{$\textbf{Post}$ $\equiv$ d $=_{obs}$ definir(c,s,d$_0$)}    	
+{$\textbf{Post}$ $\equiv$ d $=_{obs}$ definir(c,s,d$_0$)}
 '\ofi{O(|n_m| + copy(s))} Justificación: Itera sobre la cantidad de caracteres del String c y en caso de que algún caracter no esté definido crea un arrelglo de 27 posiciones, por lo que realiza |$n_m$| operaciones. Luego copia el significado pasado por parámetro en O(copy(s)) y finalmente agrega en la lista un puntero al nodo creado'
 
 \end{lstlisting}
@@ -344,7 +352,7 @@ operación que modifique d sin utilizar las funciones del iterador.]
 		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
 	end while '\ote{$|n_m|$}'
 	res $\leftarrow$ (*arr).info '\ote{1}'
-	
+
 {$\textbf{Post}$ $\equiv$ alias(res $=_{obs}$ obtener(c,d)}
 '\ofi{O(|n_m|)} Justificación: Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego itera sobre los caracteres restantes hasta el final del String c, por lo que hace |$n_m$| operaciones. Finalmente retorna el significado almacenado. Todas las demás operaciones se realizan en O(1) porque son comparaciones o asignaciones de valores enteros o de punteros'
 
@@ -391,13 +399,13 @@ operación que modifique d sin utilizar las funciones del iterador.]
 \begin{lstlisting}[mathescape]
 
 '\alg{tieneHermanos}{\In{nodo}{puntero(Nodo)}}{bool}'
-{$\textbf{Pre}$ $\equiv$ nodo!=NULL} 
+{$\textbf{Pre}$ $\equiv$ nodo!=NULL}
 
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	nat: l $\leftarrow$ longitud((*nodo).arbolTrie)) '\ote{1}'
 	while(i< l and not(*nodo).arbolTrie[i] = NULL) do '\ote{1}'
 		i $\leftarrow$ i + 1 '\ote{1}'
-	end while '\ote{1}' 
+	end while '\ote{1}'
 	res $\leftarrow$ i < l '\ote{1}'
 
 {$\textbf{Post}$ $\equiv$ res $=_{obs}$ ($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) (*nodo.arbolTrie[i] != NULL))}
@@ -412,8 +420,8 @@ operación que modifique d sin utilizar las funciones del iterador.]
 
 	res $\leftarrow$ tieneHermanos(nodo) and (*nodo).infoValida = true '\ote{1}'
 
-{$\textbf{Post}$ $\equiv$ res $=_{obs}$ 
-($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) 
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$
+($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie))
 (*nodo.arbolTrie[i] != NULL)) $\land$ (*nodo).infoValida = true}
 '\ofi{O(1)} Justificación: Llama a la funcion tieneHermanos que es O(1) y verifica además que el nodo contenga información válida'
 

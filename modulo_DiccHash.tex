@@ -21,7 +21,7 @@
 \InterfazFuncion{redefinir}{\Inout{d}{DiccNat($\alpha$), \In{n}{nat}, \In{a}{$\alpha$}}}{}
 [definido?(n,d)]
 {obtener(n,d) $=_{obs}$ a}
-[$O(1)$ en caso promedio, $O(n)$ en peor caso]
+[$O(1)$ en caso promedio, $O(\# claves)$ en peor caso]
 []
 
 ~
@@ -29,7 +29,7 @@
 \InterfazFuncion{obtener}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{puntero($\alpha$)}
 [true]
 {res $=_{obs}$ obtener(n,d)}
-[$O(1)$ en caso promedio, $O(n)$ en peor caso]
+[$O(1)$ en caso promedio, $O(\# claves)$ en peor caso]
 [Devuelve un puntero al significado de la clave pasada por parametro. Si no está definido, devuelve NULL]
 [El puntero va ser una referencia al significado almacenado en el diccionario]
 
@@ -38,7 +38,7 @@
 \InterfazFuncion{definido?}{\In{n}{nat}, \In{d}{DiccNat($\alpha$)}}{bool}
 [true]
 {res $=_{obs}$ def?(n,d)}
-[$O(1)$ en caso promedio, $O(n)$ en peor caso]
+[$O(1)$ en caso promedio, $O(\# claves)$ en peor caso]
 [Dice si está definida una clave en el diccionario]
 []
 
@@ -53,12 +53,16 @@
 
 ~
 
-\InterfazFuncion{OrdenadoPorClave}{\In{d}{DiccNat($\alpha$)}}{vector(tupla(nat,puntero($\alpha$)))}
+\InterfazFuncion{CrearItClavesSig}{\In{d}{DiccNat($\alpha$)}}{itConj(tupla(nat,$\alpha$)}
 [true]
-{$\forall$ n : nat (def?(n,d) $\Leftarrow$ esta?((n, obtener(n,d)), res)) $\land$ estaOrdenado(res)}
+{alias(esPermutacion?(SecuSuby(res), c)) $\land$ vacia?(Anteriores(res))}
 [$O(1)$]
-[Devuelve el vector ordenado de manera creciente según el natural de la clave]
-[La informacion a la que apunta la segunda parte de la tupla es una referencia al significado correspondiente de la primera parte de la tupla]
+[crea un iterador bidireccional del conjunto, de forma tal que HayAnterior evalúe a false (i.e.,
+que se pueda recorrer los elementos aplicando iterativamente Siguiente). Luego, se pueden utilizar
+todas las funciones del iterador de conjunto sobre res.]
+[El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función
+EliminarSiguiente. Además, anteriores(res) y siguientes(res) podrían cambiar completamente ante cualquier
+operación que modifique c sin utilizar las funciones del iterador. Esto funciona tal como se indica en la interfaz del iterador de conjunto.]
 
 ~
 
@@ -212,13 +216,10 @@ operación que modifique d sin utilizar las funciones del iterador.]
 			AgregarAtras(res.listaIterable, puntero(res.tabla[k][q-1])) '\ote{q}'
 			i++ '\ote{1}'
 		end while '\ote{longitud(v) * (copy($\alpha$) + q)}'
-{$\textbf{Post}$ $\equiv$ (($\forall$ $t$ : tupla(nat, $\alpha$)) esta?($t$, v)) $\Rightarrow$ ((definido?(t.clave, res))
- $\land_L$ obtener(t.clave,res) $=_{obs}$ t.significado) $\land$ cantClaves(res) $=_{obs}$ longitud(v)}
+'{$\textbf{Post}$ $\equiv$ (($\forall$ $t$ : tupla(nat, $\alpha$)) esta?($t$, v)) $\Rightarrow$ ((definido?(t.clave, res))
+ $\land_L$ obtener(t.clave,res) $=_{obs}$ t.significado) $\land$ cantClaves(res) $=_{obs}$ longitud(v)}'
 '\ofi{O(longitud(v) * (copy(\alpha) + q))} donde q es la cantidad de elementos que pueden encontrarse en una misma posicion de la tabla'
-$\textbf{Justificacion:}$ las veces que se va a realizar la operacion de copia
-	del elemento $\alpha$ es equivalente al largo del vector, ya que va a hacer
-	una vez cada una. El valor de $q$ va a ser 1 en caso promedio gracias a la funcion
-	de Hash, pero en el peor caso va a ser igual a la longitud del vector de entrada.
+'$\textbf{Justificacion:}$ las veces que se va a realizar la operacion de copia del elemento $\alpha$ es equivalente al largo del vector, ya que va a hacer una vez cada una. El valor de $q$ va a ser 1 en caso promedio gracias a la funcion de Hash, pero en el peor caso va a ser igual a la longitud del vector de entrada.'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -228,20 +229,13 @@ $\textbf{Justificacion:}$ las veces que se va a realizar la operacion de copia
 	itLista($\alpha$) : it $\leftarrow$ crearIt(d.tabla[k]) '\ote{1}'
 	while haySiguiente?(it) do '\ote{1}'
 		IF siguiente(it).clave = n THEN '\ote{1}'
-			it.significado $\leftarrow$ a '\ote{1}'
+			siguiente(it).significado $\leftarrow$ a '\ote{1}'
 		FI
+		avanzar(it) '\ote{1}'
 	end while '\ote{longitud(d.tabla[k])}'
 {$\textbf{Post}$ $\equiv$ obtener(n,d) $=_{obs}$ a}
-'\ofi{O(i)} siendo i = 1 en caso promedio y i = $\#$claves(d) en peor caso'
-// Preguntar como renombrar longitud(d.tabla[k]) a i, para que la complejidad quede
-// prolija
-$\textbf{Justificacion:}$ En el peor caso, van a estar todos los elementos
-	en la misma posicion de la tabla y el elemento que queremos redefinir
-	va a estar en la ultima posicion. Ademas, cada acceso a una posicion de
-	una lista, es O(i) siendo i la posicion y vamos a recorrer todos los elementos
-	de la tabla (o sea de la lista) hasta encontrar el que queremos. Entonces,
-	en el peor caso, i va a ser igual al numero de claves del diccionario,
-	pero en caso promedio, i va a ser 1 gracias a la funcion de hash.
+'\ofi{O(1)} en caso promedio, $O(\#claves(d))$ en peor caso'
+'$\textbf{Justificacion:}$ En el peor caso, van a estar todos los elementos en la misma posicion de la tabla y el elemento que queremos redefinir	va a estar en la ultima posicion. Ademas, cada acceso a una posicion de	una lista, es O(i) siendo i la posicion y vamos a recorrer todos los elementos de la tabla (o sea de la lista) hasta encontrar el que queremos. Entonces,	en el peor caso, i va a ser igual al numero de claves del diccionario, pero en caso promedio, i va a ser 1 gracias a la funcion de hash.'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -252,12 +246,13 @@ $\textbf{Justificacion:}$ En el peor caso, van a estar todos los elementos
 	res $\leftarrow$ NULL '\ote{1}'
 	while haySiguiente?(it) do '\ote{1}'
 		IF Siguiente(it).clave = n THEN '\ote{1}'
-			res $\leftarrow$ it.significado '\ote{1}'
+			res $\leftarrow$ Siguiente(it).significado '\ote{1}'
 		FI
+		Avanzar(it) '\ote{1}'
 	end for '\ote{i}'
 {$\textbf{Post}$ $\equiv$ res $=_{obs}$ obtener(n,d)}
-'\ofi{O(i)} siendo i = 1 en caso promedio y i = $\#$claves(d) en peor caso'
-$\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
+'\ofi{O(1)} en caso promedio, $O(\#claves(d))$ en peor caso'
+'$\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -270,10 +265,11 @@ $\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
 		IF Siguiente(it).clave $=$ n THEN '\ote{i}'
 			res $\leftarrow$ true '\ote{1}'
 		FI
+		Avanzar(it) '\ote{1}'
 	end while '\ote{i}'
 {$\textbf{Post}$ $\equiv$ res $=_{obs}$ def?(n,d)}
-'\ofi{O(i)} siendo i = 1 en caso promedio y i = $\#$claves(d) en peor caso'
-$\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
+'\ofi{O(1)} en caso promedio, $O(\#claves(d))$ en peor caso'
+'$\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -282,8 +278,7 @@ $\textbf{Justificacion:}$ Misma justificacion que para redefinir(d,n,a)
 	res $\leftarrow$ longitud(d.tabla) '\ote{1}'
 {$\textbf{Post}$ $\equiv$ res $=_{obs}$ $\#$claves(d)}
 '\ofi{O(1)}'
-$\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep,
-	sabemos que el largo del vector representa la cantidad de claves del dicc.
+'$\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep, sabemos que el largo del vector representa la cantidad de claves del dicc.'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -292,7 +287,7 @@ $\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep
 	res $\leftarrow$ crearIt(d.listaIterable) '\ote{1}'
 {$\textbf{Post}$ $\equiv$ alias(esPermutacion(SecuSuby(res), d)) $\land$ vacia?(Anteriores(res))}
 '\ofi{\Theta (1)}'
-{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, crear un itLista($\alpha$) es $\Theta (1)$.
+'$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, crear un itLista($\alpha$) es $\Theta (1)$.'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -301,7 +296,7 @@ $\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep
 	res $\leftarrow$ HaySiguiente(it)
 {$\textbf{Pre}$ $\equiv$ res $=_{obs}$ haySiguiente?(it)}
 '\ofi{\Theta (1)}'
-{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, HaySiguiente(it) es $\Theta (1)$.
+'$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, HaySiguiente(it) es $\Theta (1)$.'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -310,7 +305,7 @@ $\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep
 	res $\leftarrow$ Siguiente(it)
 {$\textbf{Pre}$ $\equiv$ alias(res $=_{obs}$ Siguiente?(it))}
 '\ofi{\Theta (1)}'
-{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Siguiente(it) es $\Theta (1)$.
+'$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Siguiente(it) es $\Theta (1)$.'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -319,7 +314,7 @@ $\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep
 	res $\leftarrow$ Siguiente(it)
 {$\textbf{Pre}$ $\equiv$ alias(res $=_{obs}$ Siguiente(it).significado)}
 '\ofi{\Theta (1)}'
-{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Siguiente(it) es $\Theta (1)$.
+'$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Siguiente(it) es $\Theta (1)$.'
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -328,5 +323,5 @@ $\textbf{Justificacion:}$ Saber la longitud de un vector es O(1) y por el InvRep
 	res $\leftarrow$ Avanzar(it)
 {$\textbf{Pre}$ $\equiv$ it $=_{obs}$ Avanzar?(it$_0$)}
 '\ofi{\Theta (1)}'
-{$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Avanzar(it) es $\Theta (1)$.
+'$\textbf{Justificacion:}$ De acuerdo a la interfaz de Lista, Avanzar(it) es $\Theta (1)$.'
 \end{lstlisting}

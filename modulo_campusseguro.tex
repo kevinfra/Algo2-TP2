@@ -73,7 +73,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 ~
 
-\InterfazFuncion{estudiantes}{\In{cs}{campusSeguro}}{itDiccString(nombre, posicion)}
+\InterfazFuncion{estudiantes}{\In{cs}{campusSeguro}}{itConj(tupla(nombre, posicion))}
 [true]
 {$res =_{obs}$ estudiantes($cs$)}
 [$O(1)$]
@@ -82,7 +82,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 ~
 
-\InterfazFuncion{hippies}{\In{cs}{campusSeguro}}{itDiccString(nombre, posicion)}
+\InterfazFuncion{hippies}{\In{cs}{campusSeguro}}{itConj(tupla(nombre, posicion))}
 [true]
 {$res =_{obs}$ hippies($cs$)}
 [$O(1)$]
@@ -91,7 +91,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 ~
 
-\InterfazFuncion{agentes}{\In{cs}{campusSeguro}}{itDiccNat(agente,datosAgente)}
+\InterfazFuncion{agentes}{\In{cs}{campusSeguro}}{itConj(tupla(agente,datosAgente))}
 [true]
 {$res =_{obs}$ agentes($cs$)}
 [$O(1)$]
@@ -238,7 +238,7 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 
 	%DONE habia puntero, ahora hay iterador nro12
 	\item Las posiciones en posicionesAgente que no tienen agente tienen un agente tienen un iterador en el que ver si hay siguiente da false.
-	
+
 	%done nro13
 	\item La dimension del campus es mayor que la cantidad de estudiantes, hippies, agentes y obstaculos.
 	%done nro14
@@ -381,12 +381,12 @@ $\neg$todasOcupadas?(vecinos(posEstudianteYHippie($h$,$cs$),campus($cs$)),$cs$)]
 	$\land$
 	\\%nro26
 	($\forall$ est: string)(def?(est, $e$.estudiantes) $\Leftrightarrow_L$ ($\exists!$ i: nat)(i < longitud($e$.posicionesEstudiantes) $\land_L$ $e$.posicionesEstudiantes[i] = Obtener(est, $e$.estudiantes) $\land$ (i / columnas($e$.campus) = Obtener(est, $e$.estudiantes).x) $\land$ (i mod columnas($e$.campus) = Obtener(est, $e$.estudiantes).y)))
-	\\ 
+	\\
 	$\land$
 	\\%nro27
 	long(e.agentesOrdenados) $=$ cantClaves(e.personalAS) $\land$ ($\forall$ placa : agente)(definido?(placa, e.personalAS)
 	\\$\Rightarrow_L$ ($\exists$ a : As)(placa $=_{obs}$ a.agente $\land$ obtener(placa, e.personalAS) $=_{obs}$ a.datos)
-	\\ 
+	\\
 	$\land$
 	\\%nro28
 	ordenadoPorPlaca?(e.agentesOrdenados)
@@ -574,7 +574,7 @@ $\land$
 	res $\leftarrow$ Vacio() '\ote{1}'
 	nat: i $\leftarrow$ 0 '\ote{1}'
 	itDiccNat(agente, datosAgente): it $\leftarrow$ CrearIt(d) '\ote{1}'
-	
+
 	vector(tupla(agente, datosAgente)) vVacio $\leftarrow$ Vacio() '\ote{1}'
 	diccNat(agente, datosAgente) dVacio $\leftarrow$ crearDiccionario(vVacio) '\ote{1}'
 	itDiccNat(agente, datosAgente): itVacio $\leftarrow$ CrearIt(dVacio) '\ote{1}'
@@ -658,7 +658,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 '\alg{iIngresarEstudiante}{\In{e}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} } {}'
 	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$) AND
 	AND AlMenosUnAgente(vecinos(pos, $cs$.campus)) then $\textit{\textbf{(c1)}}$ '\ote{$2*4$}'
-		conj(As): conjAgParaSanc $\leftarrow$ 
+		conj(As): conjAgParaSanc $\leftarrow$
 			$\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c2)}}$ '\ote{4}'
 		SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
 	end if '\ote{$3*4$}'
@@ -674,7 +674,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 
 	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
 		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c5)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
 		while HaySiguiente(itHEst) do '\ote{1}'
@@ -698,7 +698,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 	//Las capturas se actualizan en HippiesRodeadosAs
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
 		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c6)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
@@ -713,7 +713,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c7)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
 		while HaySiguiente(itEstH) do '\ote{1}'
@@ -735,7 +735,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 
 	conj(posicion): conjEstRodAs $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c8)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
 		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
 
@@ -743,7 +743,7 @@ Como estos dos ciclos son los que predominan en complejidad (el resto de las fun
 			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
 			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then $\textit{\textbf{(c9)}}$  '\ote{$2*4$}'
 				conj(As): conjAgParaSanc $\leftarrow$
-					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), 
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus),
 							$cs$) $\textit{\textbf{(c10)}}$ '\ote{4}'
 				SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c11)}}$ '\ote{4}'
 			end if '\ote{1}'
@@ -946,7 +946,7 @@ La función va iterando por el conjunto de posiciones que se le pasa como parame
 
 \InterfazFuncion{AgParaPremSanc}{\In{c}{conj(posición)}, \In{cs}{campusseguro}}{conj(As)}
 [true]
-{res $=_{obs}$ AgParaPremSanc(c,cs)}
+{res va a a ser el conjunto de As tales que esten en alguna de las posiciones pasadas por parametro}
 
 \begin{lstlisting}[mathescape]
 '\alg{AgParaPremSanc}{\In{c}{conj(posicion)}, \In{cs}{estr}}{conj(As)}'
@@ -954,10 +954,10 @@ La función va iterando por el conjunto de posiciones que se le pasa como parame
 	res $\leftarrow$ Vacio() '\ote{1}'
 
 	while HaySiguiente(itC) do '\ote{1}'
-		if HaySiguiente($cs$.posicionesAgente[Siguiente(itC).y * 
+		if HaySiguiente($cs$.posicionesAgente[Siguiente(itC).y *
 			* Columnas($cs$.campus) + Siguiente(itC).x].datos) then '\ote{1}'
 			AgregarRapido(res,
-				$cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) + 
+				$cs$.posicionesAgente[Siguiente(itC).y * Columnas($cs$.campus) +
 				+ Siguiente(itC).x]) '\ote{1}'
 		end if '\ote{1}'
 		Avanzar(itC) '\ote{1}'
@@ -982,12 +982,12 @@ La función va iterando por el conjunto de posiciones que se le pasa como parame
 	while HaySiguiente(itC) do '\ote{1}'
 		Siguiente(Siguiente(itC).datos).cantAtrapados $\leftarrow$
 			$\leftarrow$ Siguiente(Siguiente(itC).datos).cantAtrapados$+1$ '\ote{1}'
-		
+
 		if Siguiente(cs.masVigilante.datos).cantAtrapados $<$
 			$<$ Siguiente(itC).cantAtrapados then '\ote{1}'
 			cs.masVigilante $\leftarrow$ Siguiente(itC) '\ote{1}'
 		end if
-		
+
 		Avanzar(itC) '\ote{1}'
 	end while '\ote{$\#c$}'
 
@@ -1158,7 +1158,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 '\alg{iIngresarHippie}{\In{h}{nombre}, \In{pos}{posicion}, \Inout{cs}{estr} }{}'
 	if todasOcupadas?(vecinos(pos, $cs$.campus), $cs$) AND
 	AND AlMenosUnAgente(vecinos(pos, $cs$.campus)) then $\textit{\textbf{(c1)}}$ '\ote{$2*4$}'
-		conj(As): conjAgParaPrem $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus), 
+		conj(As): conjAgParaPrem $\leftarrow$ AgParaPremSanc(vecinos(pos, $cs$.campus),
 			$cs$) $\textit{\textbf{(c2)}}$ '\ote{4}'
 		PremiarAgentes(conjAgParaPrem, $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
 	else if todasOcuapadas?(vecinos(pos, $cs$.campus), $cs$) AND
@@ -1197,7 +1197,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 	//Las capturas se actualizan en HippiesRodeadosAs
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
 		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c6)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
@@ -1242,7 +1242,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
 			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then $\textit{\textbf{(c9)}}$ '\ote{$2*4$}'
 				conj(As): conjAgParaSanc $\leftarrow$
-					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), 
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus),
 						$cs$) $\textit{\textbf{(c10)}}$ '\ote{4}'
 				SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c11)}}$ '\ote{4}'
 			end if '\ote{1}'
@@ -1304,7 +1304,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 
 	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
 		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c2)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
 		while HaySiguiente(itHEst) do '\ote{1}'
@@ -1328,7 +1328,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 	//Las capturas se actualizan en HippiesRodeadosAs
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
 		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
@@ -1343,7 +1343,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c4)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
 		while HaySiguiente(itEstH) do '\ote{1}'
@@ -1365,7 +1365,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 
 	conj(posicion): conjEstRodAs $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c5)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
 		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
 
@@ -1373,7 +1373,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
 			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then $\textit{\textbf{(c6)}}$  '\ote{$2*4$}'
 				conj(As): conjAgParaSanc $\leftarrow$
-					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), 
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus),
 							$cs$) $\textit{\textbf{(c7)}}$ '\ote{4}'
 				SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c8)}}$ '\ote{4}'
 			end if '\ote{1}'
@@ -1414,7 +1414,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 
 	conj(nombre, posicion): conjHippiesRodEst $\leftarrow$
 		$\leftarrow$ HippiesRodeadosEstudiantes(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c2)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjHippiesRodEst) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHEst $\leftarrow$ CrearIt(conjHippiesRodEst) '\ote{1}'
 		while HaySiguiente(itHEst) do '\ote{1}'
@@ -1438,7 +1438,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 	//Las capturas se actualizan en HippiesRodeadosAs
 	conj(nombre, posicion): conjHippiesRodAs $\leftarrow$
 		$\leftarrow$ HippiesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c3)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjHippiesRodAs) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itHAs $\leftarrow$ CrearIt(conjHippiesRodAs) '\ote{1}'
 		while HaySiguiente(itHAs) do '\ote{1}'
@@ -1453,7 +1453,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 
 	conj(nombre, posicion): conjEstRodHip $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosHippies(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c4)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjEstRodHip) $>$ 0 then '\ote{1}'
 		itConj(nombre, posicion): itEstH $\leftarrow$ CrearIt(conjEstRodHip) '\ote{1}'
 		while HaySiguiente(itEstH) do '\ote{1}'
@@ -1475,7 +1475,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 
 	conj(posicion): conjEstRodAs $\leftarrow$
 		$\leftarrow$ EstudiantesRodeadosAs(vecinos(pos, $cs$.campus), $cs$) $\textit{\textbf{(c5)}}$ '\ote{4}'
-	
+
 	if Cardinal(conjEstRodAs) $> 0$ then '\ote{1}'
 		itConj(posicion): itEstAs $\leftarrow$ CrearIt(conjEstRodAs) '\ote{1}'
 
@@ -1483,7 +1483,7 @@ En la función va iterando cada posición del conjunto que se le pasa como param
 			if todasOcupadas?(vecinos(Siguiente(itEstAs), $cs$.campus), $cs$ AND
 			AND AlMenosUnAgente(vecinos(Siguiente(itEstAs), $cs$.campus) then $\textit{\textbf{(c6)}}$  '\ote{$2*4$}'
 				conj(As): conjAgParaSanc $\leftarrow$
-					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus), 
+					$\leftarrow$ AgParaPremSanc(vecinos(Siguiente(itEstAs), $cs$.campus),
 							$cs$) $\textit{\textbf{(c7)}}$ '\ote{4}'
 				SancionarAgentes(conjAgParaSanc, $cs$) $\textit{\textbf{(c8)}}$ '\ote{4}'
 			end if '\ote{1}'
@@ -1838,30 +1838,30 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 
 \begin{lstlisting}[mathescape]
-'\alg{iEstudiantes}{\In{cs}{estr} }{itDiccString(nombre,posición)}'
-	$res$ $\leftarrow$ CrearIt($cs$.estudiantes)'\ote{1}'
+'\alg{iEstudiantes}{\In{cs}{estr} }{itConj(tupla(nombre,posición))}'
+	$res$ $\leftarrow$ CrearItClavesSig($cs$.estudiantes)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} O(1)
 
 ~
 
 
 \begin{lstlisting}[mathescape]
-'\alg{iHippies}{\In{cs}{estr} }{itDiccString(nombre,posición)}'
-	$res$ $\leftarrow$ CrearIt($cs$.hippies)'\ote{1}'
+'\alg{iHippies}{\In{cs}{estr} }{itConj(tupla(nombre,posición))}'
+	$res$ $\leftarrow$ CrearItClavesSig($cs$.hippies)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
-\textbf{Complejidad:} Analizar complejidad.
+\textbf{Complejidad:} O(1)
 
 ~
 
 
 \begin{lstlisting}[mathescape]
-'\alg{iAgentes}{\In{cs}{estr} }{itDiccNat(agente,datosAgente)}'
-	$res$ $\leftarrow$ CrearIt($cs$.personalAS)'\ote{1}'
+'\alg{iAgentes}{\In{cs}{estr} }{itConj(tupla(agente,datosAgente))}'
+	$res$ $\leftarrow$ CrearItClavesSig($cs$.personalAS)'\ote{1}'
 '\ofi{O(1)}'
 \end{lstlisting}
 
@@ -2066,4 +2066,3 @@ $\textit{\textbf{(c3)}}$ Idem que el primer punto, la complejidad termina siendo
 
 
 \textbf{Complejidad:} Analizar complejidad.
-
